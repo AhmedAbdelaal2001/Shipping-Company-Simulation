@@ -69,7 +69,7 @@ public:
 		delete arr[count-- - 1];
 		
 		if (count > initialMaxCount && count < maxCount / 4) //If the array becomes too small compared to maxSize, it will be resized to
-			resize(maxCount / 2);                            //maxCount/4, given that it has already been resized before.
+			resize(maxCount / 2);                            //maxCount/2, given that it has already been resized before.
 			                                                 
 		
 		return true;
