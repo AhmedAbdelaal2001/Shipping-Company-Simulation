@@ -1,5 +1,7 @@
 #pragma once
 
+
+//An Ordered List Interface.
 template <class T>
 class ListInterface {
 public:
