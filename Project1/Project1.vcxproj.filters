@@ -32,5 +32,23 @@
     <ClInclude Include="ArrayList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\ArrayBag.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\ArrayBagRecursiveFunctions.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\BagInterface.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\LinkedListBag.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\LinkedListBagRecursiveFunctions.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\Node.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
