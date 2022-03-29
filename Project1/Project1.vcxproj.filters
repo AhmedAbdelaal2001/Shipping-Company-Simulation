@@ -32,5 +32,11 @@
     <ClInclude Include="ArrayList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PQueueInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryHeap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

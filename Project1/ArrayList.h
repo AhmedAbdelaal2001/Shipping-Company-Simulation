@@ -14,6 +14,9 @@ private:
 
 	//This function resizes the list from size maxCount to newSize
 	void resize(int newSize) {                                    //O(n)
+		if (isEmpty())
+			return;
+
 		cout << "Resizing..." << endl;
 		T** newArr = new T * [newSize];
 		
@@ -41,9 +44,30 @@ public:
 		this->maxCount = this->initialMaxCount = maxCount;
 	}
 
+	//Getter for count data member
+	int getCount() const {                                   //O(1)
+		return count;
+	}
+
+	bool isEmpty() {
+		return count == 0;
+	}
+
+	int max(int index1, int index2) {
+		return (*arr[index1] > *arr[index2]) ? index1 : index2;
+	}
+
+	//Returns the item stored at index position "index"
+	T* operator [] (int index) {                         //O(1)
+		if (index < 0 || index >= count)
+			return nullptr;
+		
+		return arr[index];
+	}
+
 	bool swap(int i, int j) {                                //O(1)
 		
-		if (i >= count || j >= count || i<0 || j<0)
+		if (i == j)
 			return false;
 
 		T* temp = arr[i];
@@ -61,19 +85,19 @@ public:
 		*arr[count++] = item;
 	}
 
-	bool deleteEnd() {                                         //O(1) amortized
+	T* deleteEnd() {                                         //O(1) amortized
 		
-		if (count == 0)
-			return false;
+		if (isEmpty())
+			return nullptr;
 
-		delete arr[count - 1];
-		arr[count-- - 1] = nullptr;
+		T* itemPtr = arr[count-- - 1];
+		//arr[count-- - 1] = nullptr;
 		
 		if (maxCount > initialMaxCount && count < maxCount / 4) //If the array becomes too small compared to maxSize, it will be resized to
 			resize(maxCount / 2); //O(n)                        //maxCount/2, given that it has already been resized before.
 			                                                 
 		
-		return true;
+		return itemPtr;
 	}
 
 	void PrintList() {                                         //O(n)
@@ -115,6 +139,7 @@ void ArrayListTest() {
 		cout << "2. Delete From the end:" << endl;
 		cout << "3. Swap 2 elements: " << endl;
 		cout << "4. Print the List: " << endl;
+		cout << "5. Peek at index: " << endl;
 		cin >> choice;
 
 		switch (choice) {
@@ -155,6 +180,15 @@ void ArrayListTest() {
 			cout << "Printing the list: " << endl;
 			list.PrintList();
 			cout << "List Printed." << endl;
+			break;
+
+		case 5:
+			cout << "Enter the index position you want to PEEK at: ";
+			cin >> inputNum1;
+			if (!list[inputNum1])
+				cout << "Invalid Index." << endl;
+			else 
+			cout << *list[inputNum1] << endl;
 			break;
 
 		default:
