@@ -1,10 +1,11 @@
 #include "ArrayList.h"
+#include "BinaryHeap.h"
 
-//Change_3
-//This main function is for testing the ArrayList class. Run the program and follow the prompts.
+
+//This main function is for testing the Priority Queue. Run the program and follow the prompts.
 int main() {
 	
-	ArrayListTest();
+	PriorityQueueTest();
 
 	return 0;
 }

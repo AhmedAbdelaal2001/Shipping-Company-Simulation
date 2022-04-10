@@ -13,7 +13,7 @@ public:
 	virtual void insertEnd(T item) = 0;
 
 	//deletes the last element in the list.
-	virtual bool deleteEnd() = 0;
+	virtual T* deleteEnd() = 0;
 
 	//Prints all the elements.
 	virtual void PrintList() = 0;
