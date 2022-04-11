@@ -7,7 +7,7 @@ class ListInterface {
 public:
 	
 	//Swaps the elements at index positions i and j.
-	virtual bool swap(int i, int j) = 0;
+	virtual void swap(int i, int j) = 0;
 
 	//Inserts a new element at the end of the list.
 	virtual void insertEnd(T item) = 0;

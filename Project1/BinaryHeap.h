@@ -5,23 +5,27 @@
 template <class T>
 class BinaryHeap :public PQueueInterface<T> {
 private:
-	ArrayList<T> list;
+	ArrayList<T> list; //List of pointers to the stored elements.
 
+	//Returns the index position of the parent of an element at a given index position.
 	int parent(int index) {
 		int parent = (index - 1) / 2;
 		return (index < 0) ? index : parent;
 	}
 
+	//Returns the index position of the left child of an element at a given index position.
 	int leftChild(int index) {
 		int leftChild = 2 * index + 1;
 		return (leftChild >= list.getCount()) ? index : leftChild;
 	}
 
+	//Returns the index position of the right child of an element at a given index position.
 	int rightChild(int index) {
 		int rightChild = 2 * index + 2;
 		return (rightChild >= list.getCount()) ? index : rightChild;
 	}
 
+	//This function is for maintaining the heap property after insertion.
 	void heapifyUp(int index) {
 		
 		int parentIndex = parent(index);
@@ -30,7 +34,12 @@ private:
 			heapifyUp(parentIndex);
 		}
 	}
+
+	//This function is for maintaining the heap property after deletion.
 	void heapifyDown(int index) {
+
+		if (!list[index])
+			return;
 		
 		int rch = rightChild(index);
 		int lch = leftChild(index);
@@ -43,7 +52,10 @@ private:
 	}
 
 public:
+
+	//Constructor
 	BinaryHeap(int maxSize = 10) : list(maxSize){};
+
 
 	void enqueue(T item) {
 		list.insertEnd(item);
@@ -52,36 +64,20 @@ public:
 
 	T* dequeue() {
 
-		if (list.isEmpty())
-			return nullptr;
-
 		list.swap(list.getCount() - 1, 0);
-
 		T* itemPtr = list.deleteEnd();
-
-		if (!list.isEmpty())
-			heapifyDown(0);
+		heapifyDown(0);
 
 		return itemPtr;
-		
-		/*if (list.swap(list.getCount() - 1, 0)) {
-			dequeued = list.deleteEnd();
-			heapifyDown(0);
-		}
-		else {
-			dequeued = list.deleteEnd();
-		}*/
 
 	}
 
 	T* peek() {
-		if (list.isEmpty())
-			return nullptr;
-
 		return list[0];
 	}
 
-	void printQueue() {
+	//Prints the stored content.
+	void printPQ() {
 		list.PrintList();
 	}
 };
@@ -135,7 +131,7 @@ void PriorityQueueTest() {
 			cout << "PeEkInG..." << endl;
 			ellymzbtna = heap.peek();
 			if (ellymzbtna)
-				cout << heap.peek() << endl;
+				cout << *heap.peek() << endl;
 			else
 				cout << "m3rftsh" << endl;
 			
@@ -143,7 +139,7 @@ void PriorityQueueTest() {
 
 		case 4:
 			cout << "Printing Queue..." << endl;
-			heap.printQueue();
+			heap.printPQ();
 			
 			break;
 

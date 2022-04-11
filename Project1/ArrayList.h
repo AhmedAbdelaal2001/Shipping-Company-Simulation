@@ -12,25 +12,6 @@ private:
 	int maxCount; //The maximum number of elements that can currently be stored in the array
 	int initialMaxCount; //The initial maxCount, before any resizing takes place
 
-	//This function resizes the list from size maxCount to newSize
-	void resize(int newSize) {                                    //O(n)
-		if (isEmpty())
-			return;
-
-		cout << "Resizing..." << endl;
-		T** newArr = new T * [newSize];
-		
-		for (int i = 0; i < count; i++)
-			newArr[i] = arr[i];
-
-		delete[] arr;
-		arr = newArr;
-		maxCount = newSize;
-		
-		for (int i = count; i < maxCount; i++)
-			arr[i] = nullptr;
-	}
-
 public:
 
 	//Constructor
@@ -65,15 +46,33 @@ public:
 		return arr[index];
 	}
 
-	bool swap(int i, int j) {                                //O(1)
+	void swap(int i, int j) {                                //O(1)
 		
-		if (i == j)
-			return false;
+		if (i == j || i < 0 || j < 0)
+			return;
 
 		T* temp = arr[i];
 		arr[i] = arr[j];
 		arr[j] = temp;
-		return true;
+	}
+
+	//This function resizes the list from size maxCount to newSize
+	void resize(int newSize) {                                    //O(n)
+		if (isEmpty())
+			return;
+
+		cout << "Resizing..." << endl;
+		T** newArr = new T * [newSize];
+
+		for (int i = 0; i < count; i++)
+			newArr[i] = arr[i];
+
+		delete[] arr;
+		arr = newArr;
+		maxCount = newSize;
+
+		for (int i = count; i < maxCount; i++)
+			arr[i] = nullptr;
 	}
 
 	void insertEnd(T item) {                                  //O(1) amortized
@@ -90,8 +89,8 @@ public:
 		if (isEmpty())
 			return nullptr;
 
-		T* itemPtr = arr[count-- - 1];
-		//arr[count-- - 1] = nullptr;
+		T* itemPtr = arr[count - 1];
+		arr[count-- - 1] = nullptr;
 		
 		if (maxCount > initialMaxCount && count < maxCount / 4) //If the array becomes too small compared to maxSize, it will be resized to
 			resize(maxCount / 2); //O(n)                        //maxCount/2, given that it has already been resized before.
@@ -167,12 +166,9 @@ void ArrayListTest() {
 			cin >> inputNum1;
 			cout << "Enter the index of the second number: ";
 			cin >> inputNum2;
-			check = list.swap(inputNum1, inputNum2);
+			list.swap(inputNum1, inputNum2);
 
-			if (check)
-				cout << "Items swapped" << endl;
-			else
-				cout << "Items could not be swapped" << endl;
+			cout << "Swap Exectued." << endl;
 
 			break;
 
