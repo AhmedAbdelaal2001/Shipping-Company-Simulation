@@ -6,7 +6,7 @@ ostream& operator << (ostream& out, Node<int> node) {
 	return out;
 }
 
-//This main function is for testing the Priority Queue. Run the program and follow the prompts.
+//This main function is for testing the custom crosslinked list (using a HashMap). Run the program and follow the prompts.
 int main() {
 
 	CrossLinkedListTest();
