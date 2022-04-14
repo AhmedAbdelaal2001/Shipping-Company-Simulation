@@ -30,6 +30,10 @@ public:
 		return count;
 	}
 
+	int getMaxCount() const {
+		return maxCount;
+	}
+
 	bool isEmpty() {
 		return count == 0;
 	}
@@ -174,7 +178,7 @@ void ArrayListTest() {
 
 		case 4:
 			cout << "Printing the list: " << endl;
-			list.PrintList();
+			//list.PrintList();
 			cout << "List Printed." << endl;
 			break;
 

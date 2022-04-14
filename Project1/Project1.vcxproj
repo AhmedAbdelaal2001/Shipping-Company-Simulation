@@ -142,17 +142,16 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\ArrayBag.h" />
-    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\ArrayBagRecursiveFunctions.h" />
-    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\BagInterface.h" />
-    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\LinkedListBag.h" />
-    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\LinkedListBagRecursiveFunctions.h" />
-    <ClInclude Include="..\..\..\..\Documents\CUFE CHS 25\Year 01\Semester 02\05. Data Structures and Algorithms\Visual Studio\Bag\Bag\Bag\Node.h" />
     <ClInclude Include="ArrayList.h" />
     <ClInclude Include="BinaryHeap.h" />
+    <ClInclude Include="CrossLinkedList.h" />
+    <ClInclude Include="HashMap.h" />
+    <ClInclude Include="HLinkedList.h" />
     <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="HNode.h" />
     <ClInclude Include="ListInterface.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="MapInterface.h" />
     <ClInclude Include="PQueueInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
