@@ -2,6 +2,11 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Cargo.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Truck.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="Promotion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
@@ -15,5 +20,10 @@
     <ClInclude Include="HNode.h" />
     <ClInclude Include="HLinkedList.h" />
     <ClInclude Include="CrossLinkedList.h" />
+    <ClInclude Include="Cargo.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="Truck.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="Promotion.h" />
   </ItemGroup>
 </Project>

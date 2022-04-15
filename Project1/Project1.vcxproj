@@ -139,12 +139,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cargo.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Promotion.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Truck.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
     <ClInclude Include="BinaryHeap.h" />
+    <ClInclude Include="Cargo.h" />
     <ClInclude Include="CrossLinkedList.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="HashMap.h" />
     <ClInclude Include="HLinkedList.h" />
     <ClInclude Include="LinkedList.h" />
@@ -152,7 +159,10 @@
     <ClInclude Include="ListInterface.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="MapInterface.h" />
+    <ClInclude Include="Promotion.h" />
     <ClInclude Include="QueueInterface.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="Truck.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
