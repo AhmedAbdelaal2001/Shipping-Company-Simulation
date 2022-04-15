@@ -8,7 +8,7 @@
     <ClInclude Include="BinaryHeap.h" />
     <ClInclude Include="ListInterface.h" />
     <ClInclude Include="Node.h" />
-    <ClInclude Include="PQueueInterface.h" />
+    <ClInclude Include="QueueInterface.h" />
     <ClInclude Include="MapInterface.h" />
     <ClInclude Include="HashMap.h" />
     <ClInclude Include="LinkedList.h" />

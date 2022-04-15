@@ -1,6 +1,7 @@
 #pragma once
 #include "HashMap.h"
 
+//A custom data structure consisting of a linked list and a HashMap crosslinked together.
 template <class T>
 class CrossLinkedList {
 
@@ -11,13 +12,13 @@ private:
 public:
 	CrossLinkedList(int maxSize) : hashMap(maxSize) { }
 
-	void insertLast(T* itemPtr, int key) {
+	void insertLast(T* itemPtr, int key) {           //O(1) amortized
 		list.insertEnd(itemPtr);
 		Node<T>* tail = list.peekLast();
 		hashMap.insertItem(key, tail);
 	}
 
-	T* deleteFirst() {
+	T* deleteFirst() {                                //O(1) amortized
 		T* delPtr = list.deleteFirst();
 		if (!delPtr)
 			return nullptr;
@@ -28,12 +29,12 @@ public:
 		return delPtr;
 	}
 
-	T* deleteElement(int key) {
+	T* deleteElement(int key) {                        //O(1) amortized
 		Node<T>* delPtr = hashMap.removeItem(key);
 		return list.deleteNode(delPtr);
 	}
 
-	void printList() {
+	void printList() {                                 //O(n)
 		list.printList();
 		cout << endl;
 		hashMap.printMap();

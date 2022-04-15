@@ -8,29 +8,28 @@ class HashMap : public MapInterface<T> {
 private:
 	HLinkedList<T>* arr;
 	int count;
-	int a;
-	int b;
-	int p;
+	int a;                      
+	int b;                      // a and b are integers that will correspond to a specific hash function from the universal hash family.
+	int p;                     // a large prime number, which limits the possible values of a and b.
 	int maxSize;
 	int initialMaxSize;
 
 
-	void computeParameters() {
+	//Randomly chooses values for a and b.
+	void computeParameters() {                             //O(1)
 		srand(time(0));
 		a = rand() % (p - 1);
 		b = rand() % (p - 1);
-
-		cout << "Displaying parameters: " << endl;
-		cout << "a = " << a << endl;
-		cout << "b = " << b << endl;
 	}
 
-	int hash(int key)
+	//Computes the hash of a given key.
+	int hash(int key)                                    //O(1)
 	{
 		return ((a * key + b) % p) % maxSize;
 	}
 
-	void rehash(int newSize) {
+	//Rehashes the entire hashMap, used when the number of elements reaches a level that increases the probability of collisions.
+	void rehash(int newSize) {                         //O(n)
 		int oldSize = maxSize;
 		maxSize = newSize;
 		computeParameters();
@@ -72,7 +71,7 @@ public:
 		computeParameters();
 	}
 
-	T* findItem(int key) {
+	T* findItem(int key) {                              //O(1)
 		
 		int index = hash(key);
 		Node<T>* temp = arr[index].find(key);
@@ -82,7 +81,7 @@ public:
 		
 	}
 
-	void insertItem(int key, T* itemPtr) {
+	void insertItem(int key, T* itemPtr) {                //O(1) amortized
 		
 		if (count >= 0.75 * maxSize)
 			rehash(2 * maxSize);
@@ -92,7 +91,7 @@ public:
 		count++;
 	}
 
-	T* removeItem(int key) {
+	T* removeItem(int key) {                              //O(1) amortized
 		
 		if (maxSize > initialMaxSize && count <= 0.25 * maxSize)
 			rehash(maxSize / 2);
@@ -105,7 +104,7 @@ public:
 		return arr[index].deleteNode(nodePtr);
 	}
 
-	void printMap() {
+	void printMap() {                               //O(n)
 
 		for (int i = 0; i < maxSize; i++) {
 			cout << "Index = " << i << endl;

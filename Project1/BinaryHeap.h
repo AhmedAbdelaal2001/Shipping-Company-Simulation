@@ -1,20 +1,20 @@
 #pragma once
-#include "PQueueInterface.h"
+#include "QueueInterface.h"
 #include "ArrayList.h"
 
 template <class T>
-class BinaryHeap :public PQueueInterface<T> {
+class BinaryHeap :public QueueInterface<T> {
 private:
 	ArrayList<T> list; //List of pointers to the stored elements.
 
 	//Returns the index position of the parent of an element at a given index position.
-	int parent(int index) {
+	int parent(int index) {                                       //O(1)
 		int parent = (index - 1) / 2;
 		return (index < 0) ? index : parent;
 	}
 
 	//Returns the index position of the left child of an element at a given index position.
-	int leftChild(int index) {
+	int leftChild(int index) {                                     //O(1)
 		int leftChild = 2 * index + 1;
 		return (leftChild >= list.getCount()) ? index : leftChild;
 	}
@@ -22,11 +22,11 @@ private:
 	//Returns the index position of the right child of an element at a given index position.
 	int rightChild(int index) {
 		int rightChild = 2 * index + 2;
-		return (rightChild >= list.getCount()) ? index : rightChild;
+		return (rightChild >= list.getCount()) ? index : rightChild;    //O(1)
 	}
 
 	//This function is for maintaining the heap property after insertion.
-	void heapifyUp(int index) {
+	void heapifyUp(int index) {                                         //O(logn)
 		
 		int parentIndex = parent(index);
 		if (*list[index] > *list[parentIndex]) {
@@ -36,7 +36,7 @@ private:
 	}
 
 	//This function is for maintaining the heap property after deletion.
-	void heapifyDown(int index) {
+	void heapifyDown(int index) {                                       //O(logn)
 
 		if (!list[index])
 			return;
@@ -57,12 +57,12 @@ public:
 	BinaryHeap(int maxSize = 10) : list(maxSize){};
 
 
-	void enqueue(T item) {
+	void enqueue(T item) {                                //O(logn)
 		list.insertEnd(item);
 		heapifyUp(list.getCount() - 1);
 	}
 
-	T* dequeue() {
+	T* dequeue() {                                       //O(logn)
 
 		list.swap(list.getCount() - 1, 0);
 		T* itemPtr = list.deleteEnd();
@@ -72,13 +72,13 @@ public:
 
 	}
 
-	T* peek() {
+	T* peek() {                                          //O(1)
 		return list[0];
 	}
 
 	//Prints the stored content.
-	void printPQ() {
-		list.PrintList();
+	void printQueue() {                                      //O(n)
+		list.printList();
 	}
 };
 
@@ -139,7 +139,7 @@ void PriorityQueueTest() {
 
 		case 4:
 			cout << "Printing Queue..." << endl;
-			heap.printPQ();
+			heap.printQueue();
 			
 			break;
 

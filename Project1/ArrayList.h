@@ -12,6 +12,25 @@ private:
 	int maxCount; //The maximum number of elements that can currently be stored in the array
 	int initialMaxCount; //The initial maxCount, before any resizing takes place
 
+	//This function resizes the list from size maxCount to newSize
+	void resize(int newSize) {                                    //O(n)
+		if (isEmpty())
+			return;
+
+		cout << "Resizing..." << endl;
+		T** newArr = new T * [newSize];
+
+		for (int i = 0; i < count; i++)
+			newArr[i] = arr[i];
+
+		delete[] arr;
+		arr = newArr;
+		maxCount = newSize;
+
+		for (int i = count; i < maxCount; i++)
+			arr[i] = nullptr;
+	}
+
 public:
 
 	//Constructor
@@ -30,12 +49,14 @@ public:
 		return count;
 	}
 
-	int getMaxCount() const {
-		return maxCount;
-	}
+	void swap(int i, int j) {                                //O(1)
 
-	bool isEmpty() {
-		return count == 0;
+		if (i == j || i < 0 || j < 0)
+			return;
+
+		T* temp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = temp;
 	}
 
 	int max(int index1, int index2) {
@@ -46,37 +67,12 @@ public:
 	T* operator [] (int index) {                         //O(1)
 		if (index < 0 || index >= count)
 			return nullptr;
-		
+
 		return arr[index];
 	}
 
-	void swap(int i, int j) {                                //O(1)
-		
-		if (i == j || i < 0 || j < 0)
-			return;
-
-		T* temp = arr[i];
-		arr[i] = arr[j];
-		arr[j] = temp;
-	}
-
-	//This function resizes the list from size maxCount to newSize
-	void resize(int newSize) {                                    //O(n)
-		if (isEmpty())
-			return;
-
-		cout << "Resizing..." << endl;
-		T** newArr = new T * [newSize];
-
-		for (int i = 0; i < count; i++)
-			newArr[i] = arr[i];
-
-		delete[] arr;
-		arr = newArr;
-		maxCount = newSize;
-
-		for (int i = count; i < maxCount; i++)
-			arr[i] = nullptr;
+	bool isEmpty() {                                        //O(1)
+		return count == 0;
 	}
 
 	void insertEnd(T item) {                                  //O(1) amortized
@@ -103,7 +99,23 @@ public:
 		return itemPtr;
 	}
 
-	void PrintList() {                                         //O(n)
+	T* deleteFirst() {                                         //O(1) amortized
+
+		if (isEmpty())
+			return nullptr;
+
+		T* itemPtr = arr[0];
+		arr[0] = nullptr;
+		count--;
+
+		if (maxCount > initialMaxCount && count < maxCount / 4) //If the array becomes too small compared to maxSize, it will be resized to
+			resize(maxCount / 2); //O(n)                        //maxCount/2, given that it has already been resized before.
+
+
+		return itemPtr;
+	}
+
+	void printList() {                                         //O(n)
 		
 		for (int i = 0; i < count; i++)
 			cout << *arr[i] << " ";

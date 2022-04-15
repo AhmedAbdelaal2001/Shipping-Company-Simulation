@@ -12,15 +12,21 @@ protected:
 
 public:
 
-	LinkedList() {
+	LinkedList() {                                         //O(1)
 		head = nullptr;
 		tail = nullptr;
 	}
 
-	Node<T>* peekLast() { return tail; }
-	Node<T>* peekFirst() { return head; }
+	Node<T>* peekLast() { return tail; }                   //O(1)
+	Node<T>* peekFirst() { return head; }                  //O(1)
 
-	virtual void insertEnd(T* newItem, int key = -1) {
+	bool isEmpty() {                                       //O(1)
+		if (head)
+			return false;
+		return true;
+	}
+
+	virtual void insertEnd(T* newItem, int key = -1) {     //O(1)
 		Node<T>* temp = new Node<T>(newItem);
 		
 		if (!tail) {
@@ -33,7 +39,7 @@ public:
 		tail = temp;
 	}
 
-	T* deleteFirst() {
+	T* deleteFirst() {                                    //O(1)
 		if (!head)
 			return nullptr;
 
@@ -47,7 +53,7 @@ public:
 		return itemPtr;
 	}
 
-	T* deleteLast() {
+	T* deleteLast() {                                    //O(1)
 		if (!tail)
 			return nullptr;
 
@@ -64,7 +70,7 @@ public:
 		return itemPtr;
 	}
 
-	T* deleteNode(Node<T>* nodePtr) {
+	T* deleteNode(Node<T>* nodePtr) {                     //O(1)
 
 		if (!nodePtr)
 			return nullptr;
@@ -84,14 +90,16 @@ public:
 		}
 	}
 
-	void printList() {
+	void printList() {                                  //O(n)
 		Node<T>* temp = head;
 		while (temp) {
 			temp->printNode();
 			temp = temp->getNext();
 		}
 	}
+	 
 
+	//To be commented out.
 	virtual Node<T>* find(int index) {
 		Node<T>* temp = head;
 		for (int i = 0; i < index; i++) {
@@ -101,7 +109,7 @@ public:
 		return temp;
 	}
 
-	~LinkedList() {
+	~LinkedList() {                                 //O(n)
 		while(deleteFirst()){}
 	}
 };

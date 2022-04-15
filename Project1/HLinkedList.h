@@ -7,7 +7,7 @@ class HLinkedList : public LinkedList<T> {
 
 public:
 	
-	void insertEnd(T* newItem, int key = -1) {
+	void insertEnd(T* newItem, int key = -1) {                     //O(1)
 		HNode<T>* temp = new HNode<T>(key, newItem);
 
 		if (!this->tail) {
@@ -20,7 +20,7 @@ public:
 		this->tail = temp;
 	}
 
-	Node<T>* find(int key) {
+	Node<T>* find(int key) {                           //O(n)
 
 		if (!this->tail)
 			return nullptr;
@@ -39,7 +39,7 @@ public:
 
 	}
 
-	int returnFirstKey() {
+	int returnFirstKey() {                               //O(1)
 
 		return this->head ? this->head->getKey() : -1;
 

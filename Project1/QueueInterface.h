@@ -2,7 +2,7 @@
 
 //A Priority Queue (PQ) Interface. 
 template <class T>
-class PQueueInterface {
+class QueueInterface {
 
 public:
 	
@@ -16,5 +16,5 @@ public:
 	virtual T* peek() = 0;
 
 	//Prints the PQ.
-	virtual void printPQ() = 0;
+	virtual void printQueue() = 0;
 };

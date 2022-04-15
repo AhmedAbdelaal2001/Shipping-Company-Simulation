@@ -1,4 +1,5 @@
 #include "CrossLinkedList.h"
+#include "BinaryHeap.h"
 
 ostream& operator << (ostream& out, Node<int> node) {
 	out << *(node.getItemPtr());
