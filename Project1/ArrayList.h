@@ -190,7 +190,7 @@ void ArrayListTest() {
 
 		case 4:
 			cout << "Printing the list: " << endl;
-			//list.PrintList();
+			list.printList();
 			cout << "List Printed." << endl;
 			break;
 

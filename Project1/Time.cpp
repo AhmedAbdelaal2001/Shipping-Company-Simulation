@@ -7,7 +7,7 @@ Time::Time(int hour, int day) {
 
 }
 
-Time::Time(Time& time)
+Time::Time(const Time& time)
 {
 	setDays(time.getDays());
 	setHours(time.getHours());

@@ -12,7 +12,7 @@ private:
 public:
 	
 	Time(int hour = 0, int day = 0);
-	Time(Time& time);
+	Time(const Time& time);
 
 	int getHours() const;
 	void setHours(int hour);

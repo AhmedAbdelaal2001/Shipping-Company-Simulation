@@ -15,8 +15,27 @@ private:
 
 public:
 
-	Cargo(Time prepTime, int loadTime = 0, char type = 'U', float distance = 0, float cost = 0, float priority = 0);
+	Cargo(Time prepTime, Time loadTime, int id, char type = 'U', float distance = 0, float cost = 0, float priority = 0);
 
-	//Eftkr el setters wel getters
+	void setId(int id);
+	int getId() const;
+
+	void setPrepTime(Time prepTime);
+	Time getPrepTime() const;
+
+	void setLoadTime(Time loadTime);
+	Time getLoadTime() const;
+
+	void setType(char type);
+	char getType();
+
+	void setDistance(int distance);
+	int getDistance() const;
+
+	void setCost(int cost);
+	int getCost() const;
+
+	void setPriority(int priority);
+	int getPriority() const;
 };
 
