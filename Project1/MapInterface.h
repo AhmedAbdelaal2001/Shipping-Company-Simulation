@@ -12,6 +12,6 @@ class MapInterface {
 	//Removes a key-item pair given a key.
 	virtual bool removeItem(int key, T& item) = 0;
 
-	//Prints the stored elements.
-	virtual void printMap() = 0;
+	////Prints the stored elements.
+	//virtual void printMap() = 0;
 };

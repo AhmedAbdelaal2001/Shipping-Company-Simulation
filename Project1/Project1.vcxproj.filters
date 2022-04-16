@@ -7,6 +7,9 @@
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Promotion.cpp" />
+    <ClCompile Include="Company.cpp" />
+    <ClCompile Include="Cancellation.cpp" />
+    <ClCompile Include="Preparation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
@@ -26,5 +29,8 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="Promotion.h" />
     <ClInclude Include="Queue.h" />
+    <ClInclude Include="Company.h" />
+    <ClInclude Include="Cancellation.h" />
+    <ClInclude Include="Preparation.h" />
   </ItemGroup>
 </Project>

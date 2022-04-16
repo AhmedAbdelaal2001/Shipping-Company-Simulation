@@ -143,85 +143,86 @@ public:
 	}
 
 	~LinkedList() {                                 //O(n)
-		Node<T>* temp = head;
-		while (temp) {
-			delete temp->getItem();
-			temp->setItem(nullptr);
-			delete temp;
-			temp = temp->getNext();
+		Node<T>* temp1 = head;
+		Node<T>* temp2 = head;
+		while (temp1) {
+			delete temp1->getItem();
+			temp1 = temp1->getNext();
+			delete temp2;
+			temp2 = temp1;
 		}
 	}
 };
 
-void LinkedListTest() {
-
-	int choice = 0, inputNum1 = 0, inputNum2 = 0;
-	int* inputNum1Ptr = nullptr;
-	Node<int*>* nodePtr = nullptr;
-	bool check = true;
-	char decision;
-
-	cout << "Creating List: " << endl;
-	LinkedList<int*> list;
-	cout << "List Created!" << endl;
-
-	while (check) {
-
-		cout << "**********************************************************************************" << endl;
-		cout << "1. Insert at the end:" << endl;
-		cout << "2. Delete From the beginning:" << endl;
-		cout << "3. Delete an element: " << endl;
-		cout << "4. Print the List: " << endl;
-		cin >> choice;
-
-		switch (choice) {
-
-		case 1:
-			cout << "Input the number you wish to insert: ";
-			cin >> inputNum1;
-			inputNum1Ptr = new int(inputNum1);
-			list.insertEnd(inputNum1Ptr);
-			cout << "Element Inserted." << endl;
-			break;
-
-		case 2:
-			cout << "Deleting the first element: " << endl;
-	
-
-			if (list.deleteFirst(inputNum1Ptr))
-				cout << "Last element deleted." << endl << "Deleted Element: " << *inputNum1Ptr << endl;
-			else
-				cout << "List already empty." << endl;
-
-			break;
-
-		case 3:
-			cout << "Enter the index you wish to delete: ";
-			cin >> inputNum1;
-			nodePtr = list.find(inputNum1);
-
-			if (list.deleteNode(nodePtr, inputNum1Ptr))
-				cout << "Element Deleted: " << *inputNum1Ptr << endl;
-			else
-				cout << "Element not found" << endl;
-
-			break;
-
-		case 4:
-			cout << "Printing the list: " << endl;
-			list.printList();
-			cout << endl << "List Printed." << endl;
-			break;
-
-		default:
-			cout << "Unrecognized input." << endl;
-		}
-
-		cout << "Do you wish to continue? (y/n)";
-		cin >> decision;
-		if (decision == 'y')
-			check = true;
-		else
-			check = false;
-	}
-}
+//void LinkedListTest() {
+//
+//	int choice = 0, inputNum1 = 0, inputNum2 = 0;
+//	int* inputNum1Ptr = nullptr;
+//	Node<int*>* nodePtr = nullptr;
+//	bool check = true;
+//	char decision;
+//
+//	cout << "Creating List: " << endl;
+//	LinkedList<int*> list;
+//	cout << "List Created!" << endl;
+//
+//	while (check) {
+//
+//		cout << "**********************************************************************************" << endl;
+//		cout << "1. Insert at the end:" << endl;
+//		cout << "2. Delete From the beginning:" << endl;
+//		cout << "3. Delete an element: " << endl;
+//		cout << "4. Print the List: " << endl;
+//		cin >> choice;
+//
+//		switch (choice) {
+//
+//		case 1:
+//			cout << "Input the number you wish to insert: ";
+//			cin >> inputNum1;
+//			inputNum1Ptr = new int(inputNum1);
+//			list.insertEnd(inputNum1Ptr);
+//			cout << "Element Inserted." << endl;
+//			break;
+//
+//		case 2:
+//			cout << "Deleting the first element: " << endl;
+//	
+//
+//			if (list.deleteFirst(inputNum1Ptr))
+//				cout << "Last element deleted." << endl << "Deleted Element: " << *inputNum1Ptr << endl;
+//			else
+//				cout << "List already empty." << endl;
+//
+//			break;
+//
+//		case 3:
+//			cout << "Enter the index you wish to delete: ";
+//			cin >> inputNum1;
+//			nodePtr = list.find(inputNum1);
+//
+//			if (list.deleteNode(nodePtr, inputNum1Ptr))
+//				cout << "Element Deleted: " << *inputNum1Ptr << endl;
+//			else
+//				cout << "Element not found" << endl;
+//
+//			break;
+//
+//		case 4:
+//			cout << "Printing the list: " << endl;
+//			list.printList();
+//			cout << endl << "List Printed." << endl;
+//			break;
+//
+//		default:
+//			cout << "Unrecognized input." << endl;
+//		}
+//
+//		cout << "Do you wish to continue? (y/n)";
+//		cin >> decision;
+//		if (decision == 'y')
+//			check = true;
+//		else
+//			check = false;
+//	}
+//}

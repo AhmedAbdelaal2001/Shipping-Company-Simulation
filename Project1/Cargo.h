@@ -18,9 +18,13 @@ private:
 public:
 	Cargo();
 
-	Cargo(Time prepTime, Time loadTime, int id, char type = 'U', float distance = 0, float cost = 0, float priority = 0);
+	Cargo(Time prepTime, Time loadTime, int id, char type = 'U', int distance = 0, float cost = 0, float priority = 0);
+
+	int computePriority(int cost, int distance, Time prepTime);
+	int updatePriority(int cost);
 
 	friend ostream& operator << (ostream& out, Cargo cargo);
+	bool operator > (Cargo cargo);
 
 	void setId(int id);
 	int getId() const;

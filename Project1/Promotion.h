@@ -4,10 +4,14 @@ class Promotion :
     public Event
 
 {
-    int id;
+    int extraCost;
+
 public:
-    Promotion(Time eventTime, int id);
-    void Execute();
+    
+    Promotion(Time eventTime, Company* pCompany, int id, int extraCost = 0);
+    
+    bool Execute();
+
 
 };
 

@@ -6,6 +6,10 @@ ostream& operator << (ostream& out, Cargo cargo) {
 	return out;
 }
 
+bool Cargo::operator > (Cargo cargo) {
+	return priority > cargo.getPriority();
+}
+
 Cargo::Cargo() {
 	Time zeroTime(0, 1);
 	setPrepTime(zeroTime);
@@ -17,10 +21,10 @@ Cargo::Cargo() {
 	setPriority(0);
 }
 
-Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, float distance, float cost, float priority) {
+Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, float cost, float priority) {
 
 	if (type == 'V')
-		priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours();
+		computePriority(cost, distance, prepTime);
 
 	setPrepTime(prepTime);
 	setLoadTime(loadTime);
@@ -29,6 +33,16 @@ Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, float distance, fl
 	setDistance(distance);
 	setCost(cost);
 	setPriority(priority);
+}
+
+int Cargo::computePriority(int cost, int distance, Time prepTime) {
+	priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours();
+	return priority;
+}
+
+int Cargo::updatePriority(int newCost) {
+	computePriority(newCost, distance, prepTime);
+	return priority;
 }
 
 void Cargo::setId(int id) { this->id = id; }

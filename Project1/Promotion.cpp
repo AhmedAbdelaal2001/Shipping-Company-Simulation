@@ -1,10 +1,25 @@
 #include "Promotion.h"
 
 
-Promotion::Promotion(Time eventTime, int id): Event(eventTime) {
-	this->id = id;
+Promotion::Promotion(Time eventTime, Company* pCompany, int id, int extraCost) : Event(eventTime, pCompany, id) {
+	this->extraCost = extraCost;
 }
-void Promotion::Execute()
-{
 
+bool Promotion::Execute()
+{
+	Company* pCompany = Event::getPCompany();
+	Cargo* promotedCargo;
+	bool promotionFlag = pCompany->getWaitingNormalCargo()->deleteElement(Event::getID(), promotedCargo);
+	
+	if (!promotionFlag)
+		return false;
+	
+	promotedCargo->setType('V');
+	int oldCost = promotedCargo->getCost();
+	int newCost = oldCost + extraCost;
+	promotedCargo->setCost(newCost);
+	promotedCargo->updatePriority(newCost);
+	
+	pCompany->getWaitingVIPCargo()->enqueue(promotedCargo);
+	return true;
 }

@@ -20,11 +20,12 @@ public:
 	int getDays() const;
 	void setDays(int day);
 
+	void printTime();
+	
 	void operator ++();
 	Time operator +(Time time);
 	Time operator -(Time time);
 	bool operator >=(Time time);
-	void printTime();
 
 };
 

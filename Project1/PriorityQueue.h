@@ -45,7 +45,7 @@ private:
 		int lch = leftChild(index);
 		int biggerChild = list.max(rch, lch);
 
-		if (*list[index] < *list[biggerChild]) {
+		if (*list[biggerChild] > *list[index]) {
 			list.swap(index, biggerChild);
 			heapifyDown(biggerChild);
 		}
@@ -86,77 +86,77 @@ public:
 	}
 };
 
-void PriorityQueueTest() {
-
-	int choice = 0, inputNum1 = 0, inputNum2 = 0, queueSize = 0;
-	int* ellymzbtna = nullptr;
-	bool check = true;
-	char decision;
-
-	cout << "Enter the size of the priority queue you wish to create: ";
-	cin >> queueSize;
-	cout << "Creating List: " << endl;
-	PriorityQueue<int*> heap(queueSize);
-	cout << "Priority Queue Created!" << endl;
-
-	while (check) {
-
-		cout << "**********************************************************************************" << endl;
-		cout << "1. Enqueue:" << endl;
-		cout << "2. Dequeue:" << endl;
-		cout << "3. Peek: " << endl;
-		cout << "4. Print Queue: " << endl;
-		cin >> choice;
-
-		switch (choice) {
-
-		case 1:
-			cout << "Input the number you wish to insert: ";
-			cin >> inputNum1;
-			ellymzbtna = new int(inputNum1);
-			heap.enqueue(ellymzbtna);
-			cout << "Element Inserted." << endl;
-			break;
-
-		case 2:
-			cout << "Deleting the last element: " << endl;
-			check = heap.dequeue(ellymzbtna);
-
-			if (ellymzbtna)
-			{
-				cout << "Last element deleted." << endl;
-				cout << "Deleted Element: " << *ellymzbtna << endl;
-			}
-			else
-				cout << "List already empty." << endl;
-			
-			break;
-
-		case 3:
-			cout << "PeEkInG..." << endl;
-			ellymzbtna = heap.peek();
-			if (ellymzbtna)
-				cout << *heap.peek() << endl;
-			else
-				cout << "m3rftsh" << endl;
-			
-			break;
-
-		case 4:
-			cout << "Printing Queue..." << endl;
-			heap.printQueue();
-			
-			break;
-
-		default:
-			cout << "Unrecognized input." << endl;
-		}
-
-		cout << "Do you wish to continue? (y/n)";
-		cin >> decision;
-		if (decision == 'y')
-			check = true;
-		else
-			check = false;
-	}
-}
+//void PriorityQueueTest() {
+//
+//	int choice = 0, inputNum1 = 0, inputNum2 = 0, queueSize = 0;
+//	int* ellymzbtna = nullptr;
+//	bool check = true;
+//	char decision;
+//
+//	cout << "Enter the size of the priority queue you wish to create: ";
+//	cin >> queueSize;
+//	cout << "Creating List: " << endl;
+//	PriorityQueue<int*> heap(queueSize);
+//	cout << "Priority Queue Created!" << endl;
+//
+//	while (check) {
+//
+//		cout << "**********************************************************************************" << endl;
+//		cout << "1. Enqueue:" << endl;
+//		cout << "2. Dequeue:" << endl;
+//		cout << "3. Peek: " << endl;
+//		cout << "4. Print Queue: " << endl;
+//		cin >> choice;
+//
+//		switch (choice) {
+//
+//		case 1:
+//			cout << "Input the number you wish to insert: ";
+//			cin >> inputNum1;
+//			ellymzbtna = new int(inputNum1);
+//			heap.enqueue(ellymzbtna);
+//			cout << "Element Inserted." << endl;
+//			break;
+//
+//		case 2:
+//			cout << "Deleting the last element: " << endl;
+//			check = heap.dequeue(ellymzbtna);
+//
+//			if (ellymzbtna)
+//			{
+//				cout << "Last element deleted." << endl;
+//				cout << "Deleted Element: " << *ellymzbtna << endl;
+//			}
+//			else
+//				cout << "List already empty." << endl;
+//			
+//			break;
+//
+//		case 3:
+//			cout << "PeEkInG..." << endl;
+//			ellymzbtna = heap.peek();
+//			if (ellymzbtna)
+//				cout << *heap.peek() << endl;
+//			else
+//				cout << "m3rftsh" << endl;
+//			
+//			break;
+//
+//		case 4:
+//			cout << "Printing Queue..." << endl;
+//			heap.printQueue();
+//			
+//			break;
+//
+//		default:
+//			cout << "Unrecognized input." << endl;
+//		}
+//
+//		cout << "Do you wish to continue? (y/n)";
+//		cin >> decision;
+//		if (decision == 'y')
+//			check = true;
+//		else
+//			check = false;
+//	}
+//}
