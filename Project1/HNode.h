@@ -8,8 +8,8 @@ private:
 	int key;
 
 public:
-	HNode(int key = 0, T itemptr = nullptr, Node<T>* next = nullptr, Node<T>* prev = nullptr) : 
-		Node<T>(itemptr, next, prev) 
+	HNode(int key = 0, T item = nullptr, Node<T>* next = nullptr, Node<T>* prev = nullptr) : 
+		Node<T>(item, next, prev) 
 	{
 		setKey(key);
 	}

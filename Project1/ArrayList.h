@@ -107,6 +107,11 @@ public:
 		cout << endl;
 	}
 
+	~ArrayList() {
+		for (int i = 0; i < count; i++)
+			delete arr[i];
+	}
+
 };
 
 //This function is for testing the ArrayList class. All of the available methods (swap, insertEnd, deleteEnd, printList)

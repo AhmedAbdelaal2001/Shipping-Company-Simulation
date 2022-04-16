@@ -9,12 +9,14 @@ protected:
 	
 	Node<T>* head;
 	Node<T>* tail;
+	int itemsCount;
 
 public:
 
 	LinkedList() {                                         //O(1)
 		head = nullptr;
 		tail = nullptr;
+		itemsCount = 0;
 	}
 
 	Node<T>* peekLast() { return tail; }                   //O(1)
@@ -27,38 +29,45 @@ public:
 	}
 
 	virtual void insertEnd(T newItem, int key = -1) {     //O(1)
-		Node<T>* temp = new Node<T>(newItem);
+		itemsCount++;
+		Node<T>* newNode = new Node<T>(newItem);
 		
-		if (!tail) {
-			head = tail = temp;
+		if (!head) {
+			head = tail = newNode;
 			return;
 		}
 
-		temp->setPrev(tail);
-		tail->setNext(temp);
-		tail = temp;
+		newNode->setPrev(tail);
+		tail->setNext(newNode);
+		tail = newNode;
 	}
 
 	T deleteFirst() {                                    //O(1)
 		if (!head)
 			return nullptr;
 
+		itemsCount--;
 		Node<T>* temp = head;
-		T itemPtr = head->getItemPtr();
+		T item = head->getItem();
 		head = temp->getNext();
-		if (!head)
+		
+		if (head)
+			head->setPrev(nullptr);
+		else
 			tail = nullptr;
+		
 		delete temp;
 		
-		return itemPtr;
+		return item;
 	}
 
 	T deleteLast() {                                    //O(1)
 		if (!tail)
 			return nullptr;
 
+		itemsCount--;
 		Node<T>* temp = tail;
-		T itemPtr = tail->getItemPtr();
+		T item = tail->getItem();
 		tail = temp->getPrev();
 		
 		if (tail)
@@ -67,7 +76,7 @@ public:
 			head = nullptr;
 
 		delete temp;
-		return itemPtr;
+		return item;
 	}
 
 	T deleteNode(Node<T>* nodePtr) {                     //O(1)
@@ -82,12 +91,40 @@ public:
 			return deleteLast();
 		}
 		else {
+			itemsCount--;
 			nodePtr->getPrev()->setNext(nodePtr->getNext());
 			nodePtr->getNext()->setPrev(nodePtr->getPrev());
-			T itemPtr = nodePtr->getItemPtr();
+			T item = nodePtr->getItem();
 			delete nodePtr;
-			return itemPtr;
+			return item;
 		}
+	}
+
+	T Delete(T it) //for promotion
+	{
+
+		if (tail->getItem() == it)
+			return deleteLast();
+
+		bool flag = false;
+		Node<T>* ptr = head;
+
+		while (ptr)
+		{
+			
+			if (ptr->getItem() == it)
+			{
+				flag = true;
+				break;
+			}
+			ptr = ptr->getNext();
+		
+		}
+
+		if (flag == false)
+			return nullptr;
+		
+		return deleteNode(ptr);
 	}
 
 	void printList() {                                  //O(n)

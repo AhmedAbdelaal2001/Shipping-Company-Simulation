@@ -34,17 +34,18 @@ private:
 		maxSize = newSize;
 		computeParameters();
 		int key = 0, index = 0;
+		T firstItem = nullptr;
 		HLinkedList<T>* newArr = new HLinkedList<T>[newSize];
 		
 		for (int i = 0; i < oldSize; i++) {
 			while (true) {
 				
 				key = arr[i].returnFirstKey();
-				T firstItemPtr = arr[i].deleteFirst();
+				firstItem = arr[i].deleteFirst();
 				
-				if (firstItemPtr) {
+				if (firstItem) {
 					index = hash(key);
-					newArr[index].insertEnd(firstItemPtr, key);
+					newArr[index].insertEnd(firstItem, key);
 					continue;
 				
 				}
@@ -76,7 +77,7 @@ public:
 		int index = hash(key);
 		Node<T>* temp = arr[index].find(key);
 		if (temp)
-			return temp->getItemPtr();
+			return temp->getItem();
 		return nullptr;
 		
 	}

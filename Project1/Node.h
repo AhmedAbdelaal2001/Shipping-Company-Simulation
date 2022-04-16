@@ -7,14 +7,14 @@ template <class T>
 class Node {
 
 private:
-	T itemptr;
+	T item;
 	Node<T>* next;
 	Node<T>* prev;
 
 public:
 
 	Node(T itemptr = nullptr, Node<T>* next = nullptr, Node<T>* prev = nullptr) {
-		setItemPtr(itemptr);
+		setItem(itemptr);
 		setNext(next);
 		setPrev(prev);
 	}
@@ -24,8 +24,8 @@ public:
 	virtual int getKey() const { return -1; }
 	virtual void setKey(int key) { }
 	
-	T getItemPtr() const { return itemptr; }
-	void setItemPtr(T itemptr) { this->itemptr = itemptr; }
+	T getItem() const { return item; }
+	void setItem(T item) { this->item = item; }
 
 	Node<T>* getNext() const { return next; }
 	void setNext(Node<T>* next) { this->next = next; }
@@ -34,6 +34,6 @@ public:
 	void setPrev(Node<T>* prev) { this->prev = prev; }
 
 	void printNode() const {
-		cout << *itemptr << " ";
+		cout << *item << " ";
 	}
 };
