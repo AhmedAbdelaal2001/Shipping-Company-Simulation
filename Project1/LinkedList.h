@@ -26,7 +26,7 @@ public:
 		return true;
 	}
 
-	virtual void insertEnd(T* newItem, int key = -1) {     //O(1)
+	virtual void insertEnd(T newItem, int key = -1) {     //O(1)
 		Node<T>* temp = new Node<T>(newItem);
 		
 		if (!tail) {
@@ -39,12 +39,12 @@ public:
 		tail = temp;
 	}
 
-	T* deleteFirst() {                                    //O(1)
+	T deleteFirst() {                                    //O(1)
 		if (!head)
 			return nullptr;
 
 		Node<T>* temp = head;
-		T* itemPtr = head->getItemPtr();
+		T itemPtr = head->getItemPtr();
 		head = temp->getNext();
 		if (!head)
 			tail = nullptr;
@@ -53,12 +53,12 @@ public:
 		return itemPtr;
 	}
 
-	T* deleteLast() {                                    //O(1)
+	T deleteLast() {                                    //O(1)
 		if (!tail)
 			return nullptr;
 
 		Node<T>* temp = tail;
-		T* itemPtr = tail->getItemPtr();
+		T itemPtr = tail->getItemPtr();
 		tail = temp->getPrev();
 		
 		if (tail)
@@ -70,7 +70,7 @@ public:
 		return itemPtr;
 	}
 
-	T* deleteNode(Node<T>* nodePtr) {                     //O(1)
+	T deleteNode(Node<T>* nodePtr) {                     //O(1)
 
 		if (!nodePtr)
 			return nullptr;
@@ -84,7 +84,7 @@ public:
 		else {
 			nodePtr->getPrev()->setNext(nodePtr->getNext());
 			nodePtr->getNext()->setPrev(nodePtr->getPrev());
-			T* itemPtr = nodePtr->getItemPtr();
+			T itemPtr = nodePtr->getItemPtr();
 			delete nodePtr;
 			return itemPtr;
 		}
@@ -118,12 +118,12 @@ void LinkedListTest() {
 
 	int choice = 0, inputNum1 = 0, inputNum2 = 0;
 	int* inputNum1Ptr = nullptr;
-	Node<int>* nodePtr = nullptr;
+	Node<int*>* nodePtr = nullptr;
 	bool check = true;
 	char decision;
 
 	cout << "Creating List: " << endl;
-	LinkedList<int> list;
+	LinkedList<int*> list;
 	cout << "List Created!" << endl;
 
 	while (check) {

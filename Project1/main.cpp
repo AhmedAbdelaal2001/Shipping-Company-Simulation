@@ -1,9 +1,9 @@
 #include "CrossLinkedList.h"
-//#include "BinaryHeap.h"
+#include "BinaryHeap.h"
 #include "Time.h"
 
-ostream& operator << (ostream& out, Node<int> node) {
-	out << *(node.getItemPtr());
+ostream& operator << (ostream& out, Node<int*> node) {
+	out << *node.getItemPtr();
 
 	return out;
 }
@@ -25,7 +25,7 @@ void TimeTest() {
 //This main function is for testing the custom crosslinked list (using a HashMap). Run the program and follow the prompts.
 int main() {
 
-	CrossLinkedListTest();
+	PriorityQueueTest();
 
 	return 0;
 }

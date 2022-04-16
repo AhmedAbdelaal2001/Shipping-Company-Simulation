@@ -40,7 +40,7 @@ private:
 			while (true) {
 				
 				key = arr[i].returnFirstKey();
-				T* firstItemPtr = arr[i].deleteFirst();
+				T firstItemPtr = arr[i].deleteFirst();
 				
 				if (firstItemPtr) {
 					index = hash(key);
@@ -71,7 +71,7 @@ public:
 		computeParameters();
 	}
 
-	T* findItem(int key) {                              //O(1)
+	T findItem(int key) {                              //O(1)
 		
 		int index = hash(key);
 		Node<T>* temp = arr[index].find(key);
@@ -81,7 +81,7 @@ public:
 		
 	}
 
-	void insertItem(int key, T* itemPtr) {                //O(1) amortized
+	void insertItem(int key, T itemPtr) {                //O(1) amortized
 		
 		if (count >= 0.75 * maxSize)
 			rehash(2 * maxSize);
@@ -91,7 +91,7 @@ public:
 		count++;
 	}
 
-	T* removeItem(int key) {                              //O(1) amortized
+	T removeItem(int key) {                              //O(1) amortized
 		
 		if (maxSize > initialMaxSize && count <= 0.25 * maxSize)
 			rehash(maxSize / 2);
@@ -128,7 +128,7 @@ void HashMapTest() {
 	cout << "Enter the size of the hash table you wish to create: ";
 	cin >> size;
 	cout << "Creating List: " << endl;
-	HashMap<int> hashMap(size);
+	HashMap<int*> hashMap(size);
 	cout << "Hash Table Created!" << endl;
 
 	while (check) {

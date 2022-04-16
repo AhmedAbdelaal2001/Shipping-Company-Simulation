@@ -1,5 +1,22 @@
 #include "Cargo.h"
 
+ostream& operator << (ostream& out, Cargo cargo) {
+
+	out << cargo.getId();
+	return out;
+}
+
+Cargo::Cargo() {
+	Time zeroTime(0, 1);
+	setPrepTime(zeroTime);
+	setLoadTime(zeroTime);
+	setId(0);
+	setType('U');
+	setDistance(0);
+	setCost(0);
+	setPriority(0);
+}
+
 Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, float distance, float cost, float priority) {
 
 	if (type == 'V')

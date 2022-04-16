@@ -7,13 +7,13 @@ template <class T>
 class Node {
 
 private:
-	T* itemptr;
+	T itemptr;
 	Node<T>* next;
 	Node<T>* prev;
 
 public:
 
-	Node(T* itemptr = nullptr, Node<T>* next = nullptr, Node<T>* prev = nullptr) {
+	Node(T itemptr = nullptr, Node<T>* next = nullptr, Node<T>* prev = nullptr) {
 		setItemPtr(itemptr);
 		setNext(next);
 		setPrev(prev);
@@ -24,8 +24,8 @@ public:
 	virtual int getKey() const { return -1; }
 	virtual void setKey(int key) { }
 	
-	T* getItemPtr() const { return itemptr; }
-	void setItemPtr(T* itemptr) { this->itemptr = itemptr; }
+	T getItemPtr() const { return itemptr; }
+	void setItemPtr(T itemptr) { this->itemptr = itemptr; }
 
 	Node<T>* getNext() const { return next; }
 	void setNext(Node<T>* next) { this->next = next; }

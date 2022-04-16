@@ -1,5 +1,7 @@
 #pragma once
 #include "Time.h"
+#include <iostream>
+using namespace std;
 
 class Cargo
 {
@@ -14,8 +16,11 @@ private:
 	int priority;
 
 public:
+	Cargo();
 
 	Cargo(Time prepTime, Time loadTime, int id, char type = 'U', float distance = 0, float cost = 0, float priority = 0);
+
+	friend ostream& operator << (ostream& out, Cargo cargo);
 
 	void setId(int id);
 	int getId() const;

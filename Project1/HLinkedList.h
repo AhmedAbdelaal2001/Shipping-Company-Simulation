@@ -7,7 +7,7 @@ class HLinkedList : public LinkedList<T> {
 
 public:
 	
-	void insertEnd(T* newItem, int key = -1) {                     //O(1)
+	void insertEnd(T newItem, int key = -1) {                     //O(1)
 		HNode<T>* temp = new HNode<T>(key, newItem);
 
 		if (!this->tail) {

@@ -62,17 +62,19 @@ public:
 		heapifyUp(list.getCount() - 1);
 	}
 
-	T* dequeue() {                                       //O(logn)
+	bool dequeue(T& item) {                                       //O(logn)
 
 		list.swap(list.getCount() - 1, 0);
-		T* itemPtr = list.deleteEnd();
+		T itemPtr = nullptr;
+		bool check = list.deleteEnd(itemPtr);
 		heapifyDown(0);
 
-		return itemPtr;
+		item = itemPtr;
+		return check;
 
 	}
 
-	T* peek() {                                          //O(1)
+	T peek() {                                          //O(1)
 		return list[0];
 	}
 
@@ -92,7 +94,7 @@ void PriorityQueueTest() {
 	cout << "Enter the size of the priority queue you wish to create: ";
 	cin >> queueSize;
 	cout << "Creating List: " << endl;
-	BinaryHeap<int> heap(queueSize);
+	BinaryHeap<int*> heap(queueSize);
 	cout << "Priority Queue Created!" << endl;
 
 	while (check) {
@@ -109,13 +111,14 @@ void PriorityQueueTest() {
 		case 1:
 			cout << "Input the number you wish to insert: ";
 			cin >> inputNum1;
-			heap.enqueue(inputNum1);
+			ellymzbtna = new int(inputNum1);
+			heap.enqueue(ellymzbtna);
 			cout << "Element Inserted." << endl;
 			break;
 
 		case 2:
 			cout << "Deleting the last element: " << endl;
-			ellymzbtna = heap.dequeue();
+			check = heap.dequeue(ellymzbtna);
 
 			if (ellymzbtna)
 			{

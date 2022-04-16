@@ -7,19 +7,19 @@ class CrossLinkedList {
 
 private:
 	LinkedList<T> list;
-	HashMap<Node<T>> hashMap;
+	HashMap<Node<T>*> hashMap;
 
 public:
 	CrossLinkedList(int maxSize) : hashMap(maxSize) { }
 
-	void insertLast(T* itemPtr, int key) {           //O(1) amortized
+	void insertLast(T itemPtr, int key) {           //O(1) amortized
 		list.insertEnd(itemPtr);
 		Node<T>* tail = list.peekLast();
 		hashMap.insertItem(key, tail);
 	}
 
-	T* deleteFirst() {                                //O(1) amortized
-		T* delPtr = list.deleteFirst();
+	T deleteFirst() {                                //O(1) amortized
+		T delPtr = list.deleteFirst();
 		if (!delPtr)
 			return nullptr;
 
@@ -29,9 +29,11 @@ public:
 		return delPtr;
 	}
 
-	T* deleteElement(int key) {                        //O(1) amortized
+	T deleteElement(int key) {                        //O(1) amortized
 		Node<T>* delPtr = hashMap.removeItem(key);
+		
 		return list.deleteNode(delPtr);
+
 	}
 
 	void printList() {                                 //O(n)
@@ -50,7 +52,7 @@ void CrossLinkedListTest() {
 	cout << "Enter the size of the list you wish to create: ";
 	cin >> size;
 	cout << "Creating List: " << endl;
-	CrossLinkedList<int> list(size);
+	CrossLinkedList<int*> list(size);
 	cout << "List Created!" << endl;
 
 	while (check) {
