@@ -42,13 +42,13 @@ public:
 		tail = newNode;
 	}
 
-	T deleteFirst() {                                    //O(1)
-		if (!head)
-			return nullptr;
+	bool deleteFirst(T& deletedItem) {                                    //O(1)
+		if (isEmpty())
+			return false;
 
 		itemsCount--;
 		Node<T>* temp = head;
-		T item = head->getItem();
+		deletedItem = head->getItem();
 		head = temp->getNext();
 		
 		if (head)
@@ -58,16 +58,16 @@ public:
 		
 		delete temp;
 		
-		return item;
+		return true;
 	}
 
-	T deleteLast() {                                    //O(1)
-		if (!tail)
-			return nullptr;
+	bool deleteLast(T& deletedItem) {                                    //O(1)
+		if (isEmpty())
+			return false;
 
 		itemsCount--;
 		Node<T>* temp = tail;
-		T item = tail->getItem();
+		deletedItem = tail->getItem();
 		tail = temp->getPrev();
 		
 		if (tail)
@@ -76,35 +76,35 @@ public:
 			head = nullptr;
 
 		delete temp;
-		return item;
+		return true;
 	}
 
-	T deleteNode(Node<T>* nodePtr) {                     //O(1)
+	bool deleteNode(Node<T>* nodePtr, T& deletedItem) {                     //O(1)
 
 		if (!nodePtr)
-			return nullptr;
+			return false;
 
 		if (!(nodePtr->getPrev())) {
-			return deleteFirst();
+			return deleteFirst(deletedItem);
 		}
 		else if (!(nodePtr->getNext())) {
-			return deleteLast();
+			return deleteLast(deletedItem);
 		}
 		else {
 			itemsCount--;
 			nodePtr->getPrev()->setNext(nodePtr->getNext());
 			nodePtr->getNext()->setPrev(nodePtr->getPrev());
-			T item = nodePtr->getItem();
+			deletedItem = nodePtr->getItem();
 			delete nodePtr;
-			return item;
+			return true;
 		}
 	}
 
-	T Delete(T it) //for promotion
+	bool Delete(T it, T& deletedItem) //for promotion
 	{
 
 		if (tail->getItem() == it)
-			return deleteLast();
+			return deleteLast(deletedItem);
 
 		bool flag = false;
 		Node<T>* ptr = head;
@@ -122,9 +122,9 @@ public:
 		}
 
 		if (flag == false)
-			return nullptr;
+			return false;
 		
-		return deleteNode(ptr);
+		return deleteNode(ptr, deletedItem);
 	}
 
 	void printList() {                                  //O(n)
@@ -147,7 +147,11 @@ public:
 	}
 
 	~LinkedList() {                                 //O(n)
-		while(deleteFirst()){}
+		Node<T>* temp = head;
+		while (temp) {
+			delete temp->getItem();
+			temp = temp->getNext();
+		}
 	}
 };
 
@@ -184,9 +188,9 @@ void LinkedListTest() {
 
 		case 2:
 			cout << "Deleting the first element: " << endl;
-			inputNum1Ptr = list.deleteFirst();
+	
 
-			if (inputNum1Ptr)
+			if (list.deleteFirst(inputNum1Ptr))
 				cout << "Last element deleted." << endl << "Deleted Element: " << *inputNum1Ptr << endl;
 			else
 				cout << "List already empty." << endl;
@@ -197,9 +201,8 @@ void LinkedListTest() {
 			cout << "Enter the index you wish to delete: ";
 			cin >> inputNum1;
 			nodePtr = list.find(inputNum1);
-			inputNum1Ptr = list.deleteNode(nodePtr);
 
-			if (inputNum1Ptr)
+			if (list.deleteNode(nodePtr, inputNum1Ptr))
 				cout << "Element Deleted: " << *inputNum1Ptr << endl;
 			else
 				cout << "Element not found" << endl;

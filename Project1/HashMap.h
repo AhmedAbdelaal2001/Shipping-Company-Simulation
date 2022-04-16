@@ -41,9 +41,8 @@ private:
 			while (true) {
 				
 				key = arr[i].returnFirstKey();
-				firstItem = arr[i].deleteFirst();
 				
-				if (firstItem) {
+				if (arr[i].deleteFirst(firstItem)) {
 					index = hash(key);
 					newArr[index].insertEnd(firstItem, key);
 					continue;
@@ -72,27 +71,29 @@ public:
 		computeParameters();
 	}
 
-	T findItem(int key) {                              //O(1)
+	bool findItem(int key, T& item) {                              //O(1)
 		
 		int index = hash(key);
 		Node<T>* temp = arr[index].find(key);
-		if (temp)
-			return temp->getItem();
-		return nullptr;
+		if (temp) {
+			item = temp->getItem();
+			return true;
+		}
+		return false;
 		
 	}
 
-	void insertItem(int key, T itemPtr) {                //O(1) amortized
+	void insertItem(int key, T item) {                //O(1) amortized
 		
 		if (count >= 0.75 * maxSize)
 			rehash(2 * maxSize);
 
 		int index = hash(key);
-		arr[index].insertEnd(itemPtr, key);
+		arr[index].insertEnd(item, key);
 		count++;
 	}
 
-	T removeItem(int key) {                              //O(1) amortized
+	bool removeItem(int key, T& item) {                              //O(1) amortized
 		
 		if (maxSize > initialMaxSize && count <= 0.25 * maxSize)
 			rehash(maxSize / 2);
@@ -102,7 +103,7 @@ public:
 		count--;
 
 
-		return arr[index].deleteNode(nodePtr);
+		return arr[index].deleteNode(nodePtr, item);
 	}
 
 	void printMap() {                               //O(n)
@@ -154,9 +155,8 @@ void HashMapTest() {
 		case 2:
 			cout << "Enter the element you wish to delete: " << endl;
 			cin >> inputNum1;
-			inputNum1Ptr = hashMap.removeItem(inputNum1);
 
-			if (inputNum1Ptr)
+			if (hashMap.removeItem(inputNum1, inputNum1Ptr))
 			{
 				cout << "Element deleted." << endl;
 				cout << "Deleted Element: " << *inputNum1Ptr << endl;
@@ -169,8 +169,8 @@ void HashMapTest() {
 		case 3:
 			cout << "Enter the key you wish to search for" << endl;
 			cin >> inputNum1;
-			inputNum1Ptr = hashMap.findItem(inputNum1);
-			if (inputNum1Ptr)
+			
+			if (hashMap.findItem(inputNum1, inputNum1Ptr))
 				cout << "Element Found." << endl;
 			else
 				cout << "Element Not Found." << endl;

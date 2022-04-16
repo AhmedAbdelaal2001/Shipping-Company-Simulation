@@ -18,21 +18,20 @@ public:
 		hashMap.insertItem(key, tail);
 	}
 
-	T deleteFirst() {                                //O(1) amortized
-		T delPtr = list.deleteFirst();
-		if (!delPtr)
-			return nullptr;
+	bool deleteFirst(T& deletedItem) {                                //O(1) amortized
+		if (!list.deleteFirst(deletedItem))
+			return false;
 
-		int key = *delPtr;
-		hashMap.removeItem(key);
-
-		return delPtr;
+		int key = *deletedItem;
+		Node<T>* delNode = nullptr;
+		return hashMap.removeItem(key, delNode);
 	}
 
-	T deleteElement(int key) {                        //O(1) amortized
-		Node<T>* delPtr = hashMap.removeItem(key);
+	bool deleteElement(int key, T& deletedItem) {                        //O(1) amortized
+		Node<T>* delPtr = nullptr;
+		hashMap.removeItem(key, delPtr);
 		
-		return list.deleteNode(delPtr);
+		return list.deleteNode(delPtr, deletedItem);
 
 	}
 
@@ -77,9 +76,8 @@ void CrossLinkedListTest() {
 		case 2:
 			cout << "Enter the element you wish to delete: " << endl;
 			cin >> inputNum1;
-			inputNum1Ptr = list.deleteElement(inputNum1);
 
-			if (inputNum1Ptr)
+			if (list.deleteElement(inputNum1, inputNum1Ptr))
 			{
 				cout << "Element deleted." << endl;
 				cout << "Deleted Element: " << *inputNum1Ptr << endl;
@@ -90,8 +88,7 @@ void CrossLinkedListTest() {
 			break;
 
 		case 3:
-			inputNum1Ptr = list.deleteFirst();
-			if (inputNum1Ptr) {
+			if (list.deleteFirst(inputNum1Ptr)) {
 				cout << "Element deleted." << endl;
 				cout << "Deleted Element: " << *inputNum1Ptr << endl;
 			} else
