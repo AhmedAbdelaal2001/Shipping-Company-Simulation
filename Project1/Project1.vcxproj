@@ -148,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
-    <ClInclude Include="BinaryHeap.h" />
+    <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="Cargo.h" />
     <ClInclude Include="CrossLinkedList.h" />
     <ClInclude Include="Event.h" />
@@ -160,6 +160,7 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="MapInterface.h" />
     <ClInclude Include="Promotion.h" />
+    <ClInclude Include="Queue.h" />
     <ClInclude Include="QueueInterface.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Truck.h" />

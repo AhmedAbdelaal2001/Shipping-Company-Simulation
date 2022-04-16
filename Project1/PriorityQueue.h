@@ -3,7 +3,7 @@
 #include "ArrayList.h"
 
 template <class T>
-class BinaryHeap :public QueueInterface<T> {
+class PriorityQueue :public QueueInterface<T> {
 private:
 	ArrayList<T> list; //List of pointers to the stored elements.
 
@@ -54,7 +54,9 @@ private:
 public:
 
 	//Constructor
-	BinaryHeap(int maxSize = 10) : list(maxSize){};
+	PriorityQueue(int maxSize = 10) : list(maxSize){};
+
+	bool isEmpty() { return list.isEmpty(); }
 
 
 	void enqueue(T item) {                                //O(logn)
@@ -94,7 +96,7 @@ void PriorityQueueTest() {
 	cout << "Enter the size of the priority queue you wish to create: ";
 	cin >> queueSize;
 	cout << "Creating List: " << endl;
-	BinaryHeap<int*> heap(queueSize);
+	PriorityQueue<int*> heap(queueSize);
 	cout << "Priority Queue Created!" << endl;
 
 	while (check) {

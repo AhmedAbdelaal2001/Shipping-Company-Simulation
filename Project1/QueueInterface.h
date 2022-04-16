@@ -6,6 +6,9 @@ class QueueInterface {
 
 public:
 	
+	//Checks whether the queue is empty or not.
+	virtual bool isEmpty() = 0;
+
 	//Adds an item to the PQ.
 	virtual void enqueue(T item) = 0;
 	

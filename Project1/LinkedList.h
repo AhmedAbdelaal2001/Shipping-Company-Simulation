@@ -22,11 +22,7 @@ public:
 	Node<T>* peekLast() { return tail; }                   //O(1)
 	Node<T>* peekFirst() { return head; }                  //O(1)
 
-	bool isEmpty() {                                       //O(1)
-		if (head)
-			return false;
-		return true;
-	}
+	bool isEmpty() { return head == nullptr; }                                       //O(1)
 
 	virtual void insertEnd(T newItem, int key = -1) {     //O(1)
 		itemsCount++;
@@ -150,6 +146,8 @@ public:
 		Node<T>* temp = head;
 		while (temp) {
 			delete temp->getItem();
+			temp->setItem(nullptr);
+			delete temp;
 			temp = temp->getNext();
 		}
 	}

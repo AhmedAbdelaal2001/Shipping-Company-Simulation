@@ -10,7 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
-    <ClInclude Include="BinaryHeap.h" />
+    <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="ListInterface.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="QueueInterface.h" />
@@ -25,5 +25,6 @@
     <ClInclude Include="Truck.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Promotion.h" />
+    <ClInclude Include="Queue.h" />
   </ItemGroup>
 </Project>
