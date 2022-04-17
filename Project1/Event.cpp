@@ -1,4 +1,5 @@
 #include "Event.h"
+
 Event::Event(Time eventTime, Company* pCompany, int id)
 {
 	this->eventTime = eventTime;
@@ -16,4 +17,9 @@ int Event::getID() const {
 
 Time Event::getEventTime() const{
 	return eventTime;
+}
+
+ostream& operator<< (ostream& out, Event* event) {
+	// TODO:
+	return out;
 }

@@ -6,17 +6,20 @@ class Truck
 {
 private:
 	char type;
+	int id;
 	int capacity;
 	Time checkupTime;
 	int speed;
-	int deliveryInterval;
+	Time deliveryInterval;
 	ArrayList<Cargo*> cargoList;
 	int deliveredCargos;
 	int deliveryJourneys;
 	Time activeTime;
 
+	static int currID;
+
 public:
-	Truck(char type, int capacity, Time checkupTime, int speed, int deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime);
+	Truck(char type, int id, int capacity, Time checkupTime, int speed, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime);
 
 	
 	void setType(char type);
@@ -24,15 +27,18 @@ public:
 
 	void setCapacity(int capacity);
 	int getCapacity();
-	
-	void setCheckupTime(Time checkupTime);
-	Time getCheckupTime();
+
+	void setID(int id);
+	int getID() const;
 	
 	void setSpeed(int speed);
 	int getSpeed();
+
+	void setCheckupTime(Time checkupTime);
+	Time getCheckupTime();
 	
-	void setDeliveryInterval(int deliveryInterval);
-	int getDeliveryInterval();
+	void setDeliveryInterval(Time deliveryInterval);
+	Time getDeliveryInterval();
 	
 	void setDeliveredCargos(int deliveredCargos);
 	int getDeliveredCargos();
@@ -42,6 +48,8 @@ public:
 	
 	void setActiveTime(Time activeTime);
 	Time getActiveTime();
+
+	void saveToFile(ofstream out);
 
 };
 

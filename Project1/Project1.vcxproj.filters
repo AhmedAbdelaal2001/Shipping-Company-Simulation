@@ -10,6 +10,7 @@
     <ClCompile Include="Company.cpp" />
     <ClCompile Include="Cancellation.cpp" />
     <ClCompile Include="Preparation.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
@@ -32,5 +33,6 @@
     <ClInclude Include="Company.h" />
     <ClInclude Include="Cancellation.h" />
     <ClInclude Include="Preparation.h" />
+    <ClInclude Include="UI.h" />
   </ItemGroup>
 </Project>

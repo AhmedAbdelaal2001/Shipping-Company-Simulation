@@ -1,9 +1,9 @@
 #include "Time.h"
 
-Time::Time(int hour, int day) {
+Time::Time(int days, int hours) {
 	
-	setHours(hour);
-	setDays(day);
+	setHours(hours);
+	setDays(days);
 
 }
 
@@ -18,7 +18,9 @@ int Time::getHours() const {
 }
 
 void Time::setHours(int hour) {
-	this->hours = hour;
+	
+	days += hour / 24;
+	hours = hour % 24;
 }
 
 int Time::getDays() const {
@@ -77,4 +79,20 @@ bool Time::operator >=(Time time) {
 		return hours > time.getHours();
 	
 	return false;
+}
+
+Time Time::operator /(int count) {
+	int totalHours = days * 24 + hours;
+
+	int result = totalHours / count;
+
+	Time division(0, result);
+	
+	
+	return division;
+}
+
+ostream& operator << (ostream& out, const Time time) {
+	out << time.days << ":" << time.hours << "	";
+	return out;
 }

@@ -143,6 +143,8 @@ public:
 	}
 
 	~LinkedList() {                                 //O(n)
+		// TODO: Use deletefirst/ deletelast
+		
 		Node<T>* temp1 = head;
 		Node<T>* temp2 = head;
 		while (temp1) {

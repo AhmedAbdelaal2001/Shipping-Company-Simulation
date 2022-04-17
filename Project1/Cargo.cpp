@@ -1,8 +1,8 @@
 #include "Cargo.h"
 
-ostream& operator << (ostream& out, Cargo cargo) {
+ostream& operator << (ostream& out, Cargo* cargo) {
 
-	out << cargo.getId();
+	out << cargo->getId();
 	return out;
 }
 
@@ -54,6 +54,20 @@ Time Cargo::getPrepTime() const { return prepTime; }
 void Cargo::setLoadTime(Time loadTime) { this->loadTime = loadTime; }
 Time Cargo::getLoadTime() const { return loadTime; }
 
+void Cargo::setDeliveryTime(Time deliveryTime) {
+	this->deliveryTime = deliveryTime;
+}
+Time Cargo::getDeliveryTime() const {
+	return deliveryTime;
+}
+
+void Cargo::setWaitingTime(Time waitingTime) {
+	this->waitingTime = waitingTime;
+}
+Time Cargo::getWaitingTime() const {
+	return waitingTime;
+}
+
 void Cargo::setType(char type) { this->type = type; }
 char Cargo::getType() { return type; }
 
@@ -65,3 +79,7 @@ int Cargo::getCost() const { return cost; }
 
 void Cargo::setPriority(int priority) { this->priority = priority; }
 int Cargo::getPriority() const { return priority; }
+
+void Cargo::saveToFile(ofstream& outFile) {
+	outFile << deliveryTime.getDays() << ":" << deliveryTime.getHours() << "	" << id << "	" << prepTime.getDays() << ":" << prepTime.getHours() << "	" << waitingTime.getDays() << ":" << waitingTime.getHours() << "	";
+}

@@ -12,6 +12,7 @@ private:
 
 public:
 	
+
 	bool isEmpty() { return list.isEmpty(); }
 
 	void enqueue(T item) { list.insertEnd(item); }

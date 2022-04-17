@@ -1,8 +1,12 @@
 #include "Truck.h"
 
-Truck::Truck(char type, int capacity, Time checkupTime, int speed, int deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime) :
+int Truck::currID = 0;
+
+Truck::Truck(char type, int id, int capacity, Time checkupTime, int speed, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime) :
 	cargoList(capacity)
 {
+	currID++;
+	setID(currID);
 	setType(type);
 	setCapacity(capacity);
 	setCheckupTime(checkupTime);
@@ -40,6 +44,13 @@ Time Truck::getCheckupTime() {
 	return checkupTime;
 }
 
+void Truck::setID(int id) {
+	this->id = id;
+}
+int Truck::getID() const {
+	return id;
+}
+
 void Truck::setSpeed(int speed)
 {
 	this->speed = speed;
@@ -49,12 +60,12 @@ int Truck::getSpeed() {
 	return speed;
 }
 
-void Truck::setDeliveryInterval(int deliveryInterval)
+void Truck::setDeliveryInterval(Time deliveryInterval)
 {
 	this->deliveryInterval = deliveryInterval;
 }
 
-int Truck::getDeliveryInterval() {
+Time Truck::getDeliveryInterval() {
 	return deliveryInterval;
 }
 
@@ -83,4 +94,8 @@ void Truck::setActiveTime(Time activeTime)
 
 Time Truck::getActiveTime() {
 	return activeTime;
+}
+
+void Truck::saveToFile(ofstream outFile) {
+	outFile << id << "	";
 }

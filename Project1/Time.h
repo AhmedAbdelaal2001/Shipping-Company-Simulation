@@ -11,7 +11,7 @@ private:
 
 public:
 	
-	Time(int hour = 0, int day = 0);
+	Time(int days = 0, int hours = 0);
 	Time(const Time& time);
 
 	int getHours() const;
@@ -26,6 +26,9 @@ public:
 	Time operator +(Time time);
 	Time operator -(Time time);
 	bool operator >=(Time time);
+	Time operator /(int count);
+
+	friend ostream& operator << (ostream& out, const Time time);
 
 };
 

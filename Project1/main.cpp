@@ -1,7 +1,4 @@
-#include "CrossLinkedList.h"
-#include "PriorityQueue.h"
-#include "Cargo.h"
-#include "Queue.h"
+#include "Company.h"
 
 //ostream& operator << (ostream& out, Node<int*> node) {
 //	out << *node.getItem();
@@ -27,5 +24,6 @@
 int main() {
 
 	//Testing commits and pushes.
+	Company company;
 	return 0;
 }

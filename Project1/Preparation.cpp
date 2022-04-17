@@ -1,6 +1,6 @@
 #include "Preparation.h"
 
-Perparation::Perparation(Time eventTime, Company* pCompany, int id, char type, int distance, int cost, int loadTime)
+Perparation::Perparation(Time eventTime, Company* pCompany, int id, char type, int distance, int cost, Time loadTime)
 	: Event(eventTime, pCompany, id)
 {
 	this->type = type;
@@ -11,7 +11,7 @@ Perparation::Perparation(Time eventTime, Company* pCompany, int id, char type, i
 
 
 
-bool Perparation::Exectue() {
+bool Perparation::Execute() {
 	
 	Time LTime(loadTime);
 	Cargo* newCargo = new Cargo(Event::getEventTime(), LTime, Event::getID(), type, distance, cost);
