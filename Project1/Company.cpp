@@ -156,3 +156,47 @@ void Company::saveToFile() {
 
 
 }
+
+bool Company::notTerminated() {
+	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty();
+}
+
+void Company::Simulate() {
+	Time currTime(1, 1);
+	Event* frontEvent;
+	Cargo* delivered;
+
+
+	while (notTerminated()) {
+		
+		while (EventList->peek(frontEvent) && currTime == frontEvent->getEventTime())
+		{
+			EventList->dequeue(frontEvent);
+			frontEvent->Execute();
+		}
+
+		++currTime;
+
+		if (currTime % 5 == 0) {
+			if (waitingNormalCargo->deleteFirst(delivered)) {
+				deliveredCargo->enqueue(delivered);
+				delivered->setDeliveryTime(currTime);
+				delivered->setWaitingTime(currTime - delivered->getPrepTime());
+			}
+
+			if (waitingSpecialCargo->dequeue(delivered)) {
+				deliveredCargo->enqueue(delivered);
+				delivered->setDeliveryTime(currTime);
+				delivered->setWaitingTime(currTime - delivered->getPrepTime());
+			}
+
+			if (waitingVIPCargo->dequeue(delivered)) {
+				deliveredCargo->enqueue(delivered);
+				delivered->setDeliveryTime(currTime);
+				delivered->setWaitingTime(currTime - delivered->getPrepTime());
+			}
+		}
+
+	}
+	saveToFile();
+}

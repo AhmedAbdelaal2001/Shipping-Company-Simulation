@@ -34,13 +34,15 @@ void Time::printTime()
 {
 	cout << days << ":" << hours << endl;
 }
-void Time:: operator ++() {
+Time& Time::operator++() {
 	if (hours + 1 == 24) {
 		days++;
 		hours = 0;
 	}
 	else
 		hours++;
+
+	return *this;
 }
 Time Time::operator +(Time time) {
 	int currHours = hours;
@@ -90,6 +92,16 @@ Time Time::operator /(int count) {
 	
 	
 	return division;
+}
+
+int Time::operator % (int divisor) {
+	int totalHours = days * 24 + hours;
+
+	return totalHours % divisor;
+}
+
+bool Time::operator ==(const Time& time) {
+	return hours == time.getHours() && days == time.getDays();
 }
 
 ostream& operator << (ostream& out, const Time time) {

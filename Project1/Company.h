@@ -56,6 +56,9 @@ public:
 	PriorityQueue<Cargo*>* getWaitingVIPCargo() const;
 
 	void saveToFile();
+
+	void Simulate();
+	bool notTerminated();
 	
 };
 

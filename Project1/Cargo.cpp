@@ -83,3 +83,7 @@ int Cargo::getPriority() const { return priority; }
 void Cargo::saveToFile(ofstream& outFile) {
 	outFile << deliveryTime.getDays() << ":" << deliveryTime.getHours() << "	" << id << "	" << prepTime.getDays() << ":" << prepTime.getHours() << "	" << waitingTime.getDays() << ":" << waitingTime.getHours() << "	";
 }
+
+Cargo::operator int() {
+	return id;
+}

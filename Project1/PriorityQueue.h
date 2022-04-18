@@ -76,8 +76,12 @@ public:
 
 	}
 
-	T peek() {                                          //O(1)
-		return list[0];
+	bool peek(T& item) {                                          //O(1)
+		if (list.isEmpty())
+			return false;
+
+		item = list[0];
+		return true;
 	}
 
 	//Prints the stored content.

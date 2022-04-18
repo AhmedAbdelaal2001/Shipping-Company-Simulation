@@ -20,7 +20,13 @@ public:
 	}
 
 	Node<T>* peekLast() { return tail; }                   //O(1)
-	Node<T>* peekFirst() { return head; }                  //O(1)
+	bool peekFirst(T& firstItem) { 
+		if (head) {
+			firstItem = head->getItem();
+			return true;
+		}
+		return false; 
+	}                  
 
 	bool isEmpty() { return head == nullptr; }                                       //O(1)
 

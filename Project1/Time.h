@@ -22,11 +22,13 @@ public:
 
 	void printTime();
 	
-	void operator ++();
+	Time& operator ++();
 	Time operator +(Time time);
 	Time operator -(Time time);
 	bool operator >=(Time time);
 	Time operator /(int count);
+	bool operator ==(const Time& time);
+	int operator % (int divisor);
 
 	friend ostream& operator << (ostream& out, const Time time);
 

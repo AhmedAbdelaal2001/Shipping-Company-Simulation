@@ -19,7 +19,7 @@ public:
 
 	bool dequeue(T& item) { return list.deleteFirst(item); }
 
-	T peek() { return list.peekFirst()->getItem(); }
+	bool peek(T& item) { return list.peekFirst(item); }
 
 	void printQueue() { list.printList(); }
 };

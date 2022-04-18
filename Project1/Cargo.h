@@ -24,6 +24,8 @@ public:
 
 	Cargo(Time prepTime, Time loadTime, int id, char type = 'U', int distance = 0, float cost = 0, float priority = 0);
 
+
+
 	int computePriority(int cost, int distance, Time prepTime);
 	int updatePriority(int cost);
 
@@ -58,5 +60,7 @@ public:
 	int getPriority() const;
 
 	void saveToFile(ofstream& outFile);
+
+	operator int();
 };
 

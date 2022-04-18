@@ -35,6 +35,14 @@ public:
 
 	}
 
+	bool isEmpty() {
+		return list.isEmpty();
+	}
+
+	bool peekFirst(T& item) {
+		return list.peekFirst(item);
+	}
+
 	void printList() {                                 //O(n)
 		list.printList();
 		cout << endl;
