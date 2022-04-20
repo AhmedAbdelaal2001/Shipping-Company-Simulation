@@ -34,6 +34,6 @@ public:
 	void setPrev(Node<T>* prev) { this->prev = prev; }
 
 	void printNode() const {
-		cout << item << " ";
+		cout << item;
 	}
 };

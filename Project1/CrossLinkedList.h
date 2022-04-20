@@ -12,6 +12,10 @@ private:
 public:
 	CrossLinkedList(int maxSize) : hashMap(maxSize) { }
 
+	int getCount() const {
+		return hashMap.getCount();
+	}
+
 	void insertLast(T itemPtr, int key) {           //O(1) amortized
 		list.insertEnd(itemPtr);
 		Node<T>* tail = list.peekLast();
@@ -44,10 +48,13 @@ public:
 	}
 
 	void printList() {                                 //O(n)
+		cout << "[";
 		list.printList();
-		cout << endl;
+		cout << "]";
 	}
 };
+
+
 
 //void CrossLinkedListTest() {
 //	int choice = 0, inputNum1 = 0, inputNum2 = 0, size = 0;

@@ -20,6 +20,17 @@
 //
 //}
 
+//void test56() {
+//	CrossLinkedList<Cargo*> list(10);
+//	Cargo* cargo;
+//	Time time1, time2;
+//	for (int i = 0; i < 3; i++) {
+//		cargo = new Cargo(time1,time2,i);
+//		list.insertLast(cargo, i);
+//	}
+//	list.printList();
+//}
+
 //This main function is for testing the custom crosslinked list (using a HashMap). Run the program and follow the prompts.
 int main() {
 

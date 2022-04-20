@@ -76,6 +76,10 @@ public:
 
 	}
 
+	int getCount() const {
+		return list.getCount();
+	}
+
 	bool peek(T& item) {                                          //O(1)
 		if (list.isEmpty())
 			return false;

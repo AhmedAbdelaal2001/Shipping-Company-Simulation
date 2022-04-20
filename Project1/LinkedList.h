@@ -130,9 +130,12 @@ public:
 	}
 
 	void printList() {                                  //O(n)
+
 		Node<T>* temp = head;
 		while (temp) {
 			temp->printNode();
+			if (temp != tail)
+				cout << ",";
 			temp = temp->getNext();
 		}
 	}
@@ -154,7 +157,7 @@ public:
 		Node<T>* temp1 = head;
 		Node<T>* temp2 = head;
 		while (temp1) {
-			delete temp1->getItem();
+			/*delete temp1->getItem();*/
 			temp1 = temp1->getNext();
 			delete temp2;
 			temp2 = temp1;

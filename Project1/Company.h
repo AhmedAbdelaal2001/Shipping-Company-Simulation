@@ -8,6 +8,7 @@
 #include "Truck.h"
 
 class Event;
+class UI;
 
 class Company
 {
@@ -45,20 +46,38 @@ private:
 	CrossLinkedList<Cargo*>* waitingNormalCargo;
 	Queue<Cargo*>* waitingSpecialCargo;
 	PriorityQueue<Cargo*>* waitingVIPCargo;
-	Queue<Cargo*>* deliveredCargo;
+
 	Queue<Event*>* EventList;
+
+	Queue<Cargo*>* normalDeliveredCargo;
+	Queue<Cargo*>* specialDeliveredCargo;
+	Queue<Cargo*>* VIPDeliveredCargo;
+
+	string outFileName;
+
+	string mode;
 
 public:
 	Company();
-	Queue<Event*>* getEventList() const;
+	/*Queue<Event*>* getEventList() const;
 	CrossLinkedList<Cargo*>* getWaitingNormalCargo() const;
 	Queue<Cargo*>* getWaitingSpecialCargo() const;
-	PriorityQueue<Cargo*>* getWaitingVIPCargo() const;
+	PriorityQueue<Cargo*>* getWaitingVIPCargo() const;*/
+
+	bool deleteNormalCargo(int id, Cargo*& delCargo);
+	
+	void enqueueNormal(Cargo* cargo, int id);
+	void enqueueSpecial(Cargo* cargo);
+	void enqueueVIP(Cargo* cargo);
 
 	void saveToFile();
 
 	void Simulate();
 	bool notTerminated();
+
+	void print(Time currTime);
+
+	void printAll(Time currTime);
 	
 };
 

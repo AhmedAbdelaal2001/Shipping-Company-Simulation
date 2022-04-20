@@ -1,9 +1,8 @@
 #include "UI.h"
 
 
-UI::UI() {
-	cout << "Enter mode: (Interactive, Step_By_Step, Silent)" << endl;
-	cin >> mode;
+UI::UI(Company* pCompany) {
+	this->pCompany = pCompany;
 }
 
 
@@ -17,6 +16,16 @@ string UI::getFileName() {
 void UI::print(string message) {
 	cout << message << endl;
 }
+
+
+void UI::interactivePrint(Time currTime) {
+	pCompany->printAll(currTime);
+}
+
+void UI::stepByStepPrint() {
+
+}
+
 void UI::silentPrint() {
 	cout << "Silent Mode" << endl;
 	cout << "Simulation Starts..." << endl;

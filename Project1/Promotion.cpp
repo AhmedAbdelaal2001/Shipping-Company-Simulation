@@ -9,7 +9,7 @@ bool Promotion::Execute()
 {
 	Company* pCompany = Event::getPCompany();
 	Cargo* promotedCargo;
-	bool promotionFlag = pCompany->getWaitingNormalCargo()->deleteElement(Event::getID(), promotedCargo);
+	bool promotionFlag = pCompany->deleteNormalCargo(Event::getID(), promotedCargo);
 	
 	if (!promotionFlag)
 		return false;
@@ -20,6 +20,6 @@ bool Promotion::Execute()
 	promotedCargo->setCost(newCost);
 	promotedCargo->updatePriority(newCost);
 	
-	pCompany->getWaitingVIPCargo()->enqueue(promotedCargo);
+	pCompany->enqueueVIP(promotedCargo);
 	return true;
 }

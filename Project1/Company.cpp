@@ -7,11 +7,18 @@
 Company::Company() {
 	
 
-	UI input;
+	UI input(this);
 	
+	input.print("Enter input file name: ");
 	string fileName = input.getFileName();
 
 	ifstream inputFile(fileName);
+
+	input.print("Enter output file name: ");
+	outFileName = input.getFileName();
+
+	cout << "Enter mode: (Interactive, Step_By_Step, Silent)" << endl;
+	cin >> mode;
 
 	nc_Count = sc_Count = vc_Count = cAutoP = 0;
 
@@ -110,30 +117,49 @@ Company::Company() {
 		waitingNormalCargo = new CrossLinkedList<Cargo*>(2 * n_Capacity);
 		waitingSpecialCargo = new Queue<Cargo*>;
 		waitingVIPCargo = new PriorityQueue<Cargo*>(2 * v_Capacity);
-		deliveredCargo = new Queue<Cargo*>;
+
+		normalDeliveredCargo = new Queue<Cargo*>;
+		specialDeliveredCargo = new Queue<Cargo*>;
+		VIPDeliveredCargo = new Queue<Cargo*>;
+	
 
 	}
 }
 
-CrossLinkedList<Cargo*>* Company::getWaitingNormalCargo() const {
-	return waitingNormalCargo;
+//CrossLinkedList<Cargo*>* Company::getWaitingNormalCargo() const {
+//	return waitingNormalCargo;
+//}
+//
+//Queue<Cargo*>* Company::getWaitingSpecialCargo() const {
+//	return waitingSpecialCargo;
+//}
+//
+//PriorityQueue<Cargo*>* Company::getWaitingVIPCargo() const {
+//	return waitingVIPCargo;
+//}
+//
+//Queue<Event*>* Company::getEventList() const {
+//	return EventList;
+//}
+
+bool Company::deleteNormalCargo(int id, Cargo*& delCargo) {
+	return waitingNormalCargo->deleteElement(id, delCargo);
 }
 
-Queue<Cargo*>* Company::getWaitingSpecialCargo() const {
-	return waitingSpecialCargo;
+void Company::enqueueNormal(Cargo* cargo, int id) {
+	waitingNormalCargo->insertLast(cargo, id);
+}
+void Company::enqueueSpecial(Cargo* cargo) {
+	waitingSpecialCargo->enqueue(cargo);
 }
 
-PriorityQueue<Cargo*>* Company::getWaitingVIPCargo() const {
-	return waitingVIPCargo;
-}
-
-Queue<Event*>* Company::getEventList() const {
-	return EventList;
+void Company::enqueueVIP(Cargo* cargo) {
+	waitingVIPCargo->enqueue(cargo);
 }
 
 void Company::saveToFile() {
 	
-	ofstream outFile("Output.txt");
+	/*ofstream outFile("Output.txt");
 	Cargo* temp;
 	Time totalWait, avgWait;
 	int totalCount = nc_Count + sc_Count + vc_Count;
@@ -151,7 +177,7 @@ void Company::saveToFile() {
 	outFile << "Cargo Avg Wait = " << avgWait << endl;
 
 	int percentProm = (float) (cAutoP / nc_Count) * 100;
-	outFile << "Auto-promoted Cargos: " << percentProm << "%" << endl;
+	outFile << "Auto-promoted Cargos: " << percentProm << "%" << endl;*/
 
 
 
@@ -159,6 +185,51 @@ void Company::saveToFile() {
 
 bool Company::notTerminated() {
 	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty();
+}
+
+void Company::print(Time currTime) {
+	UI output(this);
+	if (mode == "Interactive")
+		output.interactivePrint(currTime);
+	else if (mode == "Step_By_Step")
+		output.stepByStepPrint();
+	else if (mode == "Silent")
+		output.silentPrint();
+
+}
+
+void Company::printAll(Time currTime) {
+	cout << "Current Time (Day:Hour):" << currTime << endl;
+
+	cout << waitingNormalCargo->getCount() + waitingVIPCargo->getCount() + waitingSpecialCargo->getCount() << " ";
+	cout << "Waiting Cargos: ";
+	waitingNormalCargo->printList() ;
+	cout << " ";
+	cout << "(";
+	waitingSpecialCargo->printQueue();
+	cout << ")";
+	cout << " ";
+	cout << "{";
+	waitingVIPCargo->printQueue();
+	cout << "}";
+
+	cout << endl << "--------------------------------------" << endl;
+
+	cout << normalDeliveredCargo->getCount() + specialDeliveredCargo->getCount() + VIPDeliveredCargo->getCount() << " ";
+	cout << "Delivered Cargos: ";
+	cout << "[";
+	normalDeliveredCargo->printQueue();
+	cout << "] ";
+	cout << "(";
+	specialDeliveredCargo->printQueue();
+	cout << ") ";
+	cout << "{";
+	VIPDeliveredCargo->printQueue();
+	cout << "}";
+
+	cout << endl << "--------------------------------------" << endl;
+	cout << endl;
+
 }
 
 void Company::Simulate() {
@@ -179,24 +250,25 @@ void Company::Simulate() {
 
 		if (currTime % 5 == 0) {
 			if (waitingNormalCargo->deleteFirst(delivered)) {
-				deliveredCargo->enqueue(delivered);
+				normalDeliveredCargo->enqueue(delivered);
 				delivered->setDeliveryTime(currTime);
 				delivered->setWaitingTime(currTime - delivered->getPrepTime());
 			}
 
 			if (waitingSpecialCargo->dequeue(delivered)) {
-				deliveredCargo->enqueue(delivered);
+				specialDeliveredCargo->enqueue(delivered);
 				delivered->setDeliveryTime(currTime);
 				delivered->setWaitingTime(currTime - delivered->getPrepTime());
 			}
 
 			if (waitingVIPCargo->dequeue(delivered)) {
-				deliveredCargo->enqueue(delivered);
+				VIPDeliveredCargo->enqueue(delivered);
 				delivered->setDeliveryTime(currTime);
 				delivered->setWaitingTime(currTime - delivered->getPrepTime());
 			}
 		}
-
+				
+		print(currTime);
 	}
-	saveToFile();
+	//saveToFile();
 }

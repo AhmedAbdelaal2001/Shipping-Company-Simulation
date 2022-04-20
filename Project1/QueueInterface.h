@@ -6,6 +6,8 @@ class QueueInterface {
 
 public:
 	
+	// Returns count of items
+	virtual int getCount() const = 0;
 	//Checks whether the queue is empty or not.
 	virtual bool isEmpty() = 0;
 

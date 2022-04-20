@@ -1,22 +1,33 @@
 #pragma once
 
 #include <iostream>
+#include "Company.h"
+#include "Time.h"
 
 using namespace std;
+
+class Company;
 
 class UI
 {
 
 private:
-	string mode;
+
+	Company* pCompany;
 
 public:
-	UI();
+	UI(Company* pCompany);
 
 	string getFileName();
 
 	void print(string message);
 	
+	void interactivePrint(Time currTime);
+
+	void stepByStepPrint();
+
 	void silentPrint();
+
+
 };
 

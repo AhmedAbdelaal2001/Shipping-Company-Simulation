@@ -19,15 +19,15 @@ bool Perparation::Execute() {
 	switch (type) {
 	
 	case 'N':
-		getPCompany()->getWaitingNormalCargo()->insertLast(newCargo, Event::getID());
+		getPCompany()->enqueueNormal(newCargo, Event::getID());
 		break;
 
 	case 'S':
-		getPCompany()->getWaitingSpecialCargo()->enqueue(newCargo);
+		getPCompany()->enqueueSpecial(newCargo);
 		break;
 
 	case 'V':
-		getPCompany()->getWaitingVIPCargo()->enqueue(newCargo);
+		getPCompany()->enqueueVIP(newCargo);
 	}
 
 	return true;

@@ -71,6 +71,10 @@ public:
 		computeParameters();
 	}
 
+	int getCount() const {
+		return count;
+	}
+
 	bool findItem(int key, T& item) {                              //O(1)
 		
 		int index = hash(key);
@@ -100,10 +104,13 @@ public:
 
 		int index = hash(key);
 		Node<T>* nodePtr = arr[index].find(key);
-		count--;
+		bool deleted = arr[index].deleteNode(nodePtr, item);
+		
+		if (deleted)
+			count--;
 
 
-		return arr[index].deleteNode(nodePtr, item);
+		return deleted;
 	}
 
 	//void printMap() {                               //O(n)
@@ -117,6 +124,7 @@ public:
 	//}
 
 	~HashMap() {
+		
 		delete[] arr;
 	}
 };

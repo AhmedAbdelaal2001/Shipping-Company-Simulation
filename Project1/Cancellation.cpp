@@ -11,5 +11,5 @@ bool Cancellation::Execute() {
 	Company* pCompany = Event::getPCompany();
 	Cargo* cancelledCargo;
 
-	return pCompany->getWaitingNormalCargo()->deleteElement(Event::getID(), cancelledCargo);
+	return pCompany->deleteNormalCargo(Event::getID(), cancelledCargo);
 }

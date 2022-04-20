@@ -100,11 +100,12 @@ public:
 	}
 
 	void printList() {                                         //O(n)
-		
-		for (int i = 0; i < count; i++)
-			cout << arr[i] << " ";
+		for (int i = 0; i < count; i++) {
+			cout << arr[i];
+			if (i != count - 1)
+				cout << ",";
 
-		cout << endl;
+		}
 	}
 
 	~ArrayList() {

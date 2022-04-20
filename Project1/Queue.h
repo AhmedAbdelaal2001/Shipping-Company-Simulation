@@ -9,15 +9,27 @@ class Queue : public QueueInterface<T> {
 private:
 	
 	LinkedList<T> list;
+	int count;
 
 public:
 	
+	Queue() : count(0) {}
+
+	int getCount() const { return count; }
 
 	bool isEmpty() { return list.isEmpty(); }
 
-	void enqueue(T item) { list.insertEnd(item); }
+	void enqueue(T item) { 
+		list.insertEnd(item); 
+		count++;
+	}
 
-	bool dequeue(T& item) { return list.deleteFirst(item); }
+	bool dequeue(T& item) {  
+		bool deleted = list.deleteFirst(item);
+		if (deleted)
+			count--;
+		return deleted;
+	}
 
 	bool peek(T& item) { return list.peekFirst(item); }
 
