@@ -1,12 +1,34 @@
 #include "Preparation.h"
+#include <fstream>
 
-Perparation::Perparation(Time eventTime, Company* pCompany, int id, char type, int distance, int cost, Time loadTime)
-	: Event(eventTime, pCompany, id)
+Perparation::Perparation(Company* pCompany) : Event(pCompany)
 {
-	this->type = type;
-	this->distance = distance;
-	this->cost = cost;
-	this->loadTime = loadTime;
+	
+	cargoType = 'U';
+	distance = -1;
+	cost = -1;
+
+}
+
+
+void Perparation::load(ifstream& inputFile) {
+	inputFile >> cargoType;
+
+
+	char colon;
+	int id, days, hours;
+
+	inputFile >> days >> colon >> hours;
+	Time eventTime(days, hours);
+	setEventTime(eventTime);
+
+	inputFile >> id >> distance;
+	setID(id);
+
+	inputFile >> hours;
+	Time loadingTime(0, hours);
+
+	inputFile >> cost;
 }
 
 
@@ -14,9 +36,9 @@ Perparation::Perparation(Time eventTime, Company* pCompany, int id, char type, i
 bool Perparation::Execute() {
 	
 	Time LTime(loadTime);
-	Cargo* newCargo = new Cargo(Event::getEventTime(), LTime, Event::getID(), type, distance, cost);
+	Cargo* newCargo = new Cargo(Event::getEventTime(), LTime, Event::getID(), cargoType, distance, cost);
 
-	switch (type) {
+	switch (cargoType) {
 	
 	case 'N':
 		getPCompany()->enqueueNormal(newCargo, Event::getID());

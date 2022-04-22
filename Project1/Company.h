@@ -13,13 +13,11 @@ class UI;
 class Company
 {
 private:
-	int n_Count;
-	int s_Count;
-	int v_Count;
+	
 
-	int nc_Count;
+	/*int nc_Count;
 	int sc_Count;
-	int vc_Count;
+	int vc_Count;*/
 
 	int cAutoP;
 	
@@ -42,6 +40,14 @@ private:
 
 	int eventsCount;
 
+	CrossLinkedList<Truck*>* waitingNormalTrucks;
+	CrossLinkedList<Truck*>* waitingSpecialTrucks;
+	CrossLinkedList<Truck*>* waitingVIPTrucks;
+
+
+	PriorityQueue<Truck*>* movingTrucks;
+
+
 
 	CrossLinkedList<Cargo*>* waitingNormalCargo;
 	Queue<Cargo*>* waitingSpecialCargo;
@@ -55,7 +61,7 @@ private:
 
 	string outFileName;
 
-	string mode;
+	UI* in_out;
 
 public:
 	Company();

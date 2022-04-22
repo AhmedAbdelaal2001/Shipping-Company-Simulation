@@ -1,8 +1,21 @@
 #include "Promotion.h"
 
 
-Promotion::Promotion(Time eventTime, Company* pCompany, int id, int extraCost) : Event(eventTime, pCompany, id) {
-	this->extraCost = extraCost;
+Promotion::Promotion(Company* pCompany) : Event(pCompany) {
+	extraCost = 0;
+}
+
+void Promotion::load(ifstream& inputFile) {
+
+	char colon;
+	int id, days, hours;
+
+	inputFile >> days >> colon >> hours;
+	Time eventTime(days, hours);
+	setEventTime(eventTime);
+
+	inputFile >> id >> extraCost;
+	setID(id);
 }
 
 bool Promotion::Execute()

@@ -14,19 +14,20 @@ class UI
 private:
 
 	Company* pCompany;
+	string mode;
 
 public:
 	UI(Company* pCompany);
 
+	void getModefromFile();
+
+	string getMode() const;
+
 	string getFileName();
 
-	void print(string message);
+	void printMessage(string message);
 	
-	void interactivePrint(Time currTime);
-
-	void stepByStepPrint();
-
-	void silentPrint();
+	void print(Time currTime);
 
 
 };

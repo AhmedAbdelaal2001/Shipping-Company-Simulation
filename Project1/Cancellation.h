@@ -5,12 +5,13 @@
 class Cancellation :
     public Event
 {
-    int id;
 
 public:
 
-    Cancellation(Time eventTime, Company* pCompany, int id);
+    Cancellation(Company* pCompany);
 
-    bool Execute();
+    bool Execute() override;
+
+    void load(ifstream& inputFile) override;
 };
 

@@ -5,14 +5,15 @@ class Perparation :
     public Event
 {
 private:
-    char type;
+    char cargoType;
     int distance;
     int cost;
     Time loadTime;
 
 public:
-    Perparation(Time eventTime, Company* pCompany, int id, char type, int distance, int cost, Time loadTime);
+    Perparation(Company* pCompany);
 
-    bool Execute();
+    bool Execute() override;
+    void load(ifstream& inputFile) override;
 };
 

@@ -1,15 +1,27 @@
 #include "Cancellation.h"
 
-Cancellation::Cancellation(Time eventTime, Company* pCompany, int id) : Event(eventTime, pCompany, id) {
+Cancellation::Cancellation(Company* pCompany) : Event(pCompany) {
 
-	this->id = id;
 
 }
 
 bool Cancellation::Execute() {
 
-	Company* pCompany = Event::getPCompany();
+	Company* pCompany = getPCompany();
 	Cargo* cancelledCargo;
 
-	return pCompany->deleteNormalCargo(Event::getID(), cancelledCargo);
+	return pCompany->deleteNormalCargo(getID(), cancelledCargo);
+}
+
+
+void Cancellation::load(ifstream& inputFile) {
+	char colon;
+	int id, days, hours;
+
+	inputFile >> days >> colon >> hours;
+	Time eventTime(days, hours);
+	setEventTime(eventTime);
+
+	inputFile >> id;
+	setID(id);
 }

@@ -10,9 +10,11 @@ class Promotion :
 
 public:
     
-    Promotion(Time eventTime, Company* pCompany, int id, int extraCost = 0);
+    Promotion(Company* pCompany);
     
-    bool Execute();
+    bool Execute() override;
+
+    void load(ifstream& inputFile) override;
 
 
 };

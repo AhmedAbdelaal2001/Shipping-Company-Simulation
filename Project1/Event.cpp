@@ -1,18 +1,26 @@
 #include "Event.h"
 
-Event::Event(Time eventTime, Company* pCompany, int id)
+Event::Event(Company* pCompany)
 {
-	this->eventTime = eventTime;
 	this->pCompany = pCompany;
-	this->id = id;
+	id = -1;
 }
+
 
 Company* Event::getPCompany() const {
 	return pCompany;
 }
 
+void Event::setID(int id) {
+	this->id = id;
+}
+
 int Event::getID() const {
 	return id;
+}
+
+void Event::setEventTime(Time time) {
+	eventTime = time;
 }
 
 Time Event::getEventTime() const{

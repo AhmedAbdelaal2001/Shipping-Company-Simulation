@@ -7,23 +7,24 @@
 Company::Company() {
 	
 
-	UI input(this);
+	in_out = new UI(this);
 	
-	input.print("Enter input file name: ");
-	string fileName = input.getFileName();
+	in_out->printMessage("Enter input file name: ");
+	string fileName = in_out->getFileName();
 
 	ifstream inputFile(fileName);
 
-	input.print("Enter output file name: ");
-	outFileName = input.getFileName();
+	in_out->printMessage("Enter output file name: ");
+	outFileName = in_out->getFileName();
 
 	cout << "Enter mode: (Interactive, Step_By_Step, Silent)" << endl;
-	cin >> mode;
+	in_out->getModefromFile();
 
-	nc_Count = sc_Count = vc_Count = cAutoP = 0;
+	cAutoP = 0;
 
 	if (!inputFile.fail()) {
 
+		int n_Count, s_Count, v_Count;
 
 		inputFile >> n_Count >> s_Count >> v_Count;
 
@@ -53,7 +54,7 @@ Company::Company() {
 		inputFile >> eventsCount;
 		EventList = new Queue<Event*>;
 
-		char event_Type, cargoType, colon;
+		char event_Type;
 		int id, days, hours;
 		Event* p_event;
 
@@ -62,51 +63,25 @@ Company::Company() {
 
 			if (event_Type == 'R') {
 
-				int distance, cost;
-				inputFile >> cargoType;
+				p_event = new Perparation(this);
 
-				if (cargoType == 'N')
-					nc_Count++;
-				else if (cargoType == 'S')
-					sc_Count++;
-				else if (cargoType == 'V')
-					vc_Count++;
-
-				inputFile >> days >> colon >> hours;
-				Time eventTime(days, hours);
-
-				inputFile >> id >> distance;
-
-				inputFile >> hours;
-				Time loadingTime(0, hours);
-
-				inputFile >> cost;
-
-				p_event = new Perparation(eventTime, this, id, cargoType, distance, cost, loadingTime);
+				p_event->load(inputFile);
 
 				EventList->enqueue(p_event);
 			}
 			else if (event_Type == 'P') {
-				int extra_Money;
 
-				inputFile >> days >> colon >> hours;
-				Time eventTime(days, hours);
+				p_event = new Promotion(this);
 
-				inputFile >> id >> extra_Money;
-
-				p_event = new Promotion(eventTime, this, id, extra_Money);
+				p_event->load(inputFile);
 
 				EventList->enqueue(p_event);
 			}
 			else if (event_Type == 'X') {
-				nc_Count--;
 
-				inputFile >> days >> colon >> hours;
-				Time eventTime(days, hours);
+				p_event = new Cancellation(this);
 
-				inputFile >> id;
-
-				p_event = new Cancellation(eventTime, this, id);
+				p_event->load(inputFile);
 
 				EventList->enqueue(p_event);
 			}
@@ -187,16 +162,7 @@ bool Company::notTerminated() {
 	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty();
 }
 
-void Company::print(Time currTime) {
-	UI output(this);
-	if (mode == "Interactive")
-		output.interactivePrint(currTime);
-	else if (mode == "Step_By_Step")
-		output.stepByStepPrint();
-	else if (mode == "Silent")
-		output.silentPrint();
 
-}
 
 void Company::printAll(Time currTime) {
 	cout << "Current Time (Day:Hour):" << currTime << endl;
@@ -230,15 +196,23 @@ void Company::printAll(Time currTime) {
 	cout << endl << "--------------------------------------" << endl;
 	cout << endl;
 
+	
+
 }
 
 void Company::Simulate() {
 	Time currTime(1, 1);
+	Time startTime(1, 1), endTime(0, 23);
 	Event* frontEvent;
 	Cargo* delivered;
 
 
+	if (in_out->getMode() == "Silent") 
+		in_out->printMessage("Silent Mode\nSimulations Starts...");
+
+
 	while (notTerminated()) {
+
 		
 		while (EventList->peek(frontEvent) && currTime == frontEvent->getEventTime())
 		{
@@ -246,7 +220,6 @@ void Company::Simulate() {
 			frontEvent->Execute();
 		}
 
-		++currTime;
 
 		if (currTime % 5 == 0) {
 			if (waitingNormalCargo->deleteFirst(delivered)) {
@@ -267,8 +240,15 @@ void Company::Simulate() {
 				delivered->setWaitingTime(currTime - delivered->getPrepTime());
 			}
 		}
-				
-		print(currTime);
+		if (in_out->getMode() != "Silent")
+			in_out->print(currTime);
+			
+		++currTime;
 	}
+
+	if (in_out->getMode() == "Silent") {
+		in_out->printMessage("Simulations ends, Output file created");
+	}
+
 	//saveToFile();
 }

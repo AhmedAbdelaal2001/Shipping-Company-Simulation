@@ -1,10 +1,18 @@
 #include "UI.h"
-
+#include "Windows.h"
 
 UI::UI(Company* pCompany) {
 	this->pCompany = pCompany;
 }
 
+void UI::getModefromFile() {
+	cin >> mode;
+
+}
+
+string UI::getMode() const {
+	return mode;
+}
 
 string UI::getFileName() {
 	string fileName;
@@ -13,21 +21,18 @@ string UI::getFileName() {
 	return fileName;
 }
 
-void UI::print(string message) {
+void UI::printMessage(string message) {
 	cout << message << endl;
 }
 
+void UI::print(Time currTime) {
+	if (mode == "Interactive") {
+		pCompany->printAll(currTime);
+		cin.get();
+	}
+	else if (mode == "Step_By_Step") {
+		pCompany->printAll(currTime);
+		Sleep(1000);
 
-void UI::interactivePrint(Time currTime) {
-	pCompany->printAll(currTime);
-}
-
-void UI::stepByStepPrint() {
-
-}
-
-void UI::silentPrint() {
-	cout << "Silent Mode" << endl;
-	cout << "Simulation Starts..." << endl;
-	cout << "Simulation ends, Output file created" << endl;
+	}
 }

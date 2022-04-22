@@ -4,6 +4,7 @@
 #include "Time.h"
 #include "Cargo.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -17,12 +18,19 @@ private:
 	Company *pCompany;
 
 public:
-	Event(Time eventTime, Company* pCompany, int id);
+	Event(Company* pCompany);
+
 	Company* getPCompany() const;
+
+	void setID(int id);
 	int getID() const;
+
+	void setEventTime(Time time);
 	Time getEventTime() const;
 
 	virtual bool Execute() = 0;
+
+	virtual void load(ifstream& inputFile) = 0;
 
 	friend ostream& operator<< (ostream & out, Event * event);
 };
