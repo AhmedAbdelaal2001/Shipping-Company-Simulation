@@ -30,7 +30,7 @@ public:
 	int updatePriority(int cost);
 
 	friend ostream& operator << (ostream& out, Cargo* cargo);
-	bool operator > (Cargo cargo);
+	bool operator > (Cargo* cargo);
 
 	void setId(int id);
 	int getId() const;

@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "UI.h"
 #include "CrossLinkedList.h"
 #include"Queue.h"
@@ -40,14 +40,13 @@ private:
 
 	int eventsCount;
 
-	CrossLinkedList<Truck*>* waitingNormalTrucks;
-	CrossLinkedList<Truck*>* waitingSpecialTrucks;
-	CrossLinkedList<Truck*>* waitingVIPTrucks;
-
+	PriorityQueue<Truck*>* waitingNormalTrucks;
+	PriorityQueue<Truck*>* waitingSpecialTrucks;
+	PriorityQueue<Truck*>* waitingVIPTrucks;
+	
+	Queue<Truck*>* CheckupTrucks;
 
 	PriorityQueue<Truck*>* movingTrucks;
-
-
 
 	CrossLinkedList<Cargo*>* waitingNormalCargo;
 	Queue<Cargo*>* waitingSpecialCargo;
@@ -58,7 +57,7 @@ private:
 	Queue<Cargo*>* normalDeliveredCargo;
 	Queue<Cargo*>* specialDeliveredCargo;
 	Queue<Cargo*>* VIPDeliveredCargo;
-
+	PriorityQueue<Truck*>* LoadingTrucks;
 	string outFileName;
 
 	UI* in_out;
@@ -81,7 +80,6 @@ public:
 	void Simulate();
 	bool notTerminated();
 
-	void print(Time currTime);
 
 	void printAll(Time currTime);
 	

@@ -60,7 +60,7 @@ public:
 	}
 
 	int max(int index1, int index2) {
-		return (*arr[index1] > *arr[index2]) ? index1 : index2;
+		return (arr[index1] > arr[index2]) ? index1 : index2;
 	}
 
 	//Returns the item stored at index position "index"

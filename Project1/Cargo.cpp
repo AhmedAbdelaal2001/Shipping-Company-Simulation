@@ -6,8 +6,8 @@ ostream& operator << (ostream& out, Cargo* cargo) {
 	return out;
 }
 
-bool Cargo::operator > (Cargo cargo) {
-	return priority > cargo.getPriority();
+bool Cargo::operator > (Cargo* cargo) {
+	return priority > cargo->getPriority();
 }
 
 Cargo::Cargo() {
@@ -24,7 +24,7 @@ Cargo::Cargo() {
 Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, float cost, float priority) {
 
 	if (type == 'V')
-		computePriority(cost, distance, prepTime);
+		priority = computePriority(cost, distance, prepTime);
 
 	setPrepTime(prepTime);
 	setLoadTime(loadTime);

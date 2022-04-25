@@ -97,8 +97,30 @@ Company::Company() {
 		specialDeliveredCargo = new Queue<Cargo*>;
 		VIPDeliveredCargo = new Queue<Cargo*>;
 	
-
+		waitingNormalTrucks = new PriorityQueue<Truck*>( n_Count);
+		waitingSpecialTrucks = new PriorityQueue<Truck*>(s_Count);
+		waitingVIPTrucks = new PriorityQueue<Truck*>(v_Count);
+		CheckupTrucks = new Queue<Truck*>;
+		movingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
+		Truck* TruckPtr;
+		for (int i = 0; i < n_Count; i++)
+		{
+			TruckPtr = new Truck('N', n_Capacity, checkup, n_Speed);
+			waitingNormalTrucks->enqueue(TruckPtr);
+		}
+		for (int i = 0; i < s_Count; i++)
+		{
+			TruckPtr = new Truck('S', s_Capacity, checkup, s_Speed);
+			waitingSpecialTrucks->enqueue(TruckPtr);
+		}
+		for (int i = 0; i < v_Count; i++)
+		{
+			TruckPtr = new Truck('V', v_Capacity, checkup, v_Speed);
+			waitingVIPTrucks->enqueue(TruckPtr);
+		}	
+		LoadingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
 	}
+
 }
 
 //CrossLinkedList<Cargo*>* Company::getWaitingNormalCargo() const {
@@ -169,7 +191,7 @@ void Company::printAll(Time currTime) {
 
 	cout << waitingNormalCargo->getCount() + waitingVIPCargo->getCount() + waitingSpecialCargo->getCount() << " ";
 	cout << "Waiting Cargos: ";
-	waitingNormalCargo->printList() ;
+	waitingNormalCargo->printList();
 	cout << " ";
 	cout << "(";
 	waitingSpecialCargo->printQueue();
@@ -179,7 +201,30 @@ void Company::printAll(Time currTime) {
 	waitingVIPCargo->printQueue();
 	cout << "}";
 
+	cout << endl << "--------------------------------------" << endl; //TODO
+	cout << LoadingTrucks->getCount() << " Loading Trucks: ";
+	LoadingTrucks->printQueue();
 	cout << endl << "--------------------------------------" << endl;
+
+	cout << movingTrucks->getCount() << " Moving Cargos: ";
+	movingTrucks->printQueue();
+
+	cout << endl << "--------------------------------------" << endl;
+	cout << CheckupTrucks->getCount() << " In-Checkup Trucks: ";
+	CheckupTrucks->printQueue();
+	cout << endl << "--------------------------------------" << endl;
+
+	cout << waitingNormalCargo->getCount() + waitingSpecialTrucks->getCount() + waitingVIPTrucks->getCount();
+	cout << " Empty Trucks: ";
+	cout << "["; waitingNormalTrucks->printQueue(); cout << "]";
+	cout << "("; waitingSpecialTrucks->printQueue(); cout << ")";
+	cout << "{"; waitingVIPTrucks->printQueue(); cout <<"}";
+
+	cout << endl << "--------------------------------------" << endl;
+
+
+
+
 
 	cout << normalDeliveredCargo->getCount() + specialDeliveredCargo->getCount() + VIPDeliveredCargo->getCount() << " ";
 	cout << "Delivered Cargos: ";

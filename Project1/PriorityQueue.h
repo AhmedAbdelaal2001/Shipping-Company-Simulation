@@ -29,7 +29,7 @@ private:
 	void heapifyUp(int index) {                                         //O(logn)
 		
 		int parentIndex = parent(index);
-		if (*list[index] > *list[parentIndex]) {
+		if (list[index] > list[parentIndex]) {
 			list.swap(index, parentIndex);
 			heapifyUp(parentIndex);
 		}
@@ -45,7 +45,7 @@ private:
 		int lch = leftChild(index);
 		int biggerChild = list.max(rch, lch);
 
-		if (*list[biggerChild] > *list[index]) {
+		if (list[biggerChild] > list[index]) {
 			list.swap(index, biggerChild);
 			heapifyDown(biggerChild);
 		}

@@ -2,7 +2,7 @@
 
 int Truck::currID = 0;
 
-Truck::Truck(char type, int id, int capacity, Time checkupTime, int speed, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime) :
+Truck::Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/):
 	cargoList(capacity)
 {
 	currID++;
@@ -11,10 +11,11 @@ Truck::Truck(char type, int id, int capacity, Time checkupTime, int speed, Time 
 	setCapacity(capacity);
 	setCheckupTime(checkupTime);
 	setSpeed(speed);
-	setDeliveryInterval(deliveryInterval);
+	/*setDeliveryInterval(deliveryInterval);
 	setDeliveredCargos(deliveredCargos);
 	setDeliveredJourneys(deliveryJourneys);
-	setActiveTime(activeTime);
+	setActiveTime(activeTime);*/
+	setPriority(speed/capacity);
 }
 
 void Truck::setType(char type)
@@ -98,4 +99,22 @@ Time Truck::getActiveTime() {
 
 void Truck::saveToFile(ofstream outFile) {
 	outFile << id << "	";
+}
+
+ostream& operator << (ostream& out, Truck* truckPtr) {
+	out << truckPtr->getID();
+	return out;
+	//TODO:cargos el gowaha
+}
+
+
+void Truck::setPriority(int priority)
+{
+	this->priority = priority;
+}
+int Truck::getPriority() const {
+	return priority;
+}
+bool Truck::operator > (Truck* truckPtr) {
+		return priority > truckPtr->getPriority();
 }

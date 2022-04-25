@@ -14,12 +14,12 @@ private:
 	ArrayList<Cargo*> cargoList;
 	int deliveredCargos;
 	int deliveryJourneys;
+	int priority;
 	Time activeTime;
-
 	static int currID;
 
 public:
-	Truck(char type, int id, int capacity, Time checkupTime, int speed, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime);
+	Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/);
 
 	
 	void setType(char type);
@@ -46,10 +46,18 @@ public:
 	void setDeliveredJourneys(int deliveryJourneys);
 	int getDeliveredJourneys();
 	
+	void setPriority(int priority);
+	int getPriority() const ;
 	void setActiveTime(Time activeTime);
 	Time getActiveTime();
 
 	void saveToFile(ofstream out);
+
+	friend ostream& operator << (ostream& out, Truck* truckPtr);
+
+	bool operator > (Truck* truckPtr);
+
+
 
 };
 
