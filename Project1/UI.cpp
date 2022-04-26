@@ -27,12 +27,12 @@ void UI::printMessage(string message) {
 
 void UI::print(Time currTime) {
 	if (mode == "Interactive") {
-		pCompany->printAll(currTime);
 		cin.get();
+		pCompany->printAll(currTime);
 	}
 	else if (mode == "Step_By_Step") {
-		pCompany->printAll(currTime);
 		Sleep(1000);
+		pCompany->printAll(currTime);
 
 	}
 }

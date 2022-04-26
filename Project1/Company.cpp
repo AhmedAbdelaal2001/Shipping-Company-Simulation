@@ -184,7 +184,10 @@ bool Company::notTerminated() {
 	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty();
 }
 
-
+bool Company::inWorkingHours(Time currTime)
+{
+	return currTime.getHours() <= 23 && currTime.getHours() >= 5;
+}
 
 void Company::printAll(Time currTime) {
 	cout << "Current Time (Day:Hour):" << currTime << endl;
@@ -201,26 +204,29 @@ void Company::printAll(Time currTime) {
 	waitingVIPCargo->printQueue();
 	cout << "}";
 
-	cout << endl << "--------------------------------------" << endl; //TODO
+	cout << endl << "------------------------------------------------------------" << endl; //TODO
+
 	cout << LoadingTrucks->getCount() << " Loading Trucks: ";
 	LoadingTrucks->printQueue();
-	cout << endl << "--------------------------------------" << endl;
+	cout << endl << "------------------------------------------------------------" << endl;
 
 	cout << movingTrucks->getCount() << " Moving Cargos: ";
 	movingTrucks->printQueue();
 
-	cout << endl << "--------------------------------------" << endl;
+	cout << endl << "------------------------------------------------------------" << endl;
+
 	cout << CheckupTrucks->getCount() << " In-Checkup Trucks: ";
 	CheckupTrucks->printQueue();
-	cout << endl << "--------------------------------------" << endl;
+	cout << endl << "------------------------------------------------------------" << endl;
+
 
 	cout << waitingNormalCargo->getCount() + waitingSpecialTrucks->getCount() + waitingVIPTrucks->getCount();
 	cout << " Empty Trucks: ";
-	cout << "["; waitingNormalTrucks->printQueue(); cout << "]";
-	cout << "("; waitingSpecialTrucks->printQueue(); cout << ")";
+	cout << "["; waitingNormalTrucks->printQueue(); cout << "], ";
+	cout << "("; waitingSpecialTrucks->printQueue(); cout << "), ";
 	cout << "{"; waitingVIPTrucks->printQueue(); cout <<"}";
 
-	cout << endl << "--------------------------------------" << endl;
+	cout << endl << "------------------------------------------------------------" << endl;
 
 
 
@@ -238,7 +244,8 @@ void Company::printAll(Time currTime) {
 	VIPDeliveredCargo->printQueue();
 	cout << "}";
 
-	cout << endl << "--------------------------------------" << endl;
+	cout << endl << "------------------------------------------------------------" << endl;
+
 	cout << endl;
 
 	
@@ -247,10 +254,10 @@ void Company::printAll(Time currTime) {
 
 void Company::Simulate() {
 	Time currTime(1, 1);
-	Time startTime(1, 1), endTime(0, 23);
+	Time startTime(1, 5), endTime(0, 23);
 	Event* frontEvent;
 	Cargo* delivered;
-
+	int counter = 0;
 
 	if (in_out->getMode() == "Silent") 
 		in_out->printMessage("Silent Mode\nSimulations Starts...");
@@ -263,10 +270,11 @@ void Company::Simulate() {
 		{
 			EventList->dequeue(frontEvent);
 			frontEvent->Execute();
+
 		}
 
 
-		if (currTime % 5 == 0) {
+		if (inWorkingHours(currTime) && counter % 5 == 0) {
 			if (waitingNormalCargo->deleteFirst(delivered)) {
 				normalDeliveredCargo->enqueue(delivered);
 				delivered->setDeliveryTime(currTime);
@@ -288,6 +296,11 @@ void Company::Simulate() {
 		if (in_out->getMode() != "Silent")
 			in_out->print(currTime);
 			
+		if (inWorkingHours(currTime))
+			counter++;
+		else
+			counter = 0;
+
 		++currTime;
 	}
 

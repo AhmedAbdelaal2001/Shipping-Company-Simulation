@@ -79,7 +79,7 @@ public:
 
 	void Simulate();
 	bool notTerminated();
-
+	bool inWorkingHours(Time currTime);
 
 	void printAll(Time currTime);
 	
