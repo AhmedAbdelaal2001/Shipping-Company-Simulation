@@ -204,7 +204,7 @@ void Company::printAll(Time currTime) {
 	waitingVIPCargo->printQueue();
 	cout << "}";
 
-	cout << endl << "------------------------------------------------------------" << endl; //TODO
+	cout << endl << "------------------------------------------------------------" << endl; //TODO0
 
 	cout << LoadingTrucks->getCount() << " Loading Trucks: ";
 	LoadingTrucks->printQueue();
