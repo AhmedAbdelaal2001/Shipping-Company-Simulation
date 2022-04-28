@@ -10,8 +10,8 @@ public:
 
     Cancellation(Company* pCompany);
 
-    bool Execute() override;
+    bool Execute() override; // to execute
 
-    void load(ifstream& inputFile) override;
+    void load(ifstream& inputFile) override; // to load data
 };
 

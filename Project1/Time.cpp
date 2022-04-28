@@ -94,12 +94,6 @@ Time Time::operator /(int count) {
 	return division;
 }
 
-int Time::operator % (int divisor) {
-	int totalHours = days * 24 + hours;
-
-	return totalHours % divisor;
-}
-
 bool Time::operator ==(const Time& time) {
 	return hours == time.getHours() && days == time.getDays();
 }

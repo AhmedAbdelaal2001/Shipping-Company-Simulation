@@ -60,6 +60,7 @@ private:
 
 public:
 
+	//Constructor
 	HashMap(int maxSize) {
 		
 		count = 0;
@@ -75,6 +76,8 @@ public:
 		return count;
 	}
 
+
+	//Uses the item's key to determine its position in the HashMap, returns true if found and false otherwise
 	bool findItem(int key, T& item) {                              //O(1)
 		
 		int index = hash(key);
@@ -87,6 +90,8 @@ public:
 		
 	}
 
+
+	//Inserts a new item to the HashMap. Rehashing occurs if the load factor is exceeded
 	void insertItem(int key, T item) {                //O(1) amortized
 		
 		if (count >= 0.75 * maxSize)
@@ -97,6 +102,7 @@ public:
 		count++;
 	}
 
+	//Removes an item from the HashMap given its key, returns true if found and false otherwise.
 	bool removeItem(int key, T& item) {                              //O(1) amortized
 		
 		if (maxSize > initialMaxSize && count <= 0.25 * maxSize)
@@ -124,7 +130,6 @@ public:
 	//}
 
 	~HashMap() {
-		
 		delete[] arr;
 	}
 };

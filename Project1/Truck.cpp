@@ -61,32 +61,32 @@ int Truck::getSpeed() {
 	return speed;
 }
 
-void Truck::setDeliveryInterval(Time deliveryInterval)
-{
-	this->deliveryInterval = deliveryInterval;
-}
-
-Time Truck::getDeliveryInterval() {
-	return deliveryInterval;
-}
-
-void Truck::setDeliveredCargos(int deliveredCargos)
-{
-	this->deliveredCargos = deliveredCargos;
-}
-
-int Truck::getDeliveredCargos() {
-	return deliveredCargos;
-}
-
-void Truck::setDeliveredJourneys(int deliveryJourneys)
-{
-	this->deliveryJourneys = deliveryJourneys;
-}
-
-int Truck::getDeliveredJourneys() {
-	return deliveryJourneys;
-}
+//void Truck::setDeliveryInterval(Time deliveryInterval)
+//{
+//	this->deliveryInterval = deliveryInterval;
+//}
+//
+//Time Truck::getDeliveryInterval() {
+//	return deliveryInterval;
+//}
+//
+//void Truck::setDeliveredCargos(int deliveredCargos)
+//{
+//	this->deliveredCargos = deliveredCargos;
+//}
+//
+//int Truck::getDeliveredCargos() {
+//	return deliveredCargos;
+//}
+//
+//void Truck::setDeliveredJourneys(int deliveryJourneys)
+//{
+//	this->deliveryJourneys = deliveryJourneys;
+//}
+//
+//int Truck::getDeliveredJourneys() {
+//	return deliveryJourneys;
+//}
 
 void Truck::setActiveTime(Time activeTime)
 {

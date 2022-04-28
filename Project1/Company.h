@@ -13,38 +13,20 @@ class UI;
 class Company
 {
 private:
-	
-
-	/*int nc_Count;
-	int sc_Count;
-	int vc_Count;*/
-
-	int cAutoP;
-	
-	int n_Speed;
-	int s_Speed;
-	int v_Speed;
-
-	int n_Capacity;
-	int s_Capacity;
-	int v_Capacity;
+		
 
 	int journeysBeforeCheckup;
 
-	Time n_CheckupD;
-	Time s_CheckupD;
-	Time v_CheckupD;
-
 	Time autoP;
 	Time maxW;
-
-	int eventsCount;
 
 	PriorityQueue<Truck*>* waitingNormalTrucks;
 	PriorityQueue<Truck*>* waitingSpecialTrucks;
 	PriorityQueue<Truck*>* waitingVIPTrucks;
 	
-	Queue<Truck*>* CheckupTrucks;
+	Queue<Truck*>* normalCheckupTrucks;
+	Queue<Truck*>* specialCheckupTrucks;
+	Queue<Truck*>* VIPCheckupTrucks;
 
 	PriorityQueue<Truck*>* movingTrucks;
 
@@ -57,7 +39,10 @@ private:
 	Queue<Cargo*>* normalDeliveredCargo;
 	Queue<Cargo*>* specialDeliveredCargo;
 	Queue<Cargo*>* VIPDeliveredCargo;
+
 	PriorityQueue<Truck*>* LoadingTrucks;
+	
+
 	string outFileName;
 
 	UI* in_out;
@@ -75,6 +60,7 @@ public:
 	void enqueueSpecial(Cargo* cargo);
 	void enqueueVIP(Cargo* cargo);
 
+	void readFromFile();
 	void saveToFile();
 
 	void Simulate();
@@ -83,5 +69,6 @@ public:
 
 	void printAll(Time currTime);
 	
+	~Company();
 };
 

@@ -9,6 +9,11 @@ Company::Company() {
 
 	in_out = new UI(this);
 	
+	readFromFile();
+
+}
+
+void Company::readFromFile() {
 	in_out->printMessage("Enter input file name: ");
 	string fileName = in_out->getFileName();
 
@@ -20,11 +25,14 @@ Company::Company() {
 	cout << "Enter mode: (Interactive, Step_By_Step, Silent)" << endl;
 	in_out->getModefromFile();
 
-	cAutoP = 0;
+
 
 	if (!inputFile.fail()) {
 
-		int n_Count, s_Count, v_Count;
+		int n_Count, s_Count, v_Count, n_Speed, s_Speed, v_Speed, n_Capacity, s_Capacity, v_Capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours;
+		Time n_CheckupD, s_CheckupD, v_CheckupD;
+		char event_Type;
+		Event* p_event;
 
 		inputFile >> n_Count >> s_Count >> v_Count;
 
@@ -33,8 +41,6 @@ Company::Company() {
 		inputFile >> n_Capacity >> s_Capacity >> v_Capacity;
 
 		inputFile >> journeysBeforeCheckup;
-
-		int checkup, autoProm, MaxW;
 
 		inputFile >> checkup;
 		n_CheckupD.setHours(checkup);
@@ -54,9 +60,7 @@ Company::Company() {
 		inputFile >> eventsCount;
 		EventList = new Queue<Event*>;
 
-		char event_Type;
-		int id, days, hours;
-		Event* p_event;
+
 
 		for (int i = 0; i < eventsCount; i++) {
 			inputFile >> event_Type;
@@ -96,31 +100,37 @@ Company::Company() {
 		normalDeliveredCargo = new Queue<Cargo*>;
 		specialDeliveredCargo = new Queue<Cargo*>;
 		VIPDeliveredCargo = new Queue<Cargo*>;
-	
-		waitingNormalTrucks = new PriorityQueue<Truck*>( n_Count);
+
+		waitingNormalTrucks = new PriorityQueue<Truck*>(n_Count);
 		waitingSpecialTrucks = new PriorityQueue<Truck*>(s_Count);
 		waitingVIPTrucks = new PriorityQueue<Truck*>(v_Count);
-		CheckupTrucks = new Queue<Truck*>;
+
+		normalCheckupTrucks = new Queue<Truck*>;
+		specialCheckupTrucks = new Queue<Truck*>;
+		VIPCheckupTrucks = new Queue<Truck*>;
+
 		movingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
+
 		Truck* TruckPtr;
 		for (int i = 0; i < n_Count; i++)
 		{
-			TruckPtr = new Truck('N', n_Capacity, checkup, n_Speed);
+			TruckPtr = new Truck('N', n_Capacity, n_CheckupD, n_Speed);
 			waitingNormalTrucks->enqueue(TruckPtr);
 		}
 		for (int i = 0; i < s_Count; i++)
 		{
-			TruckPtr = new Truck('S', s_Capacity, checkup, s_Speed);
+			TruckPtr = new Truck('S', s_Capacity, s_CheckupD, s_Speed);
 			waitingSpecialTrucks->enqueue(TruckPtr);
 		}
 		for (int i = 0; i < v_Count; i++)
 		{
-			TruckPtr = new Truck('V', v_Capacity, checkup, v_Speed);
+			TruckPtr = new Truck('V', v_Capacity, v_CheckupD, v_Speed);
 			waitingVIPTrucks->enqueue(TruckPtr);
-		}	
-		LoadingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
-	}
+		}
 
+		LoadingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
+
+	}
 }
 
 //CrossLinkedList<Cargo*>* Company::getWaitingNormalCargo() const {
@@ -190,66 +200,7 @@ bool Company::inWorkingHours(Time currTime)
 }
 
 void Company::printAll(Time currTime) {
-	cout << "Current Time (Day:Hour):" << currTime << endl;
-
-	cout << waitingNormalCargo->getCount() + waitingVIPCargo->getCount() + waitingSpecialCargo->getCount() << " ";
-	cout << "Waiting Cargos: ";
-	waitingNormalCargo->printList();
-	cout << " ";
-	cout << "(";
-	waitingSpecialCargo->printQueue();
-	cout << ")";
-	cout << " ";
-	cout << "{";
-	waitingVIPCargo->printQueue();
-	cout << "}";
-
-	cout << endl << "------------------------------------------------------------" << endl; //TODO0
-
-	cout << LoadingTrucks->getCount() << " Loading Trucks: ";
-	LoadingTrucks->printQueue();
-	cout << endl << "------------------------------------------------------------" << endl;
-
-	cout << movingTrucks->getCount() << " Moving Cargos: ";
-	movingTrucks->printQueue();
-
-	cout << endl << "------------------------------------------------------------" << endl;
-
-	cout << CheckupTrucks->getCount() << " In-Checkup Trucks: ";
-	CheckupTrucks->printQueue();
-	cout << endl << "------------------------------------------------------------" << endl;
-
-
-	cout << waitingNormalCargo->getCount() + waitingSpecialTrucks->getCount() + waitingVIPTrucks->getCount();
-	cout << " Empty Trucks: ";
-	cout << "["; waitingNormalTrucks->printQueue(); cout << "], ";
-	cout << "("; waitingSpecialTrucks->printQueue(); cout << "), ";
-	cout << "{"; waitingVIPTrucks->printQueue(); cout <<"}";
-
-	cout << endl << "------------------------------------------------------------" << endl;
-
-
-
-
-
-	cout << normalDeliveredCargo->getCount() + specialDeliveredCargo->getCount() + VIPDeliveredCargo->getCount() << " ";
-	cout << "Delivered Cargos: ";
-	cout << "[";
-	normalDeliveredCargo->printQueue();
-	cout << "] ";
-	cout << "(";
-	specialDeliveredCargo->printQueue();
-	cout << ") ";
-	cout << "{";
-	VIPDeliveredCargo->printQueue();
-	cout << "}";
-
-	cout << endl << "------------------------------------------------------------" << endl;
-
-	cout << endl;
-
-	
-
+	in_out->print(currTime, waitingNormalTrucks, waitingSpecialTrucks, waitingVIPTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks, movingTrucks, waitingNormalCargo, waitingSpecialCargo, waitingVIPCargo, EventList, normalDeliveredCargo, specialDeliveredCargo, VIPDeliveredCargo, LoadingTrucks);	
 }
 
 void Company::Simulate() {
@@ -294,7 +245,7 @@ void Company::Simulate() {
 			}
 		}
 		if (in_out->getMode() != "Silent")
-			in_out->print(currTime);
+			printAll(currTime);
 			
 		if (inWorkingHours(currTime))
 			counter++;
@@ -309,4 +260,45 @@ void Company::Simulate() {
 	}
 
 	//saveToFile();
+}
+
+
+Company::~Company() {
+	delete waitingNormalTrucks;
+	waitingNormalTrucks = nullptr;
+	delete waitingSpecialTrucks;
+	waitingSpecialTrucks = nullptr;
+	delete waitingVIPTrucks;
+	waitingVIPTrucks= nullptr;
+
+	delete normalCheckupTrucks;
+	normalCheckupTrucks = nullptr;
+	delete specialCheckupTrucks;
+	specialCheckupTrucks = nullptr;
+	delete VIPCheckupTrucks;
+	VIPCheckupTrucks = nullptr;
+
+	delete movingTrucks;
+	movingTrucks = nullptr;
+
+	delete waitingNormalCargo;
+	waitingNormalCargo = nullptr;
+	delete waitingSpecialCargo;
+	waitingSpecialCargo = nullptr; 
+	delete waitingVIPCargo;
+	waitingVIPCargo = nullptr;
+
+	delete EventList;
+	EventList = nullptr;
+
+	delete normalDeliveredCargo;
+	normalDeliveredCargo = nullptr;
+	delete specialDeliveredCargo;
+	specialDeliveredCargo = nullptr;
+	delete VIPDeliveredCargo;
+	VIPDeliveredCargo = nullptr;
+
+	delete LoadingTrucks;
+	LoadingTrucks = nullptr; 
+	
 }

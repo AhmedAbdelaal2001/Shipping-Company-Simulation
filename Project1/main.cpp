@@ -1,10 +1,5 @@
 #include "Company.h"
 
-//ostream& operator << (ostream& out, Node<int*> node) {
-//	out << *node.getItem();
-//
-//	return out;
-//}
 
 //void TimeTest() {
 //	int day1, hour1, day2, hour2;
@@ -20,7 +15,10 @@
 //
 //}
 
-//void test56() {
+//void testCrossLinkedList
+// 
+// 
+// () {
 //	CrossLinkedList<Cargo*> list(10);
 //	Cargo* cargo;
 //	Time time1, time2;

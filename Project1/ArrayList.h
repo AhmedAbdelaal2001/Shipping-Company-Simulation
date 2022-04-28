@@ -17,7 +17,6 @@ private:
 		if (isEmpty())
 			return;
 
-		cout << "Resizing..." << endl;
 		T* newArr = new T [newSize];
 
 		for (int i = 0; i < count; i++)
@@ -60,7 +59,7 @@ public:
 	}
 
 	int max(int index1, int index2) {
-		return (arr[index1] > arr[index2]) ? index1 : index2;
+		return (*arr[index1] > arr[index2]) ? index1 : index2;
 	}
 
 	//Returns the item stored at index position "index"
@@ -111,6 +110,9 @@ public:
 	~ArrayList() {
 		for (int i = 0; i < count; i++)
 			delete arr[i];
+
+		delete[] arr;
+		arr = nullptr;
 	}
 
 };

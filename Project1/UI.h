@@ -1,12 +1,18 @@
 #pragma once
 
 #include <iostream>
-#include "Company.h"
+#include "CrossLinkedList.h"
+#include"Queue.h"
+#include "PriorityQueue.h"
 #include "Time.h"
+#include "Event.h"
+#include "Company.h"
+#include "Truck.h"
 
 using namespace std;
 
 class Company;
+class Event;
 
 class UI
 {
@@ -19,15 +25,17 @@ private:
 public:
 	UI(Company* pCompany);
 
-	void getModefromFile();
+	void getModefromFile();		// reads mode from user
 
 	string getMode() const;
 
-	string getFileName();
+	string getFileName();		
 
 	void printMessage(string message);
 	
-	void print(Time currTime);
+	// prints all the companies data (waiting lists, loading lists, moving lists... etc.)
+	void print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, PriorityQueue<Truck*>* waitingSpecialTrucks, PriorityQueue<Truck*>* waitingVIPTrucks, Queue<Truck*>* normalCheckupTrucks, Queue<Truck*>* specialCheckupTrucks, Queue<Truck*>* VIPCheckupTrucks, PriorityQueue<Truck*>* movingTrucks, CrossLinkedList<Cargo*>* waitingNormalCargo, Queue<Cargo*>* waitingSpecialCargo, PriorityQueue<Cargo*>* waitingVIPCargo, Queue<Event*>* EventList, Queue<Cargo*>* normalDeliveredCargo, Queue<Cargo*>* specialDeliveredCargo, Queue<Cargo*>* VIPDeliveredCargo, PriorityQueue<Truck*>* LoadingTrucks);
+
 
 
 };

@@ -2,6 +2,7 @@
 #include "ListInterface.h"
 #include "Node.h"
 
+//Implementation of the LinkedList DS
 template <class T>
 class LinkedList{
 
@@ -151,17 +152,13 @@ public:
 		return temp;
 	}
 
-	~LinkedList() {                                 //O(n)
+	virtual ~LinkedList() {                                 //O(n)
 		// TODO: Use deletefirst/ deletelast
 		
-		Node<T>* temp1 = head;
-		Node<T>* temp2 = head;
-		while (temp1) {
-			/*delete temp1->getItem();*/
-			temp1 = temp1->getNext();
-			delete temp2;
-			temp2 = temp1;
-		}
+		T temp;
+
+		while (deleteFirst(temp)) {}
+
 	}
 };
 

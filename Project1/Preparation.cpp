@@ -3,7 +3,7 @@
 
 Perparation::Perparation(Company* pCompany) : Event(pCompany)
 {
-	
+	// Setting the parameters to default values
 	cargoType = 'U';
 	distance = -1;
 	cost = -1;
@@ -12,8 +12,9 @@ Perparation::Perparation(Company* pCompany) : Event(pCompany)
 
 
 void Perparation::load(ifstream& inputFile) {
-	inputFile >> cargoType;
 
+	// loading 
+	inputFile >> cargoType;
 
 	char colon;
 	int id, days, hours;

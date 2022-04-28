@@ -10,6 +10,7 @@ bool Cargo::operator > (Cargo* cargo) {
 	return priority > cargo->getPriority();
 }
 
+//Default Constructor
 Cargo::Cargo() {
 	Time zeroTime(0, 1);
 	setPrepTime(zeroTime);
@@ -21,10 +22,11 @@ Cargo::Cargo() {
 	setPriority(0);
 }
 
+//non-default constructor
 Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, float cost, float priority) {
 
 	if (type == 'V')
-		priority = computePriority(cost, distance, prepTime);
+		priority = computePriority(cost, distance, prepTime);  //Computes the priority according according the cargo's cost, distance, and prep time
 
 	setPrepTime(prepTime);
 	setLoadTime(loadTime);
@@ -32,19 +34,23 @@ Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, floa
 	setType(type);
 	setDistance(distance);
 	setCost(cost);
-	setPriority(priority);
+	setPriority(priority);      //Sets the priority with the value calculated above
 }
 
 int Cargo::computePriority(int cost, int distance, Time prepTime) {
-	priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours();
+	priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours(); //Priority equation, cost and distance increase the
+	                                                                                     //cargo's priority while a high preparation time 
+	                                                                                    //decreases it
 	return priority;
 }
 
-int Cargo::updatePriority(int newCost) {
-	computePriority(newCost, distance, prepTime);
-	return priority;
+int Cargo::updatePriority(int newCost) {                                 //Used in promotions 
+	
+	computePriority(newCost, distance, prepTime);                        //The cargo's priority is calculated using its new cost
+	return priority;             
 }
 
+//Setters and Getters
 void Cargo::setId(int id) { this->id = id; }
 int Cargo::getId() const { return id; }
 
@@ -80,6 +86,7 @@ int Cargo::getCost() const { return cost; }
 void Cargo::setPriority(int priority) { this->priority = priority; }
 int Cargo::getPriority() const { return priority; }
 
+// Writes the cargo's info to the output file.
 void Cargo::saveToFile(ofstream& outFile) {
 	outFile << deliveryTime.getDays() << ":" << deliveryTime.getHours() << "	" << id << "	" << prepTime.getDays() << ":" << prepTime.getHours() << "	" << waitingTime.getDays() << ":" << waitingTime.getHours() << "	";
 }

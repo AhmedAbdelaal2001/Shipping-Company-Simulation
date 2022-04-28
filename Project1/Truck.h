@@ -37,25 +37,26 @@ public:
 	void setCheckupTime(Time checkupTime);
 	Time getCheckupTime();
 	
-	void setDeliveryInterval(Time deliveryInterval);
+	// for phase 2
+	/*void setDeliveryInterval(Time deliveryInterval);
 	Time getDeliveryInterval();
 	
 	void setDeliveredCargos(int deliveredCargos);
 	int getDeliveredCargos();
 	
 	void setDeliveredJourneys(int deliveryJourneys);
-	int getDeliveredJourneys();
+	int getDeliveredJourneys();*/
 	
-	void setPriority(int priority);
+	void setPriority(int priority);   // when trucks move from waiting to loading or loading to moving priority is recalculated and set
 	int getPriority() const ;
-	void setActiveTime(Time activeTime);
+	void setActiveTime(Time activeTime);  // sets Active time after calculation
 	Time getActiveTime();
 
-	void saveToFile(ofstream out);
+	void saveToFile(ofstream out);   // Writes to output file
 
 	friend ostream& operator << (ostream& out, Truck* truckPtr);
 
-	bool operator > (Truck* truckPtr);
+	bool operator > (Truck* truckPtr);  // for comparing truck priorities
 
 
 

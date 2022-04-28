@@ -22,13 +22,13 @@ public:
 
 	void printTime();
 	
-	Time& operator ++();
-	Time operator +(Time time);
-	Time operator -(Time time);
-	bool operator >=(Time time);
-	Time operator /(int count);
-	bool operator ==(const Time& time);
-	int operator % (int divisor);
+	Time& operator ++();				// for incrementing timesteps
+	Time operator +(Time time);			// to add 2 times
+	Time operator -(Time time);			// to subtract 2 times
+	bool operator >=(Time time);		// to compare if time1 is greater than or equal time2
+	Time operator /(int count);			// to divide 2 times
+	bool operator ==(const Time& time);	// returns true if times are equal
+		
 
 	friend ostream& operator << (ostream& out, const Time time);
 
