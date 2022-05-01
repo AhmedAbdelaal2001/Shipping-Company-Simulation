@@ -37,6 +37,7 @@ public:
 		while (temp->getNext()) {
 			if (temp->getKey() == key)
 				return temp;
+			temp = temp->getNext();
 		}
 
 		return nullptr;
