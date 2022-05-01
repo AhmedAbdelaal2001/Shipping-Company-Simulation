@@ -1,7 +1,7 @@
 #include "Time.h"
 
 Time::Time(int days, int hours) {
-	
+
 	setHours(hours);
 	setDays(days);
 
@@ -18,7 +18,7 @@ int Time::getHours() const {
 }
 
 void Time::setHours(int hour) {
-	
+
 	days += hour / 24;
 	hours = hour % 24;
 }
@@ -29,6 +29,10 @@ int Time::getDays() const {
 
 void Time::setDays(int day) {
 	this->days = day;
+}
+
+int Time::getTotalHours()const {
+	return days * 24 + hours;
 }
 void Time::printTime()
 {
@@ -79,7 +83,7 @@ bool Time::operator >=(Time time) {
 		return true;
 	else if (days == time.getDays())
 		return hours > time.getHours();
-	
+
 	return false;
 }
 
@@ -89,8 +93,8 @@ Time Time::operator /(int count) {
 	int result = totalHours / count;
 
 	Time division(0, result);
-	
-	
+
+
 	return division;
 }
 

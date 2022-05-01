@@ -1,4 +1,4 @@
- #pragma once
+#pragma once
 #include "UI.h"
 #include "CrossLinkedList.h"
 #include"Queue.h"
@@ -13,7 +13,7 @@ class UI;
 class Company
 {
 private:
-		
+
 
 	int journeysBeforeCheckup;
 
@@ -23,7 +23,7 @@ private:
 	PriorityQueue<Truck*>* waitingNormalTrucks;
 	PriorityQueue<Truck*>* waitingSpecialTrucks;
 	PriorityQueue<Truck*>* waitingVIPTrucks;
-	
+
 	Queue<Truck*>* normalCheckupTrucks;
 	Queue<Truck*>* specialCheckupTrucks;
 	Queue<Truck*>* VIPCheckupTrucks;
@@ -41,7 +41,7 @@ private:
 	Queue<Cargo*>* VIPDeliveredCargo;
 
 	PriorityQueue<Truck*>* LoadingTrucks;
-	
+
 
 	string outFileName;
 
@@ -55,7 +55,7 @@ public:
 	PriorityQueue<Cargo*>* getWaitingVIPCargo() const;*/
 
 	bool deleteNormalCargo(int id, Cargo*& delCargo);
-	
+
 	void enqueueNormal(Cargo* cargo, int id);
 	void enqueueSpecial(Cargo* cargo);
 	void enqueueVIP(Cargo* cargo);
@@ -63,12 +63,21 @@ public:
 	void readFromFile();
 	void saveToFile();
 
-	void Simulate();
+	void executeCurrEvents(Time currTime);
+
 	bool notTerminated();
 	bool inWorkingHours(Time currTime);
 
+	void assignVIP(Time currTime);
+	void assignSpecial(Time currTime);
+	void assignNormal(Time currTime);
+
+	void autoPromote(Time currTime);
+
+	void Simulate();
+
 	void printAll(Time currTime);
-	
+
 	~Company();
 };
 

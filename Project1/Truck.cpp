@@ -2,10 +2,10 @@
 
 int Truck::currID = 0;
 
-Truck::Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/):
-	cargoList(capacity)
+Truck::Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/)
 {
 	currID++;
+	cargoList = new PriorityQueue<Cargo*>(capacity);
 	setID(currID);
 	setType(type);
 	setCapacity(capacity);
@@ -15,7 +15,7 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed/*, Time delive
 	setDeliveredCargos(deliveredCargos);
 	setDeliveredJourneys(deliveryJourneys);
 	setActiveTime(activeTime);*/
-	setPriority(speed/capacity);
+	setPriority(speed / capacity);
 }
 
 void Truck::setType(char type)
@@ -97,14 +97,49 @@ Time Truck::getActiveTime() {
 	return activeTime;
 }
 
+void Truck::enqueueCargo(Cargo* loading) {
+	cargoList->enqueue(loading);
+}
+
+
 void Truck::saveToFile(ofstream outFile) {
 	outFile << id << "	";
 }
 
 ostream& operator << (ostream& out, Truck* truckPtr) {
 	out << truckPtr->getID();
+	Cargo* tempCargoPtr = nullptr;
+	truckPtr->cargoList->peek(tempCargoPtr);
+
+	if (tempCargoPtr) {
+		switch (tempCargoPtr->getType()) {
+		case 'N':
+			out << "[";
+			break;
+		case 'S':
+			out << "(";
+			break;
+		case 'V':
+			out << "{";
+			break;
+		}
+
+		truckPtr->cargoList->printQueue();
+
+		switch (tempCargoPtr->getType()) {
+		case 'N':
+			out << "]";
+			break;
+		case 'S':
+			out << ")";
+			break;
+		case 'V':
+			out << "}";
+			break;
+		}
+	}
+
 	return out;
-	//TODO:cargos el gowaha
 }
 
 
@@ -116,5 +151,9 @@ int Truck::getPriority() const {
 	return priority;
 }
 bool Truck::operator > (Truck* truckPtr) {
-		return priority > truckPtr->getPriority();
+	return priority > truckPtr->getPriority();
+}
+
+Truck::~Truck() {
+	delete cargoList;
 }

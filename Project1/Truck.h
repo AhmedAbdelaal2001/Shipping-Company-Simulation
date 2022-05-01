@@ -1,6 +1,7 @@
 #pragma once
 #include "Cargo.h"
 #include "ArrayList.h"
+#include "PriorityQueue.h"
 
 class Truck
 {
@@ -11,7 +12,7 @@ private:
 	Time checkupTime;
 	int speed;
 	Time deliveryInterval;
-	ArrayList<Cargo*> cargoList;
+	PriorityQueue<Cargo*>* cargoList;
 	int deliveredCargos;
 	int deliveryJourneys;
 	int priority;
@@ -21,7 +22,7 @@ private:
 public:
 	Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/);
 
-	
+
 	void setType(char type);
 	char getType();
 
@@ -30,27 +31,29 @@ public:
 
 	void setID(int id);
 	int getID() const;
-	
+
 	void setSpeed(int speed);
 	int getSpeed();
 
 	void setCheckupTime(Time checkupTime);
 	Time getCheckupTime();
-	
+
 	// for phase 2
 	/*void setDeliveryInterval(Time deliveryInterval);
 	Time getDeliveryInterval();
-	
+
 	void setDeliveredCargos(int deliveredCargos);
 	int getDeliveredCargos();
-	
+
 	void setDeliveredJourneys(int deliveryJourneys);
 	int getDeliveredJourneys();*/
-	
+
 	void setPriority(int priority);   // when trucks move from waiting to loading or loading to moving priority is recalculated and set
-	int getPriority() const ;
+	int getPriority() const;
 	void setActiveTime(Time activeTime);  // sets Active time after calculation
 	Time getActiveTime();
+
+	void enqueueCargo(Cargo* loading);
 
 	void saveToFile(ofstream out);   // Writes to output file
 
@@ -58,7 +61,6 @@ public:
 
 	bool operator > (Truck* truckPtr);  // for comparing truck priorities
 
-
-
+	~Truck();
 };
 

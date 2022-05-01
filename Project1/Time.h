@@ -5,12 +5,12 @@ class Time
 {
 
 private:
-	
+
 	int days;
 	int hours;
 
 public:
-	
+
 	Time(int days = 0, int hours = 0);
 	Time(const Time& time);
 
@@ -20,15 +20,17 @@ public:
 	int getDays() const;
 	void setDays(int day);
 
+	int getTotalHours()const;
+
 	void printTime();
-	
+
 	Time& operator ++();				// for incrementing timesteps
 	Time operator +(Time time);			// to add 2 times
 	Time operator -(Time time);			// to subtract 2 times
 	bool operator >=(Time time);		// to compare if time1 is greater than or equal time2
 	Time operator /(int count);			// to divide 2 times
 	bool operator ==(const Time& time);	// returns true if times are equal
-		
+
 
 	friend ostream& operator << (ostream& out, const Time time);
 

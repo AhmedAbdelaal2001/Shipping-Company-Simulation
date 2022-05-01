@@ -35,12 +35,12 @@ void Perparation::load(ifstream& inputFile) {
 
 
 bool Perparation::Execute() {
-	
+
 	Time LTime(loadTime);
 	Cargo* newCargo = new Cargo(Event::getEventTime(), LTime, Event::getID(), cargoType, distance, cost);
 
 	switch (cargoType) {
-	
+
 	case 'N':
 		getPCompany()->enqueueNormal(newCargo, Event::getID());
 		break;
@@ -51,6 +51,7 @@ bool Perparation::Execute() {
 
 	case 'V':
 		getPCompany()->enqueueVIP(newCargo);
+		break;
 	}
 
 	return true;

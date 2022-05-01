@@ -27,7 +27,7 @@ private:
 
 	//This function is for maintaining the heap property after insertion.
 	void heapifyUp(int index) {                                         //O(logn)
-		
+
 		int parentIndex = parent(index);
 		if (*list[index] > list[parentIndex]) {
 			list.swap(index, parentIndex);
@@ -40,7 +40,7 @@ private:
 
 		if (!list[index])
 			return;
-		
+
 		int rch = rightChild(index);
 		int lch = leftChild(index);
 		int biggerChild = list.max(rch, lch);
@@ -54,7 +54,7 @@ private:
 public:
 
 	//Constructor
-	PriorityQueue(int maxSize = 10) : list(maxSize){};
+	PriorityQueue(int maxSize = 10) : list(maxSize) {};
 
 	bool isEmpty() { return list.isEmpty(); }
 

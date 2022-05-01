@@ -39,15 +39,15 @@ Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, floa
 
 int Cargo::computePriority(int cost, int distance, Time prepTime) {
 	priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours(); //Priority equation, cost and distance increase the
-	                                                                                     //cargo's priority while a high preparation time 
-	                                                                                    //decreases it
+																						 //cargo's priority while a high preparation time 
+																						//decreases it
 	return priority;
 }
 
 int Cargo::updatePriority(int newCost) {                                 //Used in promotions 
-	
+
 	computePriority(newCost, distance, prepTime);                        //The cargo's priority is calculated using its new cost
-	return priority;             
+	return priority;
 }
 
 //Setters and Getters
@@ -85,6 +85,10 @@ int Cargo::getCost() const { return cost; }
 
 void Cargo::setPriority(int priority) { this->priority = priority; }
 int Cargo::getPriority() const { return priority; }
+
+Time Cargo::calcWait(Time currTime) {
+	return currTime - prepTime;
+}
 
 // Writes the cargo's info to the output file.
 void Cargo::saveToFile(ofstream& outFile) {
