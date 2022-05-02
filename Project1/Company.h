@@ -64,6 +64,7 @@ private:
 	UI* in_out;
 
 public:
+
 	Company();
 	/*Queue<Event*>* getEventList() const;
 	CrossLinkedList<Cargo*>* getWaitingNormalCargo() const;

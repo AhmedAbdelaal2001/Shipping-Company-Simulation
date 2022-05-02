@@ -18,7 +18,7 @@ Company::Company() {
 	outFileName = in_out->getFileName();
 
 	cout << "Enter mode: (Interactive, Step_By_Step, Silent)" << endl;
-	in_out->getModefromFile();
+	in_out->getModefromUser();
 
 	cAutoP = 0;
 

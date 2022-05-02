@@ -19,9 +19,9 @@ private:
 public:
 	UI(Company* pCompany);
 
-	void getModefromFile();
-
 	string getMode() const;
+	
+	void getModefromUser();
 
 	string getFileName();
 

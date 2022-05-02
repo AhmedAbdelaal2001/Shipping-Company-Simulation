@@ -5,13 +5,13 @@ UI::UI(Company* pCompany) {
 	this->pCompany = pCompany;
 }
 
-void UI::getModefromFile() {
-	cin >> mode;
-
-}
-
 string UI::getMode() const {
 	return mode;
+}
+
+void UI::getModefromUser() {
+	cin >> mode;
+
 }
 
 string UI::getFileName() {
@@ -33,6 +33,5 @@ void UI::print(Time currTime) {
 	else if (mode == "Step_By_Step") {
 		pCompany->printAll(currTime);
 		Sleep(1000);
-
 	}
 }
