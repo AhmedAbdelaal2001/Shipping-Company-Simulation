@@ -9,22 +9,28 @@ private:
 	char type;
 	int id;
 	int capacity;
-	Time checkupTime;
 	int speed;
+	int movedDistance;
+	Time checkupTime;
 	Time deliveryInterval;
+	Time activeTime;
+	Time moveTime;
 	PriorityQueue<Cargo*>* cargoList;
 	int deliveredCargos;
 	int deliveryJourneys;
 	int priority;
-	Time activeTime;
 	static int currID;
 
 public:
 	Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/);
 
+	bool isFull();
+	bool isEmpty();
 
 	void setType(char type);
 	char getType();
+
+	Time getMoveTime();
 
 	void setCapacity(int capacity);
 	int getCapacity();
@@ -34,6 +40,9 @@ public:
 
 	void setSpeed(int speed);
 	int getSpeed();
+
+	void setMovedDistance(int movedDistance);
+	int getMovedDistance() const;
 
 	void setCheckupTime(Time checkupTime);
 	Time getCheckupTime();
@@ -50,8 +59,12 @@ public:
 
 	void setPriority(int priority);   // when trucks move from waiting to loading or loading to moving priority is recalculated and set
 	int getPriority() const;
+	void updatePriority(int extraPriority);
+
 	void setActiveTime(Time activeTime);  // sets Active time after calculation
 	Time getActiveTime();
+
+	int calcMovingPriority(Time);
 
 	void enqueueCargo(Cargo* loading);
 

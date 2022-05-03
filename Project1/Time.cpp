@@ -2,8 +2,8 @@
 
 Time::Time(int days, int hours) {
 
-	setHours(hours);
 	setDays(days);
+	setHours(hours);
 
 }
 
@@ -82,7 +82,7 @@ bool Time::operator >=(Time time) {
 	if (days > time.getDays())
 		return true;
 	else if (days == time.getDays())
-		return hours > time.getHours();
+		return hours >= time.getHours();
 
 	return false;
 }

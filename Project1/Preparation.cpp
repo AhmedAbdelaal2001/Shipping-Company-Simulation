@@ -1,7 +1,7 @@
 #include "Preparation.h"
 #include <fstream>
 
-Perparation::Perparation(Company* pCompany) : Event(pCompany)
+Preparation::Preparation(Company* pCompany) : Event(pCompany)
 {
 	// Setting the parameters to default values
 	cargoType = 'U';
@@ -11,7 +11,7 @@ Perparation::Perparation(Company* pCompany) : Event(pCompany)
 }
 
 
-void Perparation::load(ifstream& inputFile) {
+void Preparation::load(ifstream& inputFile) {
 
 	// loading 
 	inputFile >> cargoType;
@@ -26,18 +26,16 @@ void Perparation::load(ifstream& inputFile) {
 	inputFile >> id >> distance;
 	setID(id);
 
-	inputFile >> hours;
-	Time loadingTime(0, hours);
+	inputFile >> loadTime;
 
 	inputFile >> cost;
 }
 
 
 
-bool Perparation::Execute() {
+bool Preparation::Execute() {
 
-	Time LTime(loadTime);
-	Cargo* newCargo = new Cargo(Event::getEventTime(), LTime, Event::getID(), cargoType, distance, cost);
+	Cargo* newCargo = new Cargo(Event::getEventTime(), loadTime, Event::getID(), cargoType, distance, cost);
 
 	switch (cargoType) {
 

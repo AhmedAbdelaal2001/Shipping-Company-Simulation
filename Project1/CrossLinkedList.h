@@ -1,9 +1,10 @@
 #pragma once
 #include "HashMap.h"
+#include "Container.h"
 
 //A custom data structure consisting of a linked list and a HashMap crosslinked together.
 template <class T>
-class CrossLinkedList {
+class CrossLinkedList : public Container<T> {
 
 private:
 	LinkedList<T> list;
@@ -22,7 +23,7 @@ public:
 		hashMap.insertItem(key, tail);
 	}
 
-	bool deleteFirst(T& deletedItem) {                                //O(1) amortized
+	bool dequeue(T& deletedItem) {                                //O(1) amortized
 		if (!list.deleteFirst(deletedItem))
 			return false;
 
@@ -43,7 +44,7 @@ public:
 		return list.isEmpty();
 	}
 
-	bool peekFirst(T& item) {
+	bool peek(T& item) {
 		return list.peekFirst(item);
 	}
 

@@ -11,11 +11,26 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed/*, Time delive
 	setCapacity(capacity);
 	setCheckupTime(checkupTime);
 	setSpeed(speed);
+	setMovedDistance(0);
 	/*setDeliveryInterval(deliveryInterval);
 	setDeliveredCargos(deliveredCargos);
 	setDeliveredJourneys(deliveryJourneys);
 	setActiveTime(activeTime);*/
 	setPriority(speed / capacity);
+
+}
+
+bool Truck::isFull() {
+	return cargoList->getCount() == capacity;
+}
+
+Time Truck::getMoveTime() {
+	moveTime.setHours(-1 * priority);
+	return moveTime;
+}
+
+bool Truck::isEmpty() {
+	return cargoList->getCount() == 0;
 }
 
 void Truck::setType(char type)
@@ -59,6 +74,14 @@ void Truck::setSpeed(int speed)
 
 int Truck::getSpeed() {
 	return speed;
+}
+
+void Truck::setMovedDistance(int movedDistance) {
+	this->movedDistance = movedDistance;
+}
+
+int Truck::getMovedDistance() const {
+	return movedDistance;
 }
 
 //void Truck::setDeliveryInterval(Time deliveryInterval)
@@ -147,9 +170,23 @@ void Truck::setPriority(int priority)
 {
 	this->priority = priority;
 }
+
 int Truck::getPriority() const {
 	return priority;
 }
+
+void Truck::updatePriority(int extraPriority) {
+	priority += extraPriority;
+}
+
+int Truck::calcMovingPriority(Time currTime) {
+	Cargo* frontCargo = nullptr;
+	if(cargoList->peek(frontCargo))
+		return currTime.getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed + frontCargo->getLoadTime();
+	return currTime.getTotalHours() + movedDistance / speed;
+}
+
+
 bool Truck::operator > (Truck* truckPtr) {
 	return priority > truckPtr->getPriority();
 }

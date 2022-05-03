@@ -34,5 +34,6 @@
     <ClInclude Include="Cancellation.h" />
     <ClInclude Include="Preparation.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="Container.h" />
   </ItemGroup>
 </Project>

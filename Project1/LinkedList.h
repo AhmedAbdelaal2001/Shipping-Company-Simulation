@@ -21,6 +21,7 @@ public:
 	}
 
 	Node<T>* peekLast() { return tail; }                   //O(1)
+	
 	bool peekFirst(T& firstItem) { 
 		if (head) {
 			firstItem = head->getItem();

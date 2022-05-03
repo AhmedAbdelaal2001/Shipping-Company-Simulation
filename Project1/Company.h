@@ -69,11 +69,20 @@ public:
 	bool notTerminated();
 	bool inWorkingHours(Time currTime);
 
-	void assignVIP(Time currTime);
-	void assignSpecial(Time currTime);
-	void assignNormal(Time currTime);
+	void moveTruckToLoading(Container<Truck*>*, Truck*);
+	void loadCargo(Container<Cargo*>*, Truck*);
+	void fillTruckWithCargo(Truck*, Container<Truck*>*, Container<Cargo*>*, int);
+
+	void assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time, int);
+	void assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
+
+	void assignVIP(Time currTime, Container<Cargo*>*);
+	void assignSpecial(Time currTime, Container<Cargo*>*);
+	void assignNormal(Time currTime, Container<Cargo*>*);
 
 	void autoPromote(Time currTime);
+
+	void startDelivery(Time currTime);
 
 	void Simulate();
 

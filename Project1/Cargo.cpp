@@ -14,7 +14,7 @@ bool Cargo::operator > (Cargo* cargo) {
 Cargo::Cargo() {
 	Time zeroTime(0, 1);
 	setPrepTime(zeroTime);
-	setLoadTime(zeroTime);
+	setLoadTime(0);
 	setId(0);
 	setType('U');
 	setDistance(0);
@@ -23,7 +23,7 @@ Cargo::Cargo() {
 }
 
 //non-default constructor
-Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, float cost, float priority) {
+Cargo::Cargo(Time prepTime, int loadTime, int id, char type, int distance, float cost, float priority) {
 
 	if (type == 'V')
 		priority = computePriority(cost, distance, prepTime);  //Computes the priority according according the cargo's cost, distance, and prep time
@@ -57,8 +57,8 @@ int Cargo::getId() const { return id; }
 void Cargo::setPrepTime(Time prepTime) { this->prepTime = prepTime; }
 Time Cargo::getPrepTime() const { return prepTime; }
 
-void Cargo::setLoadTime(Time loadTime) { this->loadTime = loadTime; }
-Time Cargo::getLoadTime() const { return loadTime; }
+void Cargo::setLoadTime(int loadTime) { this->loadTime = loadTime; }
+int Cargo::getLoadTime() const { return loadTime; }
 
 void Cargo::setDeliveryTime(Time deliveryTime) {
 	this->deliveryTime = deliveryTime;

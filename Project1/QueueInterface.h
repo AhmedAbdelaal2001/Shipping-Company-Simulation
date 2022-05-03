@@ -1,8 +1,9 @@
 #pragma once
+#include "Container.h"
 
 //A Priority Queue (PQ) Interface. 
 template <class T>
-class QueueInterface {
+class QueueInterface : public Container<T> {
 
 public:
 	
