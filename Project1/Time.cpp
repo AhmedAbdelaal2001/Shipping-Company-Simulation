@@ -2,8 +2,8 @@
 
 Time::Time(int days, int hours) {
 
-	setDays(days);
 	setHours(hours);
+	setDays(days);
 
 }
 
