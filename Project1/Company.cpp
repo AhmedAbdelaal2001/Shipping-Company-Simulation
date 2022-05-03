@@ -5,10 +5,15 @@
 #include <fstream>
 
 Company::Company() {
-	
+
 
 	in_out = new UI(this);
-	
+
+	readFromFile();
+
+}
+
+void Company::readFromFile() {
 	in_out->printMessage("Enter input file name: ");
 	string fileName = in_out->getFileName();
 
@@ -20,11 +25,14 @@ Company::Company() {
 	cout << "Enter mode: (Interactive, Step_By_Step, Silent)" << endl;
 	in_out->getModefromUser();
 
-	cAutoP = 0;
+
 
 	if (!inputFile.fail()) {
 
-		int n_Count, s_Count, v_Count;
+		int n_Count, s_Count, v_Count, n_Speed, s_Speed, v_Speed, n_Capacity, s_Capacity, v_Capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours;
+		Time n_CheckupD, s_CheckupD, v_CheckupD;
+		char event_Type;
+		Event* p_event;
 
 		inputFile >> n_Count >> s_Count >> v_Count;
 
@@ -33,8 +41,6 @@ Company::Company() {
 		inputFile >> n_Capacity >> s_Capacity >> v_Capacity;
 
 		inputFile >> journeysBeforeCheckup;
-
-		int checkup, autoProm, MaxW;
 
 		inputFile >> checkup;
 		n_CheckupD.setHours(checkup);
@@ -54,9 +60,7 @@ Company::Company() {
 		inputFile >> eventsCount;
 		EventList = new Queue<Event*>;
 
-		char event_Type;
-		int id, days, hours;
-		Event* p_event;
+
 
 		for (int i = 0; i < eventsCount; i++) {
 			inputFile >> event_Type;
@@ -96,7 +100,35 @@ Company::Company() {
 		normalDeliveredCargo = new Queue<Cargo*>;
 		specialDeliveredCargo = new Queue<Cargo*>;
 		VIPDeliveredCargo = new Queue<Cargo*>;
-	
+
+		waitingNormalTrucks = new PriorityQueue<Truck*>(n_Count);
+		waitingSpecialTrucks = new PriorityQueue<Truck*>(s_Count);
+		waitingVIPTrucks = new PriorityQueue<Truck*>(v_Count);
+
+		normalCheckupTrucks = new Queue<Truck*>;
+		specialCheckupTrucks = new Queue<Truck*>;
+		VIPCheckupTrucks = new Queue<Truck*>;
+
+		movingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
+
+		Truck* TruckPtr;
+		for (int i = 0; i < n_Count; i++)
+		{
+			TruckPtr = new Truck('N', n_Capacity, n_CheckupD, n_Speed);
+			waitingNormalTrucks->enqueue(TruckPtr);
+		}
+		for (int i = 0; i < s_Count; i++)
+		{
+			TruckPtr = new Truck('S', s_Capacity, s_CheckupD, s_Speed);
+			waitingSpecialTrucks->enqueue(TruckPtr);
+		}
+		for (int i = 0; i < v_Count; i++)
+		{
+			TruckPtr = new Truck('V', v_Capacity, v_CheckupD, v_Speed);
+			waitingVIPTrucks->enqueue(TruckPtr);
+		}
+
+		LoadingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
 
 	}
 }
@@ -133,7 +165,7 @@ void Company::enqueueVIP(Cargo* cargo) {
 }
 
 void Company::saveToFile() {
-	
+
 	/*ofstream outFile("Output.txt");
 	Cargo* temp;
 	Time totalWait, avgWait;
@@ -148,7 +180,7 @@ void Company::saveToFile() {
 	avgWait = totalWait / totalCount;
 
 	outFile << "Cargos: " << totalCount << "	" << "[N: " << nc_Count << ", S: " << sc_Count << ", V: " << vc_Count << "]" << endl;
-	
+
 	outFile << "Cargo Avg Wait = " << avgWait << endl;
 
 	int percentProm = (float) (cAutoP / nc_Count) * 100;
@@ -162,87 +194,175 @@ bool Company::notTerminated() {
 	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty();
 }
 
-
+bool Company::inWorkingHours(Time currTime)
+{
+	return currTime.getHours() <= 23 && currTime.getHours() >= 5;
+}
 
 void Company::printAll(Time currTime) {
-	cout << "Current Time (Day:Hour):" << currTime << endl;
+	in_out->print(currTime, waitingNormalTrucks, waitingSpecialTrucks, waitingVIPTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks, movingTrucks, waitingNormalCargo, waitingSpecialCargo, waitingVIPCargo, EventList, normalDeliveredCargo, specialDeliveredCargo, VIPDeliveredCargo, LoadingTrucks);
+}
 
-	cout << waitingNormalCargo->getCount() + waitingVIPCargo->getCount() + waitingSpecialCargo->getCount() << " ";
-	cout << "Waiting Cargos: ";
-	waitingNormalCargo->printList() ;
-	cout << " ";
-	cout << "(";
-	waitingSpecialCargo->printQueue();
-	cout << ")";
-	cout << " ";
-	cout << "{";
-	waitingVIPCargo->printQueue();
-	cout << "}";
+void Company::executeCurrEvents(Time currTime) {
 
-	cout << endl << "--------------------------------------" << endl;
+	Event* frontEvent;
 
-	cout << normalDeliveredCargo->getCount() + specialDeliveredCargo->getCount() + VIPDeliveredCargo->getCount() << " ";
-	cout << "Delivered Cargos: ";
-	cout << "[";
-	normalDeliveredCargo->printQueue();
-	cout << "] ";
-	cout << "(";
-	specialDeliveredCargo->printQueue();
-	cout << ") ";
-	cout << "{";
-	VIPDeliveredCargo->printQueue();
-	cout << "}";
+	while (EventList->peek(frontEvent) && currTime == frontEvent->getEventTime())
+	{
+		EventList->dequeue(frontEvent);
+		frontEvent->Execute();
 
-	cout << endl << "--------------------------------------" << endl;
-	cout << endl;
+	}
+}
 
-	
+void Company::assignVIP(Time currTime) {
+	Truck* truckPtr = nullptr;
+	Cargo* loading = nullptr;
+	while (true) {
+
+		if (waitingVIPTrucks->peek(truckPtr)) {}
+		else if (waitingNormalTrucks->peek(truckPtr)) {}
+		else if (waitingSpecialTrucks->peek(truckPtr)) {}
+		else break;
+
+
+		if (waitingVIPCargo->getCount() >= truckPtr->getCapacity())
+		{
+			switch (truckPtr->getType()) {
+			case 'V':
+				waitingVIPTrucks->dequeue(truckPtr);
+				break;
+			case 'N':
+				waitingNormalTrucks->dequeue(truckPtr);
+				break;
+			case 'S':
+				waitingSpecialTrucks->dequeue(truckPtr);
+				break;
+			}
+
+			Time readyTime = currTime;
+			for (int i = 0; i < truckPtr->getCapacity(); i++) {
+				waitingVIPCargo->dequeue(loading);
+				loading->setPriority(-1 * loading->getDistance());
+				truckPtr->enqueueCargo(loading);
+				readyTime = readyTime + loading->getLoadTime();
+			}
+			int priority = readyTime.getTotalHours();
+			truckPtr->setPriority(priority);
+
+			LoadingTrucks->enqueue(truckPtr);
+		}
+		else break;
+
+
+	}
+}
+
+void Company::assignSpecial(Time currTime) {
+
+	Truck* truckPtr = nullptr;
+	Cargo* loading = nullptr;
+
+	while (waitingSpecialTrucks->peek(truckPtr)) {
+
+		if (waitingSpecialCargo->getCount() >= truckPtr->getCapacity()) {
+
+			Time readyTime = currTime;
+			waitingSpecialTrucks->dequeue(truckPtr);
+
+			for (int i = 0; i < truckPtr->getCapacity(); i++) {
+				waitingSpecialCargo->dequeue(loading);
+				loading->setPriority(-1 * loading->getDistance());
+				truckPtr->enqueueCargo(loading);
+				readyTime = readyTime + loading->getLoadTime();
+			}
+			int priority = readyTime.getTotalHours();
+			truckPtr->setPriority(priority);
+
+			LoadingTrucks->enqueue(truckPtr);
+
+		}
+		else break;
+	}
+}
+
+void Company::assignNormal(Time currTime) {
+	Truck* truckPtr = nullptr;
+	Cargo* loading = nullptr;
+	while (true) {
+
+		if (waitingNormalTrucks->peek(truckPtr)) {}
+		else if (waitingVIPTrucks->peek(truckPtr)) {}
+		else break;
+
+
+		if (waitingNormalCargo->getCount() >= truckPtr->getCapacity())
+		{
+			switch (truckPtr->getType()) {
+			case 'V':
+				waitingVIPTrucks->dequeue(truckPtr);
+				break;
+			case 'N':
+				waitingNormalTrucks->dequeue(truckPtr);
+				break;
+			}
+
+			Time readyTime = currTime;
+			for (int i = 0; i < truckPtr->getCapacity(); i++) {
+				waitingNormalCargo->deleteFirst(loading);
+				loading->setPriority(-1 * loading->getDistance());
+				truckPtr->enqueueCargo(loading);
+				readyTime = readyTime + loading->getLoadTime();
+			}
+			int priority = readyTime.getTotalHours();
+			truckPtr->setPriority(priority);
+
+			LoadingTrucks->enqueue(truckPtr);
+		}
+		else break;
+	}
+}
+
+void Company::autoPromote(Time currTime) {
+
 
 }
 
+
 void Company::Simulate() {
 	Time currTime(1, 1);
-	Time startTime(1, 1), endTime(0, 23);
-	Event* frontEvent;
-	Cargo* delivered;
+	Time startTime(1, 5), endTime(0, 23), readyTime;
+	Truck* truckPtr = nullptr;
+	Cargo* delivered, * loading;
+	int counter = 0;
 
 
-	if (in_out->getMode() == "Silent") 
+	if (in_out->getMode() == "Silent")
 		in_out->printMessage("Silent Mode\nSimulations Starts...");
 
 
 	while (notTerminated()) {
 
-		
-		while (EventList->peek(frontEvent) && currTime == frontEvent->getEventTime())
-		{
-			EventList->dequeue(frontEvent);
-			frontEvent->Execute();
-		}
+
+		executeCurrEvents(currTime);
+
+		assignVIP(currTime);
+
+		assignSpecial(currTime);
+
+		assignNormal(currTime);
+
+		autoPromote(currTime);
 
 
-		if (currTime % 5 == 0) {
-			if (waitingNormalCargo->deleteFirst(delivered)) {
-				normalDeliveredCargo->enqueue(delivered);
-				delivered->setDeliveryTime(currTime);
-				delivered->setWaitingTime(currTime - delivered->getPrepTime());
-			}
-
-			if (waitingSpecialCargo->dequeue(delivered)) {
-				specialDeliveredCargo->enqueue(delivered);
-				delivered->setDeliveryTime(currTime);
-				delivered->setWaitingTime(currTime - delivered->getPrepTime());
-			}
-
-			if (waitingVIPCargo->dequeue(delivered)) {
-				VIPDeliveredCargo->enqueue(delivered);
-				delivered->setDeliveryTime(currTime);
-				delivered->setWaitingTime(currTime - delivered->getPrepTime());
-			}
-		}
 		if (in_out->getMode() != "Silent")
-			in_out->print(currTime);
-			
+			printAll(currTime);
+
+		if (inWorkingHours(currTime))
+			counter++;
+		else
+			counter = 0;
+
 		++currTime;
 	}
 
@@ -251,4 +371,45 @@ void Company::Simulate() {
 	}
 
 	//saveToFile();
+}
+
+
+Company::~Company() {
+	delete waitingNormalTrucks;
+	waitingNormalTrucks = nullptr;
+	delete waitingSpecialTrucks;
+	waitingSpecialTrucks = nullptr;
+	delete waitingVIPTrucks;
+	waitingVIPTrucks = nullptr;
+
+	delete normalCheckupTrucks;
+	normalCheckupTrucks = nullptr;
+	delete specialCheckupTrucks;
+	specialCheckupTrucks = nullptr;
+	delete VIPCheckupTrucks;
+	VIPCheckupTrucks = nullptr;
+
+	delete movingTrucks;
+	movingTrucks = nullptr;
+
+	delete waitingNormalCargo;
+	waitingNormalCargo = nullptr;
+	delete waitingSpecialCargo;
+	waitingSpecialCargo = nullptr;
+	delete waitingVIPCargo;
+	waitingVIPCargo = nullptr;
+
+	delete EventList;
+	EventList = nullptr;
+
+	delete normalDeliveredCargo;
+	normalDeliveredCargo = nullptr;
+	delete specialDeliveredCargo;
+	specialDeliveredCargo = nullptr;
+	delete VIPDeliveredCargo;
+	VIPDeliveredCargo = nullptr;
+
+	delete LoadingTrucks;
+	LoadingTrucks = nullptr;
+
 }

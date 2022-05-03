@@ -13,7 +13,7 @@ private:
 public:
     Perparation(Company* pCompany);
 
-    bool Execute() override;
-    void load(ifstream& inputFile) override;
+    bool Execute() override;      // prepares the cargo and enqueues it in the appropriate waiting list
+    void load(ifstream& inputFile) override;   // loads the data from file
 };
 

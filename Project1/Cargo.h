@@ -26,12 +26,13 @@ public:
 
 
 
-	int computePriority(int cost, int distance, Time prepTime);
-	int updatePriority(int cost);
+	int computePriority(int cost, int distance, Time prepTime);  // For initially enqueuing the waiting VIP cargos
+	int updatePriority(int cost);  // Used when a normal cargo is promoted to a VIP cargo, priority is updated using the cargo's new cost. 
 
-	friend ostream& operator << (ostream& out, Cargo* cargo);
-	bool operator > (Cargo cargo);
+	friend ostream& operator << (ostream& out, Cargo* cargo);  // for outputing the cargo's data
+	bool operator > (Cargo* cargo);   // for comparing the priorities
 
+	// Setters and Getters
 	void setId(int id);
 	int getId() const;
 
@@ -59,6 +60,9 @@ public:
 	void setPriority(int priority);
 	int getPriority() const;
 
+	Time calcWait(Time currTime);
+
+	//Writes the cargo's info to the output file, in the required format
 	void saveToFile(ofstream& outFile);
 
 	operator int();

@@ -13,41 +13,22 @@ class UI;
 class Company
 {
 private:
-	
 
-	/*int nc_Count;
-	int sc_Count;
-	int vc_Count;*/
-
-	int cAutoP;
-	
-	int n_Speed;
-	int s_Speed;
-	int v_Speed;
-
-	int n_Capacity;
-	int s_Capacity;
-	int v_Capacity;
 
 	int journeysBeforeCheckup;
-
-	Time n_CheckupD;
-	Time s_CheckupD;
-	Time v_CheckupD;
 
 	Time autoP;
 	Time maxW;
 
-	int eventsCount;
+	PriorityQueue<Truck*>* waitingNormalTrucks;
+	PriorityQueue<Truck*>* waitingSpecialTrucks;
+	PriorityQueue<Truck*>* waitingVIPTrucks;
 
-	CrossLinkedList<Truck*>* waitingNormalTrucks;
-	CrossLinkedList<Truck*>* waitingSpecialTrucks;
-	CrossLinkedList<Truck*>* waitingVIPTrucks;
-
+	Queue<Truck*>* normalCheckupTrucks;
+	Queue<Truck*>* specialCheckupTrucks;
+	Queue<Truck*>* VIPCheckupTrucks;
 
 	PriorityQueue<Truck*>* movingTrucks;
-
-
 
 	CrossLinkedList<Cargo*>* waitingNormalCargo;
 	Queue<Cargo*>* waitingSpecialCargo;
@@ -58,6 +39,9 @@ private:
 	Queue<Cargo*>* normalDeliveredCargo;
 	Queue<Cargo*>* specialDeliveredCargo;
 	Queue<Cargo*>* VIPDeliveredCargo;
+
+	PriorityQueue<Truck*>* LoadingTrucks;
+
 
 	string outFileName;
 
@@ -72,19 +56,29 @@ public:
 	PriorityQueue<Cargo*>* getWaitingVIPCargo() const;*/
 
 	bool deleteNormalCargo(int id, Cargo*& delCargo);
-	
+
 	void enqueueNormal(Cargo* cargo, int id);
 	void enqueueSpecial(Cargo* cargo);
 	void enqueueVIP(Cargo* cargo);
 
+	void readFromFile();
 	void saveToFile();
 
-	void Simulate();
-	bool notTerminated();
+	void executeCurrEvents(Time currTime);
 
-	void print(Time currTime);
+	bool notTerminated();
+	bool inWorkingHours(Time currTime);
+
+	void assignVIP(Time currTime);
+	void assignSpecial(Time currTime);
+	void assignNormal(Time currTime);
+
+	void autoPromote(Time currTime);
+
+	void Simulate();
 
 	void printAll(Time currTime);
-	
+
+	~Company();
 };
 

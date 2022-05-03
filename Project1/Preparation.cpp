@@ -3,7 +3,7 @@
 
 Perparation::Perparation(Company* pCompany) : Event(pCompany)
 {
-	
+	// Setting the parameters to default values
 	cargoType = 'U';
 	distance = -1;
 	cost = -1;
@@ -12,8 +12,9 @@ Perparation::Perparation(Company* pCompany) : Event(pCompany)
 
 
 void Perparation::load(ifstream& inputFile) {
-	inputFile >> cargoType;
 
+	// loading 
+	inputFile >> cargoType;
 
 	char colon;
 	int id, days, hours;
@@ -34,12 +35,12 @@ void Perparation::load(ifstream& inputFile) {
 
 
 bool Perparation::Execute() {
-	
+
 	Time LTime(loadTime);
 	Cargo* newCargo = new Cargo(Event::getEventTime(), LTime, Event::getID(), cargoType, distance, cost);
 
 	switch (cargoType) {
-	
+
 	case 'N':
 		getPCompany()->enqueueNormal(newCargo, Event::getID());
 		break;
@@ -50,6 +51,7 @@ bool Perparation::Execute() {
 
 	case 'V':
 		getPCompany()->enqueueVIP(newCargo);
+		break;
 	}
 
 	return true;
