@@ -11,7 +11,8 @@ private:
 	int capacity;
 	int speed;
 	int movedDistance;
-	Time checkupTime;
+	Time checkupDuration;
+	Time leaveTime;
 	Time deliveryInterval;
 	Time activeTime;
 	Time moveTime;
@@ -20,9 +21,10 @@ private:
 	int deliveryJourneys;
 	int priority;
 	static int currID;
+	static int journeysBeforeCheckup;
 
 public:
-	Truck(char type, int capacity, Time checkupTime, int speed);
+	Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup);
 
 	bool isFull();
 	bool isEmpty();
@@ -46,6 +48,9 @@ public:
 
 	void setCheckupTime(Time checkupTime);
 	Time getCheckupTime() const;
+
+	void setLeaveTime(Time);
+	Time getLeaveTime() const;
 
 	void setMoveTime(Time moveTime);
 	Time getMoveTime() const;
@@ -71,6 +76,8 @@ public:
 
 	void incrementActiveTime(Time currTime);  // sets Active time after calculation
 	Time getActiveTime();
+
+	bool needsCheckup() const;
 
 	void returnStats(Time);
 	void deliveryStats(Time, Cargo*);

@@ -67,7 +67,7 @@ void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, Priori
 
 	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl;
 
-	cout << normalCheckupTrucks-> getCount() << " In-Checkup Trucks: ";
+	cout << normalCheckupTrucks-> getCount() + specialCheckupTrucks->getCount() + VIPCheckupTrucks->getCount() << " In-Checkup Trucks: ";
 	cout << "[";
 	normalCheckupTrucks->printQueue();
 	cout << "] ";

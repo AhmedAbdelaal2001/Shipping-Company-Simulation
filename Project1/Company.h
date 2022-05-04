@@ -14,33 +14,31 @@ class Company
 {
 private:
 
-
-	int journeysBeforeCheckup;
-
 	Time autoP;
 	Time maxW;
-
-	PriorityQueue<Truck*>* waitingNormalTrucks;
-	PriorityQueue<Truck*>* waitingSpecialTrucks;
-	PriorityQueue<Truck*>* waitingVIPTrucks;
-
-	Queue<Truck*>* normalCheckupTrucks;
-	Queue<Truck*>* specialCheckupTrucks;
-	Queue<Truck*>* VIPCheckupTrucks;
-
-	PriorityQueue<Truck*>* movingTrucks;
 
 	CrossLinkedList<Cargo*>* waitingNormalCargo;
 	Queue<Cargo*>* waitingSpecialCargo;
 	PriorityQueue<Cargo*>* waitingVIPCargo;
 
+	PriorityQueue<Truck*>* waitingNormalTrucks;
+	PriorityQueue<Truck*>* waitingSpecialTrucks;
+	PriorityQueue<Truck*>* waitingVIPTrucks;
+
+	PriorityQueue<Truck*>* movingTrucks;
+	
 	Queue<Event*>* EventList;
 
+	PriorityQueue<Truck*>* LoadingTrucks;
+	
 	Queue<Cargo*>* normalDeliveredCargo;
 	Queue<Cargo*>* specialDeliveredCargo;
 	Queue<Cargo*>* VIPDeliveredCargo;
 
-	PriorityQueue<Truck*>* LoadingTrucks;
+
+	Queue<Truck*>* normalCheckupTrucks;
+	Queue<Truck*>* specialCheckupTrucks;
+	Queue<Truck*>* VIPCheckupTrucks;
 
 
 	string outFileName;
@@ -75,6 +73,9 @@ public:
 
 	void fillTruckWithCargo(Truck*, Container<Truck*>*, Container<Cargo*>*, Time);
 	void moveTruckToWaiting(Truck*);
+	void moveToCheckup(Truck*, Time);
+	void returnFromCheckup(Time);
+
 
 	void assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
 	void assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);

@@ -85,6 +85,7 @@ int Cargo::getCost() const { return cost; }
 
 void Cargo::setPriority(int priority) { this->priority = priority; }
 int Cargo::getPriority() const { return priority; }
+
 void Cargo::setPriorityToDistance() { priority = -1 * distance; }
 
 

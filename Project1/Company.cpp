@@ -29,7 +29,7 @@ void Company::readFromFile() {
 
 	if (!inputFile.fail()) {
 
-		int n_Count, s_Count, v_Count, n_Speed, s_Speed, v_Speed, n_Capacity, s_Capacity, v_Capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours;
+		int n_Count, s_Count, v_Count, n_Speed, s_Speed, v_Speed, n_Capacity, s_Capacity, v_Capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours, journeysBeforeCheckup;
 		Time n_CheckupD, s_CheckupD, v_CheckupD;
 		char event_Type;
 		Event* p_event;
@@ -113,17 +113,17 @@ void Company::readFromFile() {
 		Truck* TruckPtr;
 		for (int i = 0; i < n_Count; i++)
 		{
-			TruckPtr = new Truck('N', n_Capacity, n_CheckupD, n_Speed);
+			TruckPtr = new Truck('N', n_Capacity, n_CheckupD, n_Speed, journeysBeforeCheckup);
 			waitingNormalTrucks->enqueue(TruckPtr);
 		}
 		for (int i = 0; i < s_Count; i++)
 		{
-			TruckPtr = new Truck('S', s_Capacity, s_CheckupD, s_Speed);
+			TruckPtr = new Truck('S', s_Capacity, s_CheckupD, s_Speed, journeysBeforeCheckup);
 			waitingSpecialTrucks->enqueue(TruckPtr);
 		}
 		for (int i = 0; i < v_Count; i++)
 		{
-			TruckPtr = new Truck('V', v_Capacity, v_CheckupD, v_Speed);
+			TruckPtr = new Truck('V', v_Capacity, v_CheckupD, v_Speed, journeysBeforeCheckup);
 			waitingVIPTrucks->enqueue(TruckPtr);
 		}
 
@@ -191,7 +191,7 @@ void Company::saveToFile() {
 
 bool Company::notTerminated() {
 	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty() ||
-		!LoadingTrucks->isEmpty() || !movingTrucks->isEmpty();
+		!LoadingTrucks->isEmpty() || !movingTrucks->isEmpty() || !normalCheckupTrucks->isEmpty() || !specialCheckupTrucks->isEmpty() || !VIPCheckupTrucks->isEmpty();
 }
 
 bool Company::inWorkingHours(Time currTime)
@@ -282,6 +282,63 @@ void Company::moveTruckToWaiting(Truck* truckPtr) {
 		break;
 	}
 }
+
+void Company::moveToCheckup(Truck* truckPtr, Time currTime) {
+
+	truckPtr->setLeaveTime(currTime);
+
+	switch (truckPtr->getType()) {
+
+	case 'N':
+		normalCheckupTrucks->enqueue(truckPtr);
+		break;
+
+	case 'S':
+		specialCheckupTrucks->enqueue(truckPtr);
+		break;
+
+	case 'V':
+		VIPCheckupTrucks->enqueue(truckPtr);
+		break;
+	}
+}
+
+void Company::returnFromCheckup(Time currTime) {
+
+	Truck* nTruck, *sTruck, *vTruck;
+
+	nTruck = sTruck = vTruck = nullptr;
+
+	do {
+		
+		if (normalCheckupTrucks->peek(nTruck) && nTruck->getLeaveTime() == currTime) {
+			normalCheckupTrucks->dequeue(nTruck);
+			moveTruckToWaiting(nTruck);
+		}
+		else
+			nTruck = nullptr;
+
+		if (specialCheckupTrucks->peek(sTruck) && sTruck->getLeaveTime() == currTime) {
+			specialCheckupTrucks->dequeue(sTruck);
+			moveTruckToWaiting(sTruck);
+		}
+		else
+			sTruck = nullptr;
+
+
+		if (VIPCheckupTrucks->peek(vTruck) && vTruck->getLeaveTime() == currTime) {
+			VIPCheckupTrucks->dequeue(vTruck);
+			moveTruckToWaiting(vTruck);
+		}
+		else
+			vTruck = nullptr;
+
+
+	} while (nTruck || sTruck || vTruck);
+
+}
+
+
 
 
 void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime) {
@@ -405,7 +462,11 @@ void Company::completeDelivery(Time currTime) {
 		else {
 
 			truckPtr->returnStats(currTime);
-			moveTruckToWaiting(truckPtr);
+
+			if (truckPtr->needsCheckup())
+				moveToCheckup(truckPtr, currTime);
+			else
+				moveTruckToWaiting(truckPtr);
 		}
 	}
 }
@@ -437,6 +498,10 @@ void Company::Simulate() {
 		}
 
 		completeDelivery(currTime);
+
+		returnFromCheckup(currTime);
+
+
 
 		if (in_out->getMode() != "Silent")
 			printAll(currTime);

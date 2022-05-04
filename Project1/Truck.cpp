@@ -1,10 +1,12 @@
 #include "Truck.h"
 
 int Truck::currID = 0;
+int Truck::journeysBeforeCheckup = 0;
 
-Truck::Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/)
+Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup)
 {
 	currID++;
+	this->journeysBeforeCheckup = journeysBeforeCheckup;
 	cargoList = new PriorityQueue<Cargo*>(capacity);
 	setID(currID);
 	setType(type);
@@ -56,11 +58,18 @@ int Truck::getCapacity() {
 
 void Truck::setCheckupTime(Time checkupTime)
 {
-	this->checkupTime = checkupTime;
+	this->checkupDuration = checkupTime;
 }
 
 Time Truck::getCheckupTime() const {
-	return checkupTime;
+	return checkupDuration;
+}
+
+void Truck::setLeaveTime(Time currTime) {
+	leaveTime  = currTime + checkupDuration;
+}
+Time Truck::getLeaveTime() const {
+	return leaveTime;
 }
 
 void Truck::setMoveTime(Time moveTime) { this->moveTime = moveTime; }
@@ -121,6 +130,11 @@ void Truck::incrementActiveTime(Time currTime) {
 Time Truck::getActiveTime() {
 	return activeTime;
 }
+
+bool Truck::needsCheckup() const {
+	return deliveryJourneys == journeysBeforeCheckup;
+}
+
 
 void Truck::returnStats(Time currTime) {
 	Time restartTime;
