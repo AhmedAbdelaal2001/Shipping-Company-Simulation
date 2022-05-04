@@ -25,7 +25,10 @@ bool Truck::isFull() {
 }
 
 Time Truck::getMoveTime() {
-	moveTime.setHours(-1 * priority);
+	Time newMoveTime;
+	newMoveTime.setHours(-1 * priority);
+	moveTime = newMoveTime;
+
 	return moveTime;
 }
 

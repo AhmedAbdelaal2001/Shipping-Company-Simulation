@@ -249,9 +249,11 @@ void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 	int newPriority) {
 	Cargo* loading = nullptr;
 
+	
+
 	while (cargoContainer->peek(loading))
 		if (loading->calcWait(currTime) >= maxW) {
-
+			truckPtr->setPriority(newPriority);
 			if (truckPtr->isFull()) {
 				moveTruckToLoading(truckContainer, truckPtr);
 				if (!truckContainer->peek(truckPtr)) {
