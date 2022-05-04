@@ -34,8 +34,9 @@ void Preparation::load(ifstream& inputFile) {
 
 
 bool Preparation::Execute() {
+	Time LT(0, loadTime);
 
-	Cargo* newCargo = new Cargo(Event::getEventTime(), loadTime, Event::getID(), cargoType, distance, cost);
+	Cargo* newCargo = new Cargo(Event::getEventTime(), LT, Event::getID(), cargoType, distance, cost);
 
 	switch (cargoType) {
 

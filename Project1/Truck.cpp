@@ -59,9 +59,12 @@ void Truck::setCheckupTime(Time checkupTime)
 	this->checkupTime = checkupTime;
 }
 
-Time Truck::getCheckupTime() {
+Time Truck::getCheckupTime() const {
 	return checkupTime;
 }
+
+void Truck::setMoveTime(Time moveTime) { this->moveTime = moveTime; }
+Time Truck::getMoveTime() const { return moveTime; }
 
 void Truck::setID(int id) {
 	this->id = id;
@@ -125,6 +128,7 @@ Time Truck::getActiveTime() {
 
 void Truck::enqueueCargo(Cargo* loading) {
 	cargoList->enqueue(loading);
+	moveTime = moveTime + loading->getLoadTime();
 }
 
 
@@ -178,15 +182,26 @@ int Truck::getPriority() const {
 	return priority;
 }
 
-void Truck::updatePriority(int extraPriority) {
+void Truck::incrementPriority(int extraPriority) {
 	priority += extraPriority;
 }
 
-int Truck::calcMovingPriority(Time currTime) {
+void Truck::setPriorityToMoveTime() {
+	
+	priority = -1 * moveTime.getTotalHours();
+
+}
+
+
+void Truck::setMovingPriority(Time currTime) {
 	Cargo* frontCargo = nullptr;
+
 	if(cargoList->peek(frontCargo))
-		return currTime.getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed + frontCargo->getLoadTime();
-	return currTime.getTotalHours() + movedDistance / speed;
+		priority = (currTime + frontCargo->getLoadTime()).getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed;
+	else
+		priority = currTime.getTotalHours() + movedDistance / speed;
+
+	priority *= -1;
 }
 
 

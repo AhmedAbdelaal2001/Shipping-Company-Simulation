@@ -18,9 +18,10 @@ int Time::getHours() const {
 }
 
 void Time::setHours(int hour) {
-//
+
 	days += hour / 24;
 	hours = hour % 24;
+
 }
 
 int Time::getDays() const {

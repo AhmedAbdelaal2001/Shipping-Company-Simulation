@@ -45,7 +45,10 @@ public:
 	int getMovedDistance() const;
 
 	void setCheckupTime(Time checkupTime);
-	Time getCheckupTime();
+	Time getCheckupTime() const;
+
+	void setMoveTime(Time moveTime);
+	Time getMoveTime() const;
 
 	// for phase 2
 	/*void setDeliveryInterval(Time deliveryInterval);
@@ -59,12 +62,13 @@ public:
 
 	void setPriority(int priority);   // when trucks move from waiting to loading or loading to moving priority is recalculated and set
 	int getPriority() const;
-	void updatePriority(int extraPriority);
+	void incrementPriority(int extraPriority);
+	void setPriorityToMoveTime();
+	void setMovingPriority(Time);
 
 	void setActiveTime(Time activeTime);  // sets Active time after calculation
 	Time getActiveTime();
 
-	int calcMovingPriority(Time);
 
 	void enqueueCargo(Cargo* loading);
 

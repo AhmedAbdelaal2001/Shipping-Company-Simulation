@@ -23,7 +23,7 @@ Cargo::Cargo() {
 }
 
 //non-default constructor
-Cargo::Cargo(Time prepTime, int loadTime, int id, char type, int distance, float cost, float priority) {
+Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, float cost, float priority) {
 
 	if (type == 'V')
 		priority = computePriority(cost, distance, prepTime);  //Computes the priority according according the cargo's cost, distance, and prep time
@@ -57,8 +57,8 @@ int Cargo::getId() const { return id; }
 void Cargo::setPrepTime(Time prepTime) { this->prepTime = prepTime; }
 Time Cargo::getPrepTime() const { return prepTime; }
 
-void Cargo::setLoadTime(int loadTime) { this->loadTime = loadTime; }
-int Cargo::getLoadTime() const { return loadTime; }
+void Cargo::setLoadTime(Time loadTime) { this->loadTime = loadTime; }
+Time Cargo::getLoadTime() const { return loadTime; }
 
 void Cargo::setDeliveryTime(Time deliveryTime) {
 	this->deliveryTime = deliveryTime;
@@ -85,6 +85,8 @@ int Cargo::getCost() const { return cost; }
 
 void Cargo::setPriority(int priority) { this->priority = priority; }
 int Cargo::getPriority() const { return priority; }
+void Cargo::setPriorityToDistance() { priority = -1 * distance; }
+
 
 Time Cargo::calcWait(Time currTime) {
 	return currTime - prepTime;

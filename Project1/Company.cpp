@@ -61,7 +61,6 @@ void Company::readFromFile() {
 		EventList = new Queue<Event*>;
 
 
-
 		for (int i = 0; i < eventsCount; i++) {
 			inputFile >> event_Type;
 
@@ -192,7 +191,7 @@ void Company::saveToFile() {
 
 bool Company::notTerminated() {
 	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty() ||
-		!LoadingTrucks->isEmpty();
+		!LoadingTrucks->isEmpty() || !movingTrucks->isEmpty();
 }
 
 bool Company::inWorkingHours(Time currTime)
@@ -208,11 +207,11 @@ void Company::executeCurrEvents(Time currTime) {
 
 	Event* frontEvent;
 
-	while (EventList->peek(frontEvent) && currTime == frontEvent->getEventTime())
-	{
+	while (EventList->peek(frontEvent) && currTime >= frontEvent->getEventTime()) {
 		EventList->dequeue(frontEvent);
+		if (!(frontEvent->getEventTime() == currTime))
+			frontEvent->setEventTime(currTime);
 		frontEvent->Execute();
-
 	}
 }
 
@@ -220,40 +219,37 @@ void Company::executeCurrEvents(Time currTime) {
 void Company::moveTruckToLoading(Container<Truck*>* truckContainer, Truck* truckPtr) {
 	
 	truckContainer->dequeue(truckPtr);
+	truckPtr->setPriorityToMoveTime();
 	LoadingTrucks->enqueue(truckPtr);
 
 }
 
-void Company::loadCargo(Container<Cargo*>* cargoContainer, Truck* truckPtr) {
+void Company::loadCargo(Container<Cargo*>* cargoContainer, Truck* truckPtr, Time currTime) {
 	Cargo* loading = nullptr;
+	
+	if (truckPtr->isEmpty())
+		truckPtr->setMoveTime(currTime);
 
 	cargoContainer->dequeue(loading);
-	loading->setPriority(-1 * loading->getDistance());
+	loading->setPriorityToDistance();
 	truckPtr->enqueueCargo(loading);
-	truckPtr->updatePriority(-1 * loading->getLoadTime());
 }
 
 void Company::fillTruckWithCargo(Truck* truckPtr, Container<Truck*>* truckContainer, Container<Cargo*>* cargoContainer,
-	int newPriority) {
-	
-	truckPtr->setPriority(newPriority);
+	Time currTime) {
 
 	for (int i = 0; i < truckPtr->getCapacity(); i++) {
-		loadCargo(cargoContainer, truckPtr);
+		loadCargo(cargoContainer, truckPtr, currTime);
 	}
 	
 	moveTruckToLoading(truckContainer, truckPtr);
 }
 
-void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime,
-	int newPriority) {
+void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime) {
 	Cargo* loading = nullptr;
-
-	
 
 	while (cargoContainer->peek(loading))
 		if (loading->calcWait(currTime) >= maxW) {
-			truckPtr->setPriority(newPriority);
 			if (truckPtr->isFull()) {
 				moveTruckToLoading(truckContainer, truckPtr);
 				if (!truckContainer->peek(truckPtr)) {
@@ -261,7 +257,7 @@ void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 					break;
 				}
 			}
-			loadCargo(cargoContainer, truckPtr);
+			loadCargo(cargoContainer, truckPtr, currTime);
 		}
 		else break;
 
@@ -269,11 +265,8 @@ void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 		if (!truckPtr->isEmpty())
 			moveTruckToLoading(truckContainer, truckPtr);
 
-		truckContainer->peek(truckPtr);
-
-		while (cargoContainer->getCount() >= truckPtr->getCapacity()) {
-			fillTruckWithCargo(truckPtr, truckContainer, cargoContainer, newPriority);
-			truckContainer->peek(truckPtr);
+		while (truckContainer->peek(truckPtr) && cargoContainer->getCount() >= truckPtr->getCapacity()) {
+			fillTruckWithCargo(truckPtr, truckContainer, cargoContainer, currTime);
 		}
 
 }
@@ -283,16 +276,15 @@ void Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>**
 	Time currTime) {
 	
 	Truck* truckPtr = nullptr;
-	int newPriority = -1 * currTime.getTotalHours();
 
 	for (int i = 0; i < truckContainersNum; i++) {
 		while (truckContainerArr[i]->peek(truckPtr)) {
 
 			if (cargoContainer->getCount() >= truckPtr->getCapacity()) {
-				fillTruckWithCargo(truckPtr, truckContainerArr[i], cargoContainer, newPriority);
+				fillTruckWithCargo(truckPtr, truckContainerArr[i], cargoContainer, currTime);
 			}
 			else {
-				assignMaxWCargo(cargoContainer, truckPtr, truckContainerArr[i], currTime, newPriority);
+				assignMaxWCargo(cargoContainer, truckPtr, truckContainerArr[i], currTime);
 				
 				if (!truckPtr) break;
 				if (truckContainerArr[i]->peek(truckPtr))
@@ -323,18 +315,13 @@ void Company::assignNormal(Time currTime, Container<Cargo*>* cargoContainer) {
 
 void Company::autoPromote(Time currTime) {
 	Cargo* promotedCargoPtr = nullptr;
-	
-	if (!waitingNormalCargo->peek(promotedCargoPtr))
-		return;
 
-	while (promotedCargoPtr->calcWait(currTime) >= autoP) {
+	while (waitingNormalCargo->peek(promotedCargoPtr) && promotedCargoPtr->calcWait(currTime) >= autoP) {
 		
 		waitingNormalCargo->dequeue(promotedCargoPtr);
 		promotedCargoPtr->setType('V');
 		waitingVIPCargo->enqueue(promotedCargoPtr);
 
-		if (!waitingNormalCargo->peek(promotedCargoPtr))
-			return;
 	}
 }
 
@@ -343,11 +330,10 @@ void Company::startDelivery(Time currTime) {
 	Cargo* headCargoPtr = nullptr;
 	int newPriority;
 
-	while (LoadingTrucks->peek(truckPtr) && truckPtr->getMoveTime() == currTime) {
+	while (LoadingTrucks->peek(truckPtr) &&  currTime >= truckPtr->getMoveTime()) {
 		
 		LoadingTrucks->dequeue(truckPtr);
-		newPriority = truckPtr->calcMovingPriority(currTime);
-		truckPtr->setPriority(newPriority);
+		truckPtr->setMovingPriority(currTime);
 		movingTrucks->enqueue(truckPtr);
 
 	}
@@ -364,18 +350,19 @@ void Company::Simulate() {
 
 	while (notTerminated()) {
 
+		if (inWorkingHours(currTime)) {
 			
-		executeCurrEvents(currTime);
+			executeCurrEvents(currTime);
 
-		assignVIP(currTime, waitingVIPCargo);
-		assignSpecial(currTime, waitingSpecialCargo);
-		assignNormal(currTime, waitingNormalCargo);
+			assignVIP(currTime, waitingVIPCargo);
+			assignSpecial(currTime, waitingSpecialCargo);
+			assignNormal(currTime, waitingNormalCargo);
+			
+			autoPromote(currTime);
 
+			startDelivery(currTime);
 
-		startDelivery(currTime);
-
-		autoPromote(currTime);
-
+		}
 		if (in_out->getMode() != "Silent")
 			printAll(currTime);
 

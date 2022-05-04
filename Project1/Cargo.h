@@ -11,7 +11,7 @@ class Cargo
 private:
 	int id;
 	Time prepTime;
-	int loadTime;
+	Time loadTime;
 	Time waitingTime;
 	Time deliveryTime;
 	char type;
@@ -22,7 +22,7 @@ private:
 public:
 	Cargo();
 
-	Cargo(Time prepTime, int loadTime, int id, char type = 'U', int distance = 0, float cost = 0, float priority = 0);
+	Cargo(Time prepTime, Time loadTime, int id, char type = 'U', int distance = 0, float cost = 0, float priority = 0);
 
 	int computePriority(int cost, int distance, Time prepTime);  // For initially enqueuing the waiting VIP cargos
 	int updatePriority(int cost);  // Used when a normal cargo is promoted to a VIP cargo, priority is updated using the cargo's new cost. 
@@ -37,8 +37,8 @@ public:
 	void setPrepTime(Time prepTime);
 	Time getPrepTime() const;
 
-	void setLoadTime(int loadTime);
-	int getLoadTime() const;
+	void setLoadTime(Time loadTime);
+	Time getLoadTime() const;
 
 	void setWaitingTime(Time waitingTime);
 	Time getWaitingTime() const;
@@ -57,6 +57,7 @@ public:
 
 	void setPriority(int priority);
 	int getPriority() const;
+	void setPriorityToDistance();
 
 	Time calcWait(Time currTime);
 

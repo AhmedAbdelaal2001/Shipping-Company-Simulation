@@ -70,10 +70,10 @@ public:
 	bool inWorkingHours(Time currTime);
 
 	void moveTruckToLoading(Container<Truck*>*, Truck*);
-	void loadCargo(Container<Cargo*>*, Truck*);
-	void fillTruckWithCargo(Truck*, Container<Truck*>*, Container<Cargo*>*, int);
+	void loadCargo(Container<Cargo*>*, Truck*, Time);
+	void fillTruckWithCargo(Truck*, Container<Truck*>*, Container<Cargo*>*, Time);
 
-	void assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time, int);
+	void assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
 	void assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
 
 	void assignVIP(Time currTime, Container<Cargo*>*);
