@@ -235,6 +235,26 @@ void Company::loadCargo(Container<Cargo*>* cargoContainer, Truck* truckPtr, Time
 	truckPtr->enqueueCargo(loading);
 }
 
+void Company::moveCargoToDelivered(Cargo* deliveredCargo) {
+
+	switch (deliveredCargo->getType()) {
+
+	case 'N':
+		normalDeliveredCargo->enqueue(deliveredCargo);
+		break;
+
+	case 'S':
+		specialDeliveredCargo->enqueue(deliveredCargo);
+		break;
+
+	case 'V':
+		VIPDeliveredCargo->enqueue(deliveredCargo);
+		break;
+	}
+
+}
+
+
 void Company::fillTruckWithCargo(Truck* truckPtr, Container<Truck*>* truckContainer, Container<Cargo*>* cargoContainer,
 	Time currTime) {
 
@@ -245,29 +265,49 @@ void Company::fillTruckWithCargo(Truck* truckPtr, Container<Truck*>* truckContai
 	moveTruckToLoading(truckContainer, truckPtr);
 }
 
+void Company::moveTruckToWaiting(Truck* truckPtr) {
+	
+	switch (truckPtr->getType()) {
+
+	case 'N':
+		waitingNormalTrucks->enqueue(truckPtr);
+		break;
+
+	case 'S':
+		waitingSpecialTrucks->enqueue(truckPtr);
+		break;
+
+	case 'V':
+		waitingVIPTrucks->enqueue(truckPtr);
+		break;
+	}
+}
+
+
 void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime) {
 	Cargo* loading = nullptr;
 
-	while (cargoContainer->peek(loading))
-		if (loading->calcWait(currTime) >= maxW) {
-			if (truckPtr->isFull()) {
-				moveTruckToLoading(truckContainer, truckPtr);
-				if (!truckContainer->peek(truckPtr)) {
-					truckPtr = nullptr;
-					break;
-				}
-			}
-			loadCargo(cargoContainer, truckPtr, currTime);
-		}
-		else break;
-
-	if (truckPtr)
-		if (!truckPtr->isEmpty())
+	while (cargoContainer->peek(loading) && loading->calcWait(currTime) >= maxW) {
+		if (truckPtr->isFull()) {
 			moveTruckToLoading(truckContainer, truckPtr);
-
-		while (truckContainer->peek(truckPtr) && cargoContainer->getCount() >= truckPtr->getCapacity()) {
-			fillTruckWithCargo(truckPtr, truckContainer, cargoContainer, currTime);
+			if (!truckContainer->peek(truckPtr)) {
+				truckPtr = nullptr;
+				break;
+			}
 		}
+		
+		loadCargo(cargoContainer, truckPtr, currTime);
+	
+	}
+
+	if (truckPtr && !truckPtr->isEmpty()) {
+
+		moveTruckToLoading(truckContainer, truckPtr);
+	}
+
+	while (truckContainer->peek(truckPtr) && cargoContainer->getCount() >= truckPtr->getCapacity()) {
+		fillTruckWithCargo(truckPtr, truckContainer, cargoContainer, currTime);
+	}
 
 }
 
@@ -339,6 +379,38 @@ void Company::startDelivery(Time currTime) {
 	}
 }
 
+void Company::completeDelivery(Time currTime) {
+
+	Truck* truckPtr;
+	Cargo* deliveredCargo;
+
+	while (movingTrucks->peek(truckPtr) && -1 * truckPtr->getPriority() == currTime.getTotalHours()) {
+
+		movingTrucks->dequeue(truckPtr);
+
+		if (truckPtr->dequeueCargo(deliveredCargo)) {
+
+			moveCargoToDelivered(deliveredCargo);
+
+			truckPtr->deliveryStats(currTime, deliveredCargo);
+
+			movingTrucks->enqueue(truckPtr);
+
+			if (truckPtr->isEmpty()) {
+
+				truckPtr->incrementActiveTime(currTime);
+
+			}
+		}
+		else {
+
+			truckPtr->returnStats(currTime);
+			moveTruckToWaiting(truckPtr);
+		}
+	}
+}
+
+
 
 
 void Company::Simulate() {
@@ -363,6 +435,9 @@ void Company::Simulate() {
 			startDelivery(currTime);
 
 		}
+
+		completeDelivery(currTime);
+
 		if (in_out->getMode() != "Silent")
 			printAll(currTime);
 

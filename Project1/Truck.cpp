@@ -16,8 +16,8 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed/*, Time delive
 	setDeliveredCargos(deliveredCargos);
 	setDeliveredJourneys(deliveryJourneys);
 	setActiveTime(activeTime);*/
-	setPriority(speed / capacity);
-
+	setWaitingPriority();
+	deliveredCargos = deliveryJourneys = 0;
 }
 
 bool Truck::isFull() {
@@ -90,40 +90,56 @@ int Truck::getMovedDistance() const {
 	return movedDistance;
 }
 
-//void Truck::setDeliveryInterval(Time deliveryInterval)
-//{
-//	this->deliveryInterval = deliveryInterval;
-//}
-//
-//Time Truck::getDeliveryInterval() {
-//	return deliveryInterval;
-//}
-//
-//void Truck::setDeliveredCargos(int deliveredCargos)
-//{
-//	this->deliveredCargos = deliveredCargos;
-//}
-//
-//int Truck::getDeliveredCargos() {
-//	return deliveredCargos;
-//}
-//
-//void Truck::setDeliveredJourneys(int deliveryJourneys)
-//{
-//	this->deliveryJourneys = deliveryJourneys;
-//}
-//
-//int Truck::getDeliveredJourneys() {
-//	return deliveryJourneys;
-//}
+void Truck::setDeliveryInterval(Time deliveryInterval) {
+	this->deliveryInterval = deliveryInterval;
+}
 
-void Truck::setActiveTime(Time activeTime)
-{
-	this->activeTime = activeTime;
+Time Truck::getDeliveryInterval() {
+	return deliveryInterval;
+}
+
+void Truck::incrementDeliveredCargos() {
+	deliveredCargos++;
+}
+
+int Truck::getDeliveredCargos() {
+	return deliveredCargos;
+}
+
+void Truck::incrementDeliveredJourneys() {
+	deliveryJourneys++;
+}
+
+int Truck::getDeliveredJourneys() {
+	return deliveryJourneys;
+}
+
+void Truck::incrementActiveTime(Time currTime) {
+	activeTime = activeTime + (currTime - moveTime);
 }
 
 Time Truck::getActiveTime() {
 	return activeTime;
+}
+
+void Truck::returnStats(Time currTime) {
+	Time restartTime;
+
+	setMovedDistance(0);
+	setWaitingPriority();
+	setDeliveryInterval(currTime - getMoveTime());
+	setMoveTime(restartTime);
+	incrementDeliveredJourneys();
+
+}
+
+void Truck::deliveryStats(Time currTime, Cargo* deliveredCargo) {
+	
+	deliveredCargo->setDeliveryTime(currTime);
+	incrementDeliveredCargos();
+	setMovedDistance(deliveredCargo->getDistance());
+	setMovingPriority(currTime);
+
 }
 
 void Truck::enqueueCargo(Cargo* loading) {
@@ -131,6 +147,11 @@ void Truck::enqueueCargo(Cargo* loading) {
 	moveTime = moveTime + loading->getLoadTime();
 }
 
+bool Truck::dequeueCargo(Cargo*& cargoPtr) {
+	
+	return cargoList->dequeue(cargoPtr);
+
+}
 
 void Truck::saveToFile(ofstream outFile) {
 	outFile << id << "	";
@@ -177,6 +198,13 @@ void Truck::setPriority(int priority)
 {
 	this->priority = priority;
 }
+
+void Truck::setWaitingPriority() {
+
+	setPriority(speed / capacity);
+
+}
+
 
 int Truck::getPriority() const {
 	return priority;

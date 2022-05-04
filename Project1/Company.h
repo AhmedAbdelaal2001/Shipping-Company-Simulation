@@ -71,7 +71,10 @@ public:
 
 	void moveTruckToLoading(Container<Truck*>*, Truck*);
 	void loadCargo(Container<Cargo*>*, Truck*, Time);
+	void moveCargoToDelivered(Cargo*);
+
 	void fillTruckWithCargo(Truck*, Container<Truck*>*, Container<Cargo*>*, Time);
+	void moveTruckToWaiting(Truck*);
 
 	void assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
 	void assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
@@ -83,6 +86,9 @@ public:
 	void autoPromote(Time currTime);
 
 	void startDelivery(Time currTime);
+
+	void completeDelivery(Time currTime);
+
 
 	void Simulate();
 

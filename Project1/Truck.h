@@ -22,7 +22,7 @@ private:
 	static int currID;
 
 public:
-	Truck(char type, int capacity, Time checkupTime, int speed/*, Time deliveryInterval, int deliveredCargos, int deliveryJourneys, Time activeTime*/);
+	Truck(char type, int capacity, Time checkupTime, int speed);
 
 	bool isFull();
 	bool isEmpty();
@@ -51,26 +51,32 @@ public:
 	Time getMoveTime() const;
 
 	// for phase 2
-	/*void setDeliveryInterval(Time deliveryInterval);
+	void setDeliveryInterval(Time deliveryInterval);
 	Time getDeliveryInterval();
 
-	void setDeliveredCargos(int deliveredCargos);
+	void incrementDeliveredCargos();
 	int getDeliveredCargos();
 
-	void setDeliveredJourneys(int deliveryJourneys);
-	int getDeliveredJourneys();*/
+	void incrementDeliveredJourneys();
+	int getDeliveredJourneys();
 
 	void setPriority(int priority);   // when trucks move from waiting to loading or loading to moving priority is recalculated and set
+	void setWaitingPriority();
+
 	int getPriority() const;
 	void incrementPriority(int extraPriority);
+	
 	void setPriorityToMoveTime();
 	void setMovingPriority(Time);
 
-	void setActiveTime(Time activeTime);  // sets Active time after calculation
+	void incrementActiveTime(Time currTime);  // sets Active time after calculation
 	Time getActiveTime();
 
+	void returnStats(Time);
+	void deliveryStats(Time, Cargo*);
 
 	void enqueueCargo(Cargo* loading);
+	bool dequeueCargo(Cargo*&);
 
 	void saveToFile(ofstream out);   // Writes to output file
 
