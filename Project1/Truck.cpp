@@ -3,7 +3,7 @@
 int Truck::currID = 0;
 int Truck::journeysBeforeCheckup = 0;
 
-Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup)
+Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime)
 {
 	currID++;
 	this->journeysBeforeCheckup = journeysBeforeCheckup;
@@ -14,6 +14,7 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysB
 	setCheckupTime(checkupTime);
 	setSpeed(speed);
 	setMovedDistance(0);
+	worksAtNight = shiftTime == 'N' ? true : false;
 	/*setDeliveryInterval(deliveryInterval);
 	setDeliveredCargos(deliveredCargos);
 	setDeliveredJourneys(deliveryJourneys);
@@ -165,6 +166,33 @@ bool Truck::dequeueCargo(Cargo*& cargoPtr) {
 	
 	return cargoList->dequeue(cargoPtr);
 
+}
+
+bool Truck::containsNormal()
+{
+	Cargo* cargoPtr = nullptr;
+	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'N')
+		return true;
+
+	return false;
+}
+
+bool Truck::containsSpecial()
+{
+	Cargo* cargoPtr = nullptr;
+	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'S')
+		return true;
+
+	return false;
+}
+
+bool Truck::containsVIP()
+{
+	Cargo* cargoPtr = nullptr;
+	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'V')
+		return true;
+
+	return false;
 }
 
 void Truck::saveToFile(ofstream outFile) {

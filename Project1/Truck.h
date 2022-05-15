@@ -7,6 +7,7 @@ class Truck
 {
 private:
 	char type;
+	bool worksAtNight;
 	int id;
 	int capacity;
 	int speed;
@@ -24,7 +25,7 @@ private:
 	static int journeysBeforeCheckup;
 
 public:
-	Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup);
+	Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime);
 
 	bool isFull();
 	bool isEmpty();
@@ -84,6 +85,10 @@ public:
 
 	void enqueueCargo(Cargo* loading);
 	bool dequeueCargo(Cargo*&);
+
+	bool containsNormal();
+	bool containsSpecial();
+	bool containsVIP();
 
 	void saveToFile(ofstream out);   // Writes to output file
 

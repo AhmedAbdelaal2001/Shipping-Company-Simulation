@@ -14,6 +14,8 @@ class Company
 {
 private:
 
+	bool isLoadingVIP, isLoadingSpecial, isLoadingNormal;
+
 	Time autoP;
 	Time maxW;
 
@@ -24,6 +26,10 @@ private:
 	PriorityQueue<Truck*>* waitingNormalTrucks;
 	PriorityQueue<Truck*>* waitingSpecialTrucks;
 	PriorityQueue<Truck*>* waitingVIPTrucks;
+
+	PriorityQueue<Truck*>* normalNightTrucks;
+	PriorityQueue<Truck*>* specialNightTrucks;
+	PriorityQueue<Truck*>* VIPNightTrucks;
 
 	PriorityQueue<Truck*>* movingTrucks;
 	
@@ -77,8 +83,8 @@ public:
 	void returnFromCheckup(Time);
 
 
+	bool assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
 	void assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
-	void assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
 
 	void assignVIP(Time currTime, Container<Cargo*>*);
 	void assignSpecial(Time currTime, Container<Cargo*>*);
@@ -87,13 +93,12 @@ public:
 	void autoPromote(Time currTime);
 
 	void startDelivery(Time currTime);
-
 	void completeDelivery(Time currTime);
 
+	void printAll(Time currTime);
 
 	void Simulate();
 
-	void printAll(Time currTime);
 
 	~Company();
 };

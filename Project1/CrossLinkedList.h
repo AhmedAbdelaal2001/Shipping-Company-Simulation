@@ -11,7 +11,7 @@ private:
 	HashMap<Node<T>*> hashMap;
 
 public:
-	CrossLinkedList(int maxSize) : hashMap(maxSize) { }
+	CrossLinkedList(int maxSize = 10) : hashMap(maxSize) { }
 
 	int getCount() const {
 		return hashMap.getCount();

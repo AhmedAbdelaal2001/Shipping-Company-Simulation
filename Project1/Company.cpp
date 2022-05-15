@@ -8,7 +8,7 @@ Company::Company() {
 
 
 	in_out = new UI(this);
-
+	isLoadingNormal = isLoadingSpecial = isLoadingVIP = false;
 	readFromFile();
 
 }
@@ -29,16 +29,40 @@ void Company::readFromFile() {
 
 	if (!inputFile.fail()) {
 
-		int n_Count, s_Count, v_Count, n_Speed, s_Speed, v_Speed, n_Capacity, s_Capacity, v_Capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours, journeysBeforeCheckup;
+		int count, speed, capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours, journeysBeforeCheckup;
 		Time n_CheckupD, s_CheckupD, v_CheckupD;
-		char event_Type;
+		char type, shiftTime, event_Type;
 		Event* p_event;
 
-		inputFile >> n_Count >> s_Count >> v_Count;
+		inputFile >> count;
 
-		inputFile >> n_Speed >> s_Speed >> v_Speed;
+		waitingNormalCargo = new CrossLinkedList<Cargo*>;
+		waitingSpecialCargo = new Queue<Cargo*>;
+		waitingVIPCargo = new PriorityQueue<Cargo*>;
 
-		inputFile >> n_Capacity >> s_Capacity >> v_Capacity;
+		normalDeliveredCargo = new Queue<Cargo*>;
+		specialDeliveredCargo = new Queue<Cargo*>;
+		VIPDeliveredCargo = new Queue<Cargo*>;
+
+		waitingNormalTrucks = new PriorityQueue<Truck*>;
+		waitingSpecialTrucks = new PriorityQueue<Truck*>;
+		waitingVIPTrucks = new PriorityQueue<Truck*>;
+
+		normalCheckupTrucks = new Queue<Truck*>;
+		specialCheckupTrucks = new Queue<Truck*>;
+		VIPCheckupTrucks = new Queue<Truck*>;
+
+		normalNightTrucks = new PriorityQueue<Truck*>;
+		specialNightTrucks = new PriorityQueue<Truck*>;
+		VIPNightTrucks = new PriorityQueue<Truck*>;
+
+		movingTrucks = new PriorityQueue<Truck*>(count);
+
+		LoadingTrucks = new PriorityQueue<Truck*>(3);
+
+		/*inputFile >> n_Speed >> s_Speed >> v_Speed;
+
+		inputFile >> n_Capacity >> s_Capacity >> v_Capacity;*/
 
 		inputFile >> journeysBeforeCheckup;
 
@@ -50,6 +74,40 @@ void Company::readFromFile() {
 
 		inputFile >> checkup;
 		v_CheckupD.setHours(checkup);
+
+		Truck* TruckPtr;
+		for (int i = 0; i < count; i++)
+		{
+			inputFile >> type >> speed >> capacity >> shiftTime;
+
+			switch (type) {
+			case 'N': 
+				TruckPtr = new Truck(type, capacity, n_CheckupD, speed, journeysBeforeCheckup, shiftTime);
+				shiftTime == 'N'? normalNightTrucks->enqueue(TruckPtr) : waitingNormalTrucks->enqueue(TruckPtr); 
+				break;
+			case 'S': 
+				TruckPtr = new Truck(type, capacity, s_CheckupD, speed, journeysBeforeCheckup, shiftTime);
+				shiftTime == 'N' ? specialNightTrucks->enqueue(TruckPtr) : waitingSpecialTrucks->enqueue(TruckPtr); 
+				break;
+			case 'V': 
+				TruckPtr = new Truck(type, capacity, v_CheckupD, speed, journeysBeforeCheckup, shiftTime);
+				shiftTime == 'N' ? VIPNightTrucks->enqueue(TruckPtr) : waitingVIPTrucks->enqueue(TruckPtr); 
+				break;
+			}
+
+		}
+		/*for (int i = 0; i < s_Count; i++)
+		{
+
+			TruckPtr = new Truck('S', s_Capacity, s_CheckupD, s_Speed, journeysBeforeCheckup);
+			waitingSpecialTrucks->enqueue(TruckPtr);
+		}
+		for (int i = 0; i < v_Count; i++)
+		{
+			TruckPtr = new Truck('V', v_Capacity, v_CheckupD, v_Speed, journeysBeforeCheckup);
+			waitingVIPTrucks->enqueue(TruckPtr);
+		}*/
+
 
 		inputFile >> autoProm;
 		autoP.setDays(autoProm);
@@ -89,46 +147,6 @@ void Company::readFromFile() {
 				EventList->enqueue(p_event);
 			}
 		}
-
-
-
-		waitingNormalCargo = new CrossLinkedList<Cargo*>(2 * n_Capacity);
-		waitingSpecialCargo = new Queue<Cargo*>;
-		waitingVIPCargo = new PriorityQueue<Cargo*>(2 * v_Capacity);
-
-		normalDeliveredCargo = new Queue<Cargo*>;
-		specialDeliveredCargo = new Queue<Cargo*>;
-		VIPDeliveredCargo = new Queue<Cargo*>;
-
-		waitingNormalTrucks = new PriorityQueue<Truck*>(n_Count);
-		waitingSpecialTrucks = new PriorityQueue<Truck*>(s_Count);
-		waitingVIPTrucks = new PriorityQueue<Truck*>(v_Count);
-
-		normalCheckupTrucks = new Queue<Truck*>;
-		specialCheckupTrucks = new Queue<Truck*>;
-		VIPCheckupTrucks = new Queue<Truck*>;
-
-		movingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
-
-		Truck* TruckPtr;
-		for (int i = 0; i < n_Count; i++)
-		{
-			TruckPtr = new Truck('N', n_Capacity, n_CheckupD, n_Speed, journeysBeforeCheckup);
-			waitingNormalTrucks->enqueue(TruckPtr);
-		}
-		for (int i = 0; i < s_Count; i++)
-		{
-			TruckPtr = new Truck('S', s_Capacity, s_CheckupD, s_Speed, journeysBeforeCheckup);
-			waitingSpecialTrucks->enqueue(TruckPtr);
-		}
-		for (int i = 0; i < v_Count; i++)
-		{
-			TruckPtr = new Truck('V', v_Capacity, v_CheckupD, v_Speed, journeysBeforeCheckup);
-			waitingVIPTrucks->enqueue(TruckPtr);
-		}
-
-		LoadingTrucks = new PriorityQueue<Truck*>(n_Count + s_Count + v_Count);
-
 	}
 }
 
@@ -207,10 +225,8 @@ void Company::executeCurrEvents(Time currTime) {
 
 	Event* frontEvent;
 
-	while (EventList->peek(frontEvent) && currTime >= frontEvent->getEventTime()) {
+	while (EventList->peek(frontEvent) && currTime == frontEvent->getEventTime()) {
 		EventList->dequeue(frontEvent);
-		if (!(frontEvent->getEventTime() == currTime))
-			frontEvent->setEventTime(currTime);
 		frontEvent->Execute();
 	}
 }
@@ -344,70 +360,91 @@ void Company::returnFromCheckup(Time currTime) {
 void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime) {
 	Cargo* loading = nullptr;
 
-	while (cargoContainer->peek(loading) && loading->calcWait(currTime) >= maxW) {
-		if (truckPtr->isFull()) {
+	if (cargoContainer->peek(loading) && loading->getType() == 'V') return;
+
+	while (cargoContainer->peek(loading) && loading->calcWait(currTime) >= maxW && !truckPtr->isFull()) {
+	/*	if (truckPtr->isFull()) {
 			moveTruckToLoading(truckContainer, truckPtr);
 			if (!truckContainer->peek(truckPtr)) {
 				truckPtr = nullptr;
 				break;
 			}
-		}
+		}*/
 		
 		loadCargo(cargoContainer, truckPtr, currTime);
 	
 	}
 
-	if (truckPtr && !truckPtr->isEmpty()) {
+	/*if (!truckPtr->isEmpty()) {
 
 		moveTruckToLoading(truckContainer, truckPtr);
-	}
+	}*/
 
-	while (truckContainer->peek(truckPtr) && cargoContainer->getCount() >= truckPtr->getCapacity()) {
+	/*while (truckContainer->peek(truckPtr) && cargoContainer->getCount() >= truckPtr->getCapacity()) {
 		fillTruckWithCargo(truckPtr, truckContainer, cargoContainer, currTime);
-	}
+	}*/
 
 }
 
 
-void Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>** truckContainerArr, int truckContainersNum,
+bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>** truckContainerArr, int truckContainersNum,
 	Time currTime) {
+	int startIndex, increment;
 	
 	Truck* truckPtr = nullptr;
 
-	for (int i = 0; i < truckContainersNum; i++) {
-		while (truckContainerArr[i]->peek(truckPtr)) {
+	if (inWorkingHours(currTime)) {
+		startIndex = 0; increment = 1;
+	}
+	else {
+		startIndex = 1; increment = 2;
+	}
+
+	for (int i = startIndex; i < truckContainersNum; i+= increment) {
+		if (truckContainerArr[i]->peek(truckPtr)) {
 
 			if (cargoContainer->getCount() >= truckPtr->getCapacity()) {
 				fillTruckWithCargo(truckPtr, truckContainerArr[i], cargoContainer, currTime);
+				return true;
 			}
 			else {
 				assignMaxWCargo(cargoContainer, truckPtr, truckContainerArr[i], currTime);
 				
-				if (!truckPtr) break;
-				if (truckContainerArr[i]->peek(truckPtr))
-					return;
+				if (!truckPtr->isEmpty()) {
+					moveTruckToLoading(truckContainerArr[i], truckPtr);
+					return true;
+				}
 
-				break;
+				return false;
+				/*if (truckContainerArr[i]->peek(truckPtr))
+					return;*/
 			}
 		}
 	}
+
+	return false;
 }
 
 void Company::assignVIP(Time currTime, Container<Cargo*>* cargoContainer) {
-	Container<Truck*>* truckContainerArr[3] = { waitingVIPTrucks, waitingNormalTrucks, waitingSpecialTrucks };
-	assignCargo(cargoContainer, truckContainerArr, 3, currTime);
+	if (isLoadingVIP) return;
+
+	Container<Truck*>* truckContainerArr[6] = { waitingVIPTrucks, VIPNightTrucks, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks };
+	isLoadingVIP = assignCargo(cargoContainer, truckContainerArr, 6, currTime);	
 }
 
 void Company::assignSpecial(Time currTime, Container<Cargo*>* cargoContainer) {
+	if (isLoadingSpecial) return;
 
-	Container<Truck*>* truckContainerArr[1] = { waitingSpecialTrucks };
-	assignCargo(cargoContainer, truckContainerArr, 1, currTime);
-
+	Container<Truck*>* truckContainerArr[2] = { waitingSpecialTrucks, specialNightTrucks };
+	isLoadingSpecial = assignCargo(cargoContainer, truckContainerArr, 2, currTime);
 }
 
 void Company::assignNormal(Time currTime, Container<Cargo*>* cargoContainer) {
-	Container<Truck*>* truckContainerArr[2] = { waitingNormalTrucks, waitingVIPTrucks };
-	assignCargo(cargoContainer, truckContainerArr, 2, currTime);
+	if (isLoadingNormal) return;
+
+	Container<Truck*>* truckContainerArr[4] = { waitingNormalTrucks, normalNightTrucks, waitingVIPTrucks, VIPNightTrucks };
+
+	isLoadingNormal = assignCargo(cargoContainer, truckContainerArr, 4, currTime);
 }
 
 void Company::autoPromote(Time currTime) {
@@ -430,6 +467,14 @@ void Company::startDelivery(Time currTime) {
 	while (LoadingTrucks->peek(truckPtr) &&  currTime >= truckPtr->getMoveTime()) {
 		
 		LoadingTrucks->dequeue(truckPtr);
+
+		if (truckPtr->containsNormal())
+			isLoadingNormal = false;
+		else if (truckPtr->containsSpecial())
+			isLoadingSpecial = false;
+		else if (truckPtr->containsVIP())
+			isLoadingVIP = false;
+
 		truckPtr->setMovingPriority(currTime);
 		movingTrucks->enqueue(truckPtr);
 
@@ -483,24 +528,21 @@ void Company::Simulate() {
 
 	while (notTerminated()) {
 
-		if (inWorkingHours(currTime)) {
+		
+		executeCurrEvents(currTime);
+
+		assignVIP(currTime, waitingVIPCargo);
+		assignSpecial(currTime, waitingSpecialCargo);
+		assignNormal(currTime, waitingNormalCargo);
 			
-			executeCurrEvents(currTime);
+		autoPromote(currTime);
 
-			assignVIP(currTime, waitingVIPCargo);
-			assignSpecial(currTime, waitingSpecialCargo);
-			assignNormal(currTime, waitingNormalCargo);
-			
-			autoPromote(currTime);
-
-			startDelivery(currTime);
-
-		}
+		startDelivery(currTime);
+		
 
 		completeDelivery(currTime);
 
 		returnFromCheckup(currTime);
-
 
 
 		if (in_out->getMode() != "Silent")
@@ -554,5 +596,14 @@ Company::~Company() {
 
 	delete LoadingTrucks;
 	LoadingTrucks = nullptr;
+
+	delete normalNightTrucks;
+	normalNightTrucks = nullptr;
+
+	delete specialNightTrucks;
+	specialNightTrucks = nullptr;
+
+	delete VIPNightTrucks;
+	VIPNightTrucks = nullptr;
 
 }
