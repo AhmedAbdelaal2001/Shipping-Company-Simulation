@@ -104,6 +104,6 @@ bool Time::operator ==(const Time& time) {
 }
 
 ostream& operator << (ostream& out, const Time time) {
-	out << time.days << ":" << time.hours << "	";
+	out << time.days << ":" << time.hours;
 	return out;
 }

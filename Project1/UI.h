@@ -34,7 +34,7 @@ public:
 	void printMessage(string message);
 	
 	// prints all the companies data (waiting lists, loading lists, moving lists... etc.)
-	void print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, PriorityQueue<Truck*>* waitingSpecialTrucks, PriorityQueue<Truck*>* waitingVIPTrucks, Queue<Truck*>* normalCheckupTrucks, Queue<Truck*>* specialCheckupTrucks, Queue<Truck*>* VIPCheckupTrucks, PriorityQueue<Truck*>* movingTrucks, CrossLinkedList<Cargo*>* waitingNormalCargo, Queue<Cargo*>* waitingSpecialCargo, PriorityQueue<Cargo*>* waitingVIPCargo, Queue<Event*>* EventList, Queue<Cargo*>* normalDeliveredCargo, Queue<Cargo*>* specialDeliveredCargo, Queue<Cargo*>* VIPDeliveredCargo, PriorityQueue<Truck*>* LoadingTrucks);
+	void print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, PriorityQueue<Truck*>* normalNightTrucks,  PriorityQueue<Truck*>* waitingSpecialTrucks, PriorityQueue<Truck*>* specialNightTrucks, PriorityQueue<Truck*>* waitingVIPTrucks, PriorityQueue<Truck*>* VIPNightTrucks, Queue<Truck*>* normalCheckupTrucks, Queue<Truck*>* specialCheckupTrucks, Queue<Truck*>* VIPCheckupTrucks, PriorityQueue<Truck*>* movingTrucks, CrossLinkedList<Cargo*>* waitingNormalCargo, Queue<Cargo*>* waitingSpecialCargo, PriorityQueue<Cargo*>* waitingVIPCargo, Queue<Event*>* EventList, Queue<Cargo*>* normalDeliveredCargo, Queue<Cargo*>* specialDeliveredCargo, Queue<Cargo*>* VIPDeliveredCargo, PriorityQueue<Truck*>* LoadingTrucks);
 
 
 

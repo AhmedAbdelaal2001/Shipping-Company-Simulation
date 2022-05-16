@@ -26,15 +26,19 @@ void UI::printMessage(string message) {
 	cout << message << endl;
 }
 
-void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, PriorityQueue<Truck*>* waitingSpecialTrucks,PriorityQueue<Truck*>* waitingVIPTrucks, Queue<Truck*>* normalCheckupTrucks, Queue<Truck*>* specialCheckupTrucks, Queue<Truck*>* VIPCheckupTrucks, PriorityQueue<Truck*>* movingTrucks, CrossLinkedList<Cargo*>* waitingNormalCargo, Queue<Cargo*>* waitingSpecialCargo, PriorityQueue<Cargo*>* waitingVIPCargo, Queue<Event*>* EventList, Queue<Cargo*>* normalDeliveredCargo, Queue<Cargo*>* specialDeliveredCargo, Queue<Cargo*>* VIPDeliveredCargo, PriorityQueue<Truck*>* LoadingTrucks) {
+
+void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, PriorityQueue<Truck*>* normalNightTrucks, PriorityQueue<Truck*>* waitingSpecialTrucks, PriorityQueue<Truck*>* specialNightTrucks, PriorityQueue<Truck*>* waitingVIPTrucks, PriorityQueue<Truck*>* VIPNightTrucks, Queue<Truck*>* normalCheckupTrucks, Queue<Truck*>* specialCheckupTrucks, Queue<Truck*>* VIPCheckupTrucks, PriorityQueue<Truck*>* movingTrucks, CrossLinkedList<Cargo*>* waitingNormalCargo, Queue<Cargo*>* waitingSpecialCargo, PriorityQueue<Cargo*>* waitingVIPCargo, Queue<Event*>* EventList, Queue<Cargo*>* normalDeliveredCargo, Queue<Cargo*>* specialDeliveredCargo, Queue<Cargo*>* VIPDeliveredCargo, PriorityQueue<Truck*>* LoadingTrucks) {
+	
 	if (mode == "Interactive") {
 		cin.get();
-		
+
 	}
 	else if (mode == "Step_By_Step") {
 		Sleep(1000);
 	}
-	cout << "Current Time (Day:Hour):" << currTime << endl;
+
+
+	cout << endl << "Current Time (Day:Hour):" << currTime << endl;
 
 	cout << waitingNormalCargo->getCount() + waitingVIPCargo->getCount() + waitingSpecialCargo->getCount() << " ";
 	cout << "Waiting Cargos: ";
@@ -48,17 +52,22 @@ void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, Priori
 	waitingVIPCargo->printQueue();
 	cout << "}";
 
-	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl; 
+	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl;
 
 	cout << LoadingTrucks->getCount() << " Loading Trucks: ";
 	LoadingTrucks->printQueue();
 	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl;
 
-	cout << waitingNormalTrucks->getCount() + waitingSpecialTrucks->getCount() + waitingVIPTrucks->getCount();
+	cout << waitingNormalTrucks->getCount() + normalNightTrucks->getCount() + waitingSpecialTrucks->getCount() + specialNightTrucks->getCount() + waitingVIPTrucks->getCount() + VIPNightTrucks->getCount();
 	cout << " Empty Trucks: ";
-	cout << "["; waitingNormalTrucks->printQueue(); cout << "] ";
-	cout << "("; waitingSpecialTrucks->printQueue(); cout << ") ";
-	cout << "{"; waitingVIPTrucks->printQueue(); cout << "}";
+	cout << "["; 
+	waitingNormalTrucks->printQueue(); if (!waitingNormalTrucks->isEmpty() && !normalNightTrucks->isEmpty()) cout << ","; normalNightTrucks->printQueue(); cout << "] ";
+	cout << "("; 
+	waitingSpecialTrucks->printQueue(); if (!waitingSpecialTrucks->isEmpty() && !specialNightTrucks->isEmpty()) cout << ","; specialNightTrucks->printQueue(); 
+	cout << ") ";
+	cout << "{"; 
+	waitingVIPTrucks->printQueue(); if (!waitingVIPTrucks->isEmpty() && !VIPNightTrucks->isEmpty()) cout << ",";  VIPNightTrucks->printQueue(); 
+	cout << "}";
 
 	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl;
 
@@ -67,7 +76,7 @@ void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, Priori
 
 	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl;
 
-	cout << normalCheckupTrucks-> getCount() + specialCheckupTrucks->getCount() + VIPCheckupTrucks->getCount() << " In-Checkup Trucks: ";
+	cout << normalCheckupTrucks->getCount() + specialCheckupTrucks->getCount() + VIPCheckupTrucks->getCount() << " In-Checkup Trucks: ";
 	cout << "[";
 	normalCheckupTrucks->printQueue();
 	cout << "] ";

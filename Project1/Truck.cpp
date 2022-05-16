@@ -1,7 +1,8 @@
 #include "Truck.h"
-
+Time defaultTime;
 int Truck::currID = 0;
 int Truck::journeysBeforeCheckup = 0;
+Time Truck::totalActiveTime = defaultTime;
 
 Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime)
 {
@@ -21,6 +22,7 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysB
 	setActiveTime(activeTime);*/
 	setWaitingPriority();
 	deliveredCargos = deliveryJourneys = 0;
+	cargoType = 'X';
 }
 
 bool Truck::isFull() {
@@ -46,6 +48,11 @@ void Truck::setType(char type)
 
 char Truck::getType() {
 	return type;
+}
+
+bool Truck::WorksAtNight() const
+{
+	return worksAtNight;
 }
 
 void Truck::setCapacity(int capacity)
@@ -126,10 +133,15 @@ int Truck::getDeliveredJourneys() {
 
 void Truck::incrementActiveTime(Time currTime) {
 	activeTime = activeTime + (currTime - moveTime);
+	totalActiveTime = totalActiveTime + activeTime;
 }
 
 Time Truck::getActiveTime() {
 	return activeTime;
+}
+
+Time Truck::getTotalActiveTime(){
+	return totalActiveTime;
 }
 
 bool Truck::needsCheckup() const {
@@ -140,17 +152,18 @@ bool Truck::needsCheckup() const {
 void Truck::returnStats(Time currTime) {
 	Time restartTime;
 
+	cargoType = 'X';
 	setMovedDistance(0);
 	setWaitingPriority();
 	setDeliveryInterval(currTime - getMoveTime());
 	setMoveTime(restartTime);
 	incrementDeliveredJourneys();
-
 }
 
 void Truck::deliveryStats(Time currTime, Cargo* deliveredCargo) {
 	
 	deliveredCargo->setDeliveryTime(currTime);
+	deliveredCargo->setTruckID(id);
 	incrementDeliveredCargos();
 	setMovedDistance(deliveredCargo->getDistance());
 	setMovingPriority(currTime);
@@ -168,10 +181,17 @@ bool Truck::dequeueCargo(Cargo*& cargoPtr) {
 
 }
 
+void Truck::setCargoType()
+{
+	if (containsNormal()) cargoType = 'N';
+	else if (containsSpecial()) cargoType = 'S';
+	else if (containsVIP()) cargoType = 'V';
+}
+
 bool Truck::containsNormal()
 {
 	Cargo* cargoPtr = nullptr;
-	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'N')
+	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'N') 
 		return true;
 
 	return false;
@@ -180,16 +200,16 @@ bool Truck::containsNormal()
 bool Truck::containsSpecial()
 {
 	Cargo* cargoPtr = nullptr;
-	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'S')
+	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'S') 
 		return true;
-
+	
 	return false;
 }
 
 bool Truck::containsVIP()
 {
 	Cargo* cargoPtr = nullptr;
-	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'V')
+	if (cargoList->peek(cargoPtr) && cargoPtr->getType() == 'V') 
 		return true;
 
 	return false;
@@ -201,35 +221,41 @@ void Truck::saveToFile(ofstream outFile) {
 
 ostream& operator << (ostream& out, Truck* truckPtr) {
 	out << truckPtr->getID();
-	Cargo* tempCargoPtr = nullptr;
-	truckPtr->cargoList->peek(tempCargoPtr);
 
-	if (tempCargoPtr) {
-		switch (tempCargoPtr->getType()) {
-		case 'N':
-			out << "[";
-			break;
-		case 'S':
-			out << "(";
-			break;
-		case 'V':
-			out << "{";
-			break;
-		}
+	switch (truckPtr->cargoType) {
+	case 'N':
+		out << "[";
+		break;
+	case 'S':
+		out << "(";
+		break;
+	case 'V':
+		out << "{";
+		break;
+	case 'X':
+		break;
+	}
+
+	//Cargo* tempCargoPtr = nullptr;
+	//truckPtr->cargoList->peek(tempCargoPtr);
+
+	if (!truckPtr->isEmpty()) {
 
 		truckPtr->cargoList->printQueue();
+	}
 
-		switch (tempCargoPtr->getType()) {
-		case 'N':
-			out << "]";
-			break;
-		case 'S':
-			out << ")";
-			break;
-		case 'V':
-			out << "}";
-			break;
-		}
+	switch (truckPtr->cargoType) {
+	case 'N':
+		out << "]";
+		break;
+	case 'S':
+		out << ")";
+		break;
+	case 'V':
+		out << "}";
+		break;
+	case 'X':
+		break;
 	}
 
 	return out;

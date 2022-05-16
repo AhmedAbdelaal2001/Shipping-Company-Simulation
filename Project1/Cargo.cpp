@@ -54,6 +54,16 @@ int Cargo::updatePriority(int newCost) {                                 //Used 
 void Cargo::setId(int id) { this->id = id; }
 int Cargo::getId() const { return id; }
 
+void Cargo::setTruckID(int id)
+{
+	truckID = id;
+}
+
+int Cargo::getTruckID() const
+{
+	return truckID;
+}
+
 void Cargo::setPrepTime(Time prepTime) { this->prepTime = prepTime; }
 Time Cargo::getPrepTime() const { return prepTime; }
 
@@ -67,8 +77,8 @@ Time Cargo::getDeliveryTime() const {
 	return deliveryTime;
 }
 
-void Cargo::setWaitingTime(Time waitingTime) {
-	this->waitingTime = waitingTime;
+void Cargo::setWaitingTime(Time currTime) {
+	waitingTime = currTime - prepTime;
 }
 Time Cargo::getWaitingTime() const {
 	return waitingTime;

@@ -7,6 +7,7 @@ class Truck
 {
 private:
 	char type;
+	char cargoType;
 	bool worksAtNight;
 	int id;
 	int capacity;
@@ -23,6 +24,8 @@ private:
 	int priority;
 	static int currID;
 	static int journeysBeforeCheckup;
+	static Time totalActiveTime;
+
 
 public:
 	Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime);
@@ -32,6 +35,8 @@ public:
 
 	void setType(char type);
 	char getType();
+
+	bool WorksAtNight() const;
 
 	Time getMoveTime();
 
@@ -78,6 +83,8 @@ public:
 	void incrementActiveTime(Time currTime);  // sets Active time after calculation
 	Time getActiveTime();
 
+	static Time getTotalActiveTime();
+
 	bool needsCheckup() const;
 
 	void returnStats(Time);
@@ -85,6 +92,8 @@ public:
 
 	void enqueueCargo(Cargo* loading);
 	bool dequeueCargo(Cargo*&);
+
+	void setCargoType();
 
 	bool containsNormal();
 	bool containsSpecial();

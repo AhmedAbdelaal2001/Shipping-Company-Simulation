@@ -19,6 +19,8 @@ private:
 	Time autoP;
 	Time maxW;
 
+	int autoPromoted;
+
 	CrossLinkedList<Cargo*>* waitingNormalCargo;
 	Queue<Cargo*>* waitingSpecialCargo;
 	PriorityQueue<Cargo*>* waitingVIPCargo;
@@ -65,8 +67,10 @@ public:
 	void enqueueSpecial(Cargo* cargo);
 	void enqueueVIP(Cargo* cargo);
 
+	Cargo* firstDelivered(Cargo* nCargo, Cargo* sCargo, Cargo* vCargo);
+
 	void readFromFile();
-	void saveToFile();
+	void saveToFile(Time);
 
 	void executeCurrEvents(Time currTime);
 

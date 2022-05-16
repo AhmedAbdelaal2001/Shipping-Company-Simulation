@@ -18,6 +18,7 @@ private:
 	int distance;
 	int cost;
 	int priority;
+	int truckID;
 
 public:
 	Cargo();
@@ -33,6 +34,9 @@ public:
 	// Setters and Getters
 	void setId(int id);
 	int getId() const;
+
+	void setTruckID(int id);
+	int getTruckID() const;
 
 	void setPrepTime(Time prepTime);
 	Time getPrepTime() const;
