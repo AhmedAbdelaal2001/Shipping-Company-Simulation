@@ -475,26 +475,26 @@ void Company::returnFromMaintenance(Time currTime)
 
 	do {
 
-		if (normalMaintenance->peek(nTruck) && nTruck->getLeaveTime() == currTime) {
+		if ((normalMaintenance->peek(nTruck) || nightNormalMaintenance->peek(nTruck)) && nTruck->getLeaveTime() == currTime) {
+			normalMaintenance->peek(nTruck) ? normalMaintenance->dequeue(nTruck) : nightNormalMaintenance->dequeue(nTruck);
 			nTruck->resetTotalMovedDistance();
-			normalMaintenance->dequeue(nTruck);
 			moveTruckToWaiting(nTruck);
 		}
 		else
 			nTruck = nullptr;
 
-		if (specialMaintenance->peek(sTruck) && sTruck->getLeaveTime() == currTime) {
+		if ((specialMaintenance->peek(sTruck) || nightSpecialMaintenance->peek(sTruck)) && sTruck->getLeaveTime() == currTime) {
+			specialMaintenance->peek(sTruck) ? specialMaintenance->dequeue(sTruck) : nightSpecialMaintenance->dequeue(sTruck);
 			sTruck->resetTotalMovedDistance();
-			specialMaintenance->dequeue(sTruck);
 			moveTruckToWaiting(sTruck);
 		}
 		else
 			sTruck = nullptr;
 
 
-		if (VIPMaintenance->peek(vTruck) && vTruck->getLeaveTime() == currTime) {
+		if ((VIPMaintenance->peek(vTruck) || nightVIPMaintenance->peek(vTruck)) && vTruck->getLeaveTime() == currTime) {
+			VIPMaintenance->peek(vTruck)? VIPMaintenance->dequeue(vTruck) : nightVIPMaintenance->peek(vTruck);
 			vTruck->resetTotalMovedDistance();
-			VIPMaintenance->dequeue(vTruck);
 			moveTruckToWaiting(vTruck);
 		}
 		else
@@ -503,7 +503,7 @@ void Company::returnFromMaintenance(Time currTime)
 
 	} while (nTruck || sTruck || vTruck);
 
-	nTruck = sTruck = vTruck = nullptr;
+	/*nTruck = sTruck = vTruck = nullptr;
 
 	do {
 
@@ -533,7 +533,7 @@ void Company::returnFromMaintenance(Time currTime)
 			vTruck = nullptr;
 
 
-	} while (nTruck || sTruck || vTruck);
+	} while (nTruck || sTruck || vTruck);*/
 }
 
 void Company::returnFromCheckup(Time currTime) {
