@@ -35,5 +35,6 @@ int main() {
 	//Testing commits and pushes.
 	Company company;
 	company.Simulate();
+
 	return 0;
 }

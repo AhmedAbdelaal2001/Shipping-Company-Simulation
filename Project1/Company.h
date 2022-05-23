@@ -4,6 +4,7 @@
 #include"Queue.h"
 #include "PriorityQueue.h"
 #include "Event.h"
+#include "MaintenanceTrucks.h"
 
 #include "Truck.h"
 
@@ -19,7 +20,7 @@ private:
 	Time autoP;
 	Time maxW;
 
-	int autoPromoted;
+	int autoPromoted, failedTrucks;
 
 	CrossLinkedList<Cargo*>* waitingNormalCargo;
 	Queue<Cargo*>* waitingSpecialCargo;
@@ -43,11 +44,17 @@ private:
 	Queue<Cargo*>* specialDeliveredCargo;
 	Queue<Cargo*>* VIPDeliveredCargo;
 
-
 	Queue<Truck*>* normalCheckupTrucks;
 	Queue<Truck*>* specialCheckupTrucks;
 	Queue<Truck*>* VIPCheckupTrucks;
 
+	MaintenanceTrucks* VIPMaintenance;
+	MaintenanceTrucks* specialMaintenance;
+	MaintenanceTrucks* normalMaintenance;
+
+	MaintenanceTrucks* nightVIPMaintenance;
+	MaintenanceTrucks* nightSpecialMaintenance;
+	MaintenanceTrucks* nightNormalMaintenance;
 
 	string outFileName;
 
@@ -74,7 +81,7 @@ public:
 
 	void executeCurrEvents(Time currTime);
 
-	bool notTerminated();
+	bool notEndOfSimulation();
 	bool inWorkingHours(Time currTime);
 
 	void moveTruckToLoading(Container<Truck*>*, Truck*);
@@ -84,6 +91,8 @@ public:
 	void fillTruckWithCargo(Truck*, Container<Truck*>*, Container<Cargo*>*, Time);
 	void moveTruckToWaiting(Truck*);
 	void moveToCheckup(Truck*, Time);
+	void moveToMaintenance(Truck*, Time);
+	void returnFromMaintenance(Time);
 	void returnFromCheckup(Time);
 
 
@@ -98,6 +107,7 @@ public:
 
 	void startDelivery(Time currTime);
 	void completeDelivery(Time currTime);
+
 
 	void printAll(Time currTime);
 

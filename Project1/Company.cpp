@@ -8,7 +8,7 @@ Company::Company() {
 
 	in_out = new UI(this);
 	isLoadingNormal = isLoadingSpecial = isLoadingVIP = false;
-	autoPromoted = 0;
+	autoPromoted = failedTrucks = 0;
 	readFromFile();
 
 }
@@ -30,8 +30,8 @@ void Company::readFromFile() {
 
 	if (!inputFile.fail()) {
 
-		int truckCount, speed, capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours, journeysBeforeCheckup;
-		Time n_CheckupD, s_CheckupD, v_CheckupD;
+		int truckCount, speed, capacity, checkup, autoProm, MaxW, eventsCount, id, days, hours, journeysBeforeCheckup, maintenanceD, maintenanceDistance;
+		Time n_CheckupD, s_CheckupD, v_CheckupD, n_MaintenanceD, s_MaintenanceD, v_MaintenanceD;
 		char type, shiftTime, event_Type;
 		Event* p_event;
 
@@ -61,6 +61,14 @@ void Company::readFromFile() {
 
 		LoadingTrucks = new PriorityQueue<Truck*>(3);
 
+		VIPMaintenance = new MaintenanceTrucks;
+		specialMaintenance = new MaintenanceTrucks;
+		normalMaintenance = new MaintenanceTrucks;
+
+		nightVIPMaintenance = new MaintenanceTrucks;
+		nightSpecialMaintenance = new MaintenanceTrucks;
+		nightNormalMaintenance = new MaintenanceTrucks;
+
 		/*inputFile >> n_Speed >> s_Speed >> v_Speed;
 
 		inputFile >> n_Capacity >> s_Capacity >> v_Capacity;*/
@@ -76,6 +84,17 @@ void Company::readFromFile() {
 		inputFile >> checkup;
 		v_CheckupD.setHours(checkup);
 
+		inputFile >> maintenanceDistance;
+
+		inputFile >> maintenanceD;
+		n_MaintenanceD.setHours(maintenanceD);
+
+		inputFile >> maintenanceD;
+		s_MaintenanceD.setHours(maintenanceD);
+
+		inputFile >> maintenanceD;
+		v_MaintenanceD.setHours(maintenanceD);
+
 		Truck* TruckPtr;
 		for (int i = 0; i < truckCount; i++)
 		{
@@ -83,15 +102,15 @@ void Company::readFromFile() {
 
 			switch (type) {
 			case 'N': 
-				TruckPtr = new Truck(type, capacity, n_CheckupD, speed, journeysBeforeCheckup, shiftTime);
+				TruckPtr = new Truck(type, capacity, n_CheckupD, speed, journeysBeforeCheckup, shiftTime, n_MaintenanceD, maintenanceDistance);
 				shiftTime == 'N'? normalNightTrucks->enqueue(TruckPtr) : waitingNormalTrucks->enqueue(TruckPtr); 
 				break;
 			case 'S': 
-				TruckPtr = new Truck(type, capacity, s_CheckupD, speed, journeysBeforeCheckup, shiftTime);
+				TruckPtr = new Truck(type, capacity, s_CheckupD, speed, journeysBeforeCheckup, shiftTime, s_MaintenanceD, maintenanceDistance);
 				shiftTime == 'N' ? specialNightTrucks->enqueue(TruckPtr) : waitingSpecialTrucks->enqueue(TruckPtr); 
 				break;
 			case 'V': 
-				TruckPtr = new Truck(type, capacity, v_CheckupD, speed, journeysBeforeCheckup, shiftTime);
+				TruckPtr = new Truck(type, capacity, v_CheckupD, speed, journeysBeforeCheckup, shiftTime, v_MaintenanceD, maintenanceDistance);
 				shiftTime == 'N' ? VIPNightTrucks->enqueue(TruckPtr) : waitingVIPTrucks->enqueue(TruckPtr); 
 				break;
 			}
@@ -207,11 +226,11 @@ Cargo* Company::firstDelivered(Cargo* nCargo, Cargo* sCargo, Cargo* vCargo) {
 
 void Company::saveToFile(Time tSIM) {
 	int nCount, sCount, vCount, totalCargoCount;
-	int nTrucks, sTrucks, vTrucks, totalTrucksCount;
+	int nTrucks, sTrucks, vTrucks, totalTrucksCount, totalTruckUtilization, avgUtilization;
 	Time totalWait, avgWait;
 	Cargo* nCargo, * sCargo, * vCargo;
 	nCargo = sCargo = vCargo = nullptr;
-	Truck* truckPtr;
+	Truck * nTruck, * sTruck, * vTruck;
 	ofstream outFile(outFileName);
 	
 	outFile << "CDT\t\tID\t\tPT\t\tWT\t\tTID\n";
@@ -248,6 +267,9 @@ void Company::saveToFile(Time tSIM) {
 			totalWait = totalWait + cargoPtr->getWaitingTime();
 			outFile << cargoPtr->getDeliveryTime() << "\t\t" << cargoPtr->getId() << "\t\t" << cargoPtr->getPrepTime() << "\t\t" << cargoPtr->getWaitingTime() << "\t\t" << cargoPtr->getTruckID() << "\n";
 		}
+		// delete cargo
+		delete cargoPtr;
+		cargoPtr = nullptr;
 	} while (nCargo || sCargo || vCargo);
 	
 	avgWait.setHours(totalWait.getTotalHours() / totalCargoCount);
@@ -257,12 +279,43 @@ void Company::saveToFile(Time tSIM) {
 	outFile << "Auto-Promoted Cargos: " << (float)autoPromoted / nCount * 100 << " %";
 	outFile << "\nTrucks: " << totalTrucksCount << " [N: " << nTrucks << ", S: " << sTrucks << ", V: " << vTrucks << "]\n";
 	outFile << "\nAvg Active Time = " << (float)Truck::getTotalActiveTime().getTotalHours() / tSIM.getTotalHours() * 100; outFile << "%\n";
-	outFile << "Avg utilization = ";
+	
+	totalTruckUtilization = 0;
+	
+	do {
+		if (waitingNormalTrucks->dequeue(nTruck)) {
+			totalTruckUtilization += nTruck->calcUtilization(tSIM);
+			delete nTruck;
+			nTruck = waitingNormalTrucks->peek(nTruck) ? nTruck : nullptr;
+		}
+		
+		
+		if (waitingSpecialTrucks->dequeue(sTruck)) {
+			totalTruckUtilization += sTruck->calcUtilization(tSIM);
+			delete sTruck;
+			sTruck = waitingSpecialTrucks->peek(sTruck) ? sTruck : nullptr;
+		}
+	
+
+		if (waitingVIPTrucks->dequeue(vTruck)) {
+			totalTruckUtilization += vTruck->calcUtilization(tSIM);
+			delete vTruck;
+			vTruck = waitingVIPTrucks->peek(vTruck) ? vTruck : nullptr;
+		}
+		
+
+	} while (nTruck || sTruck || vTruck);
+	
+	avgUtilization = totalTruckUtilization / totalTrucksCount;
+
+	outFile << "Avg utilization = " << avgUtilization;
 }
 
-bool Company::notTerminated() {
-	return !EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty() ||
-		!LoadingTrucks->isEmpty() || !movingTrucks->isEmpty() || !normalCheckupTrucks->isEmpty() || !specialCheckupTrucks->isEmpty() || !VIPCheckupTrucks->isEmpty();
+bool Company::notEndOfSimulation() {
+	return	!EventList->isEmpty() || !waitingNormalCargo->isEmpty() || !waitingSpecialCargo->isEmpty() || !waitingVIPCargo->isEmpty() ||
+		!LoadingTrucks->isEmpty() || !movingTrucks->isEmpty() || !normalCheckupTrucks->isEmpty() || !specialCheckupTrucks->isEmpty() ||
+		!VIPCheckupTrucks->isEmpty() || !normalMaintenance->isEmpty() || !nightNormalMaintenance->isEmpty() || !specialMaintenance->isEmpty() ||
+		!nightSpecialMaintenance->isEmpty() || !VIPMaintenance->isEmpty() || !nightVIPMaintenance->isEmpty();
 }
 
 bool Company::inWorkingHours(Time currTime)
@@ -271,7 +324,11 @@ bool Company::inWorkingHours(Time currTime)
 }
 
 void Company::printAll(Time currTime) {
-	in_out->print(currTime, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks, waitingVIPTrucks, VIPNightTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks, movingTrucks, waitingNormalCargo, waitingSpecialCargo, waitingVIPCargo, EventList, normalDeliveredCargo, specialDeliveredCargo, VIPDeliveredCargo, LoadingTrucks);
+	in_out->print(currTime, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks, waitingVIPTrucks, 
+		          VIPNightTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks, movingTrucks, waitingNormalCargo, 
+				  waitingSpecialCargo, waitingVIPCargo, EventList, normalDeliveredCargo, specialDeliveredCargo, VIPDeliveredCargo,
+		          LoadingTrucks, normalMaintenance, specialMaintenance, VIPMaintenance, nightVIPMaintenance, nightSpecialMaintenance,
+		          nightNormalMaintenance);
 }
 
 void Company::executeCurrEvents(Time currTime) {
@@ -338,6 +395,11 @@ void Company::fillTruckWithCargo(Truck* truckPtr, Container<Truck*>* truckContai
 
 void Company::moveTruckToWaiting(Truck* truckPtr) {
 	
+	if (truckPtr->ifFailed()) {
+		truckPtr->resetFailureFlag();
+		truckPtr->setSpeed(truckPtr->getSpeed() * 3);
+	}
+
 	switch (truckPtr->getType()) {
 
 	case 'N':
@@ -358,6 +420,17 @@ void Company::moveToCheckup(Truck* truckPtr, Time currTime) {
 
 	truckPtr->setLeaveTime(currTime);
 
+	if (truckPtr->ifFailed()) {
+		failedTrucks++;
+
+		Cargo* cargoPtr;
+		while (truckPtr->dequeueCargo(cargoPtr)) {
+			cargoPtr->computePriority();
+			cargoPtr->setType('V');
+			waitingVIPCargo->enqueue(cargoPtr);
+		}
+	}	
+
 	switch (truckPtr->getType()) {
 
 	case 'N':
@@ -372,6 +445,95 @@ void Company::moveToCheckup(Truck* truckPtr, Time currTime) {
 		VIPCheckupTrucks->enqueue(truckPtr);
 		break;
 	}
+}
+
+void Company::moveToMaintenance(Truck* truckPtr, Time currTime)
+{
+	truckPtr->setLeaveTime(currTime);
+
+	switch (truckPtr->getType()) {
+
+	case 'N':
+		truckPtr->WorksAtNight() ? nightNormalMaintenance->enqueue(truckPtr) : normalMaintenance->enqueue(truckPtr);
+		break;
+
+	case 'S':
+		truckPtr->WorksAtNight() ? nightSpecialMaintenance->enqueue(truckPtr) : specialMaintenance->enqueue(truckPtr);
+		break;
+
+	case 'V':
+		truckPtr->WorksAtNight() ? nightVIPMaintenance->enqueue(truckPtr) : VIPMaintenance->enqueue(truckPtr);
+		break;
+	}
+}
+
+void Company::returnFromMaintenance(Time currTime)
+{
+	Truck* nTruck, * sTruck, * vTruck;
+
+	nTruck = sTruck = vTruck = nullptr;
+
+	do {
+
+		if (normalMaintenance->peek(nTruck) && nTruck->getLeaveTime() == currTime) {
+			nTruck->resetTotalMovedDistance();
+			normalMaintenance->dequeue(nTruck);
+			moveTruckToWaiting(nTruck);
+		}
+		else
+			nTruck = nullptr;
+
+		if (specialMaintenance->peek(sTruck) && sTruck->getLeaveTime() == currTime) {
+			sTruck->resetTotalMovedDistance();
+			specialMaintenance->dequeue(sTruck);
+			moveTruckToWaiting(sTruck);
+		}
+		else
+			sTruck = nullptr;
+
+
+		if (VIPMaintenance->peek(vTruck) && vTruck->getLeaveTime() == currTime) {
+			vTruck->resetTotalMovedDistance();
+			VIPMaintenance->dequeue(vTruck);
+			moveTruckToWaiting(vTruck);
+		}
+		else
+			vTruck = nullptr;
+
+
+	} while (nTruck || sTruck || vTruck);
+
+	nTruck = sTruck = vTruck = nullptr;
+
+	do {
+
+		if (nightNormalMaintenance->peek(nTruck) && nTruck->getLeaveTime() == currTime) {
+			nTruck->resetTotalMovedDistance();
+			nightNormalMaintenance->dequeue(nTruck);
+			moveTruckToWaiting(nTruck);
+		}
+		else
+			nTruck = nullptr;
+
+		if (nightSpecialMaintenance->peek(sTruck) && sTruck->getLeaveTime() == currTime) {
+			sTruck->resetTotalMovedDistance();
+			nightSpecialMaintenance->dequeue(sTruck);
+			moveTruckToWaiting(sTruck);
+		}
+		else
+			sTruck = nullptr;
+
+
+		if (nightVIPMaintenance->peek(vTruck) && vTruck->getLeaveTime() == currTime) {
+			vTruck->resetTotalMovedDistance();
+			nightVIPMaintenance->dequeue(vTruck);
+			moveTruckToWaiting(vTruck);
+		}
+		else
+			vTruck = nullptr;
+
+
+	} while (nTruck || sTruck || vTruck);
 }
 
 void Company::returnFromCheckup(Time currTime) {
@@ -483,23 +645,25 @@ bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>**
 void Company::assignVIP(Time currTime, Container<Cargo*>* cargoContainer) {
 	if (isLoadingVIP) return;
 
-	Container<Truck*>* truckContainerArr[6] = { waitingVIPTrucks, VIPNightTrucks, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks };
-	isLoadingVIP = assignCargo(cargoContainer, truckContainerArr, 6, currTime);	
+	Container<Truck*>* truckContainerArr[12] = { waitingVIPTrucks, VIPNightTrucks, waitingNormalTrucks, normalNightTrucks, 
+												waitingSpecialTrucks, specialNightTrucks, VIPMaintenance, nightVIPMaintenance,
+												normalMaintenance, nightNormalMaintenance, specialMaintenance, nightSpecialMaintenance };
+	isLoadingVIP = assignCargo(cargoContainer, truckContainerArr, 8, currTime);	
 }
 
 void Company::assignSpecial(Time currTime, Container<Cargo*>* cargoContainer) {
 	if (isLoadingSpecial) return;
 
-	Container<Truck*>* truckContainerArr[2] = { waitingSpecialTrucks, specialNightTrucks };
-	isLoadingSpecial = assignCargo(cargoContainer, truckContainerArr, 2, currTime);
+	Container<Truck*>* truckContainerArr[4] = { waitingSpecialTrucks, specialNightTrucks, specialMaintenance, nightSpecialMaintenance };
+	isLoadingSpecial = assignCargo(cargoContainer, truckContainerArr, 4, currTime);
 }
 
 void Company::assignNormal(Time currTime, Container<Cargo*>* cargoContainer) {
 	if (isLoadingNormal) return;
 
-	Container<Truck*>* truckContainerArr[4] = { waitingNormalTrucks, normalNightTrucks, waitingVIPTrucks, VIPNightTrucks };
+	Container<Truck*>* truckContainerArr[8] = { waitingNormalTrucks, normalNightTrucks,  waitingVIPTrucks, VIPNightTrucks, normalMaintenance, nightNormalMaintenance, VIPMaintenance, nightVIPMaintenance };
 
-	isLoadingNormal = assignCargo(cargoContainer, truckContainerArr, 4, currTime);
+	isLoadingNormal = assignCargo(cargoContainer, truckContainerArr, 8, currTime);
 }
 
 void Company::autoPromote(Time currTime) {
@@ -509,6 +673,7 @@ void Company::autoPromote(Time currTime) {
 		
 		waitingNormalCargo->dequeue(promotedCargoPtr);
 		promotedCargoPtr->setType('V');
+		promotedCargoPtr->updatePriority(0);
 		waitingVIPCargo->enqueue(promotedCargoPtr);
 		autoPromoted++;
 
@@ -541,40 +706,41 @@ void Company::completeDelivery(Time currTime) {
 
 	Truck* truckPtr;
 	Cargo* deliveredCargo;
+	int randomNum;
+
+	
 
 	while (movingTrucks->peek(truckPtr) && -1 * truckPtr->getPriority() == currTime.getTotalHours()) {
 
 		movingTrucks->dequeue(truckPtr);
 
-		if (truckPtr->dequeueCargo(deliveredCargo)) {
+		if (!truckPtr->ifFailed() && truckPtr->dequeueCargo(deliveredCargo)) {
 
 			moveCargoToDelivered(deliveredCargo);
+
+			if (truckPtr->isEmpty() || truckPtr->deliveryFailure()) {
+
+				truckPtr->incrementActiveTime(currTime);
+			}
 
 			truckPtr->deliveryStats(currTime, deliveredCargo);
 
 			movingTrucks->enqueue(truckPtr);
 
-			if (truckPtr->isEmpty()) {
-
-				truckPtr->incrementActiveTime(currTime);
-
-
-			}
 		}
 		else {
 
 			truckPtr->returnStats(currTime);
 
-			if (truckPtr->needsCheckup())
+			if (truckPtr->ifFailed() || truckPtr->needsCheckup())
 				moveToCheckup(truckPtr, currTime);
+			else if (truckPtr->needsMaintenance())
+				moveToMaintenance(truckPtr, currTime);
 			else
 				moveTruckToWaiting(truckPtr);
 		}
 	}
 }
-
-
-
 
 void Company::Simulate() {
 	Time currTime(1, 1);
@@ -583,7 +749,7 @@ void Company::Simulate() {
 		in_out->printMessage("Silent Mode\nSimulations Starts...");
 
 
-	while (notTerminated()) {
+	while (notEndOfSimulation()) {
 
 		
 		executeCurrEvents(currTime);
@@ -595,11 +761,12 @@ void Company::Simulate() {
 		autoPromote(currTime);
 
 		startDelivery(currTime);
-		
 
 		completeDelivery(currTime);
 
 		returnFromCheckup(currTime);
+
+		returnFromMaintenance(currTime);
 
 
 		if (in_out->getMode() != "Silent")

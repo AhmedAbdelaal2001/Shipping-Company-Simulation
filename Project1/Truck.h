@@ -9,10 +9,14 @@ private:
 	char type;
 	char cargoType;
 	bool worksAtNight;
+	bool failureFlag;
 	int id;
 	int capacity;
 	int speed;
 	int movedDistance;
+	int totalMovedDist;
+	int maintenanceDistance;
+	Time maintenanceDuration;
 	Time checkupDuration;
 	Time leaveTime;
 	Time deliveryInterval;
@@ -28,7 +32,7 @@ private:
 
 
 public:
-	Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime);
+	Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime, Time maintenanceD, int maintenanceDistance);
 
 	bool isFull();
 	bool isEmpty();
@@ -52,6 +56,8 @@ public:
 	void setMovedDistance(int movedDistance);
 	int getMovedDistance() const;
 
+	void resetTotalMovedDistance();
+
 	void setCheckupTime(Time checkupTime);
 	Time getCheckupTime() const;
 
@@ -61,7 +67,6 @@ public:
 	void setMoveTime(Time moveTime);
 	Time getMoveTime() const;
 
-	// for phase 2
 	void setDeliveryInterval(Time deliveryInterval);
 	Time getDeliveryInterval();
 
@@ -82,10 +87,15 @@ public:
 
 	void incrementActiveTime(Time currTime);  // sets Active time after calculation
 	Time getActiveTime();
-
 	static Time getTotalActiveTime();
 
+	int calcUtilization(Time);
+
 	bool needsCheckup() const;
+	bool needsMaintenance() const;
+	bool ifFailed() const;
+	bool deliveryFailure();
+	void resetFailureFlag();
 
 	void returnStats(Time);
 	void deliveryStats(Time, Cargo*);

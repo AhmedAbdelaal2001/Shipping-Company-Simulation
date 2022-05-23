@@ -25,8 +25,6 @@ Cargo::Cargo() {
 //non-default constructor
 Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, float cost, float priority) {
 
-	if (type == 'V')
-		priority = computePriority(cost, distance, prepTime);  //Computes the priority according according the cargo's cost, distance, and prep time
 
 	setPrepTime(prepTime);
 	setLoadTime(loadTime);
@@ -34,19 +32,19 @@ Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, floa
 	setType(type);
 	setDistance(distance);
 	setCost(cost);
-	setPriority(priority);      //Sets the priority with the value calculated above
+	if (type == 'V')
+		computePriority();  //Computes the priority according according the cargo's cost, distance, and prep time
+	
 }
 
-int Cargo::computePriority(int cost, int distance, Time prepTime) {
+void Cargo::computePriority() {
 	priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours(); //Priority equation, cost and distance increase the
-																						 //cargo's priority while a high preparation time 
-																						//decreases it
-	return priority;
+																						
 }
 
-int Cargo::updatePriority(int newCost) {                                 //Used in promotions 
-
-	computePriority(newCost, distance, prepTime);                        //The cargo's priority is calculated using its new cost
+int Cargo::updatePriority(int extraCost) {                                 //Used in promotions 
+	cost += extraCost;
+	computePriority();                        //The cargo's priority is calculated using its new cost
 	return priority;
 }
 

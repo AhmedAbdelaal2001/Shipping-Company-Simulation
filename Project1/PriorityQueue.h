@@ -64,7 +64,7 @@ public:
 		heapifyUp(list.getCount() - 1);
 	}
 
-	bool dequeue(T& item) {                                       //O(logn)
+	virtual bool dequeue(T& item) {                                       //O(logn)
 
 		list.swap(list.getCount() - 1, 0);
 		T itemPtr = nullptr;

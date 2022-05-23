@@ -25,7 +25,7 @@ public:
 
 	Cargo(Time prepTime, Time loadTime, int id, char type = 'U', int distance = 0, float cost = 0, float priority = 0);
 
-	int computePriority(int cost, int distance, Time prepTime);  // For initially enqueuing the waiting VIP cargos
+	void computePriority();  // For initially enqueuing the waiting VIP cargos
 	int updatePriority(int cost);  // Used when a normal cargo is promoted to a VIP cargo, priority is updated using the cargo's new cost. 
 
 	friend ostream& operator << (ostream& out, Cargo* cargo);  // for outputing the cargo's data

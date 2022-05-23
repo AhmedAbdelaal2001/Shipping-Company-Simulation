@@ -11,6 +11,7 @@
     <ClCompile Include="Cancellation.cpp" />
     <ClCompile Include="Preparation.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="MaintenanceTrucks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
@@ -35,5 +36,6 @@
     <ClInclude Include="Preparation.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Container.h" />
+    <ClInclude Include="MaintenanceTrucks.h" />
   </ItemGroup>
 </Project>

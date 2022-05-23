@@ -4,7 +4,7 @@ int Truck::currID = 0;
 int Truck::journeysBeforeCheckup = 0;
 Time Truck::totalActiveTime = defaultTime;
 
-Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime)
+Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysBeforeCheckup, char shiftTime, Time maintenanceD, int maintenanceDistance)
 {
 	currID++;
 	this->journeysBeforeCheckup = journeysBeforeCheckup;
@@ -15,13 +15,17 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysB
 	setCheckupTime(checkupTime);
 	setSpeed(speed);
 	setMovedDistance(0);
+	totalMovedDist = 0;
 	worksAtNight = shiftTime == 'N' ? true : false;
+	failureFlag = false;
 	/*setDeliveryInterval(deliveryInterval);
 	setDeliveredCargos(deliveredCargos);
 	setDeliveredJourneys(deliveryJourneys);
 	setActiveTime(activeTime);*/
 	setWaitingPriority();
 	deliveredCargos = deliveryJourneys = 0;
+	this->maintenanceDistance = maintenanceDistance;
+	maintenanceDuration = maintenanceD;
 	cargoType = 'X';
 }
 
@@ -74,7 +78,14 @@ Time Truck::getCheckupTime() const {
 }
 
 void Truck::setLeaveTime(Time currTime) {
-	leaveTime  = currTime + checkupDuration;
+	Time defaultTime;
+	leaveTime = defaultTime;
+
+	if (needsCheckup() || failureFlag)
+		leaveTime = currTime + checkupDuration;
+	else if (needsMaintenance())
+		leaveTime = currTime + maintenanceDuration;
+	
 }
 Time Truck::getLeaveTime() const {
 	return leaveTime;
@@ -105,6 +116,11 @@ void Truck::setMovedDistance(int movedDistance) {
 
 int Truck::getMovedDistance() const {
 	return movedDistance;
+}
+
+void Truck::resetTotalMovedDistance()
+{
+	totalMovedDist = 0;
 }
 
 void Truck::setDeliveryInterval(Time deliveryInterval) {
@@ -144,8 +160,42 @@ Time Truck::getTotalActiveTime(){
 	return totalActiveTime;
 }
 
+int Truck::calcUtilization(Time tSIM)
+{
+	return deliveredCargos != 0 ? (deliveredCargos) / (capacity * deliveryJourneys) * (activeTime.getTotalHours() * tSIM.getTotalHours()) : 0;
+}
+
 bool Truck::needsCheckup() const {
 	return deliveryJourneys == journeysBeforeCheckup;
+}
+
+bool Truck::needsMaintenance() const
+{
+	return totalMovedDist >= maintenanceDistance;
+}
+
+bool Truck::ifFailed() const
+{
+	return failureFlag;
+}
+
+bool Truck::deliveryFailure()
+{
+	srand(time(0));
+	int randomNum = rand() % 100;
+
+	failureFlag = (randomNum >= 0 && randomNum < 100) ? true : false;
+
+	if (failureFlag) 
+		speed /= 3;
+
+
+	return failureFlag;
+}
+
+void Truck::resetFailureFlag()
+{
+	failureFlag = false;
 }
 
 
@@ -153,11 +203,13 @@ void Truck::returnStats(Time currTime) {
 	Time restartTime;
 
 	cargoType = 'X';
+	totalMovedDist += 2 * movedDistance;
 	setMovedDistance(0);
 	setWaitingPriority();
 	setDeliveryInterval(currTime - getMoveTime());
 	setMoveTime(restartTime);
-	incrementDeliveredJourneys();
+	if (!failureFlag)
+		incrementDeliveredJourneys();
 }
 
 void Truck::deliveryStats(Time currTime, Cargo* deliveredCargo) {
@@ -220,6 +272,9 @@ void Truck::saveToFile(ofstream outFile) {
 }
 
 ostream& operator << (ostream& out, Truck* truckPtr) {
+
+	if (truckPtr->ifFailed())
+		out << "~";
 	out << truckPtr->getID();
 
 	switch (truckPtr->cargoType) {
@@ -292,7 +347,7 @@ void Truck::setPriorityToMoveTime() {
 void Truck::setMovingPriority(Time currTime) {
 	Cargo* frontCargo = nullptr;
 
-	if(cargoList->peek(frontCargo))
+	if (cargoList->peek(frontCargo) && !failureFlag)
 		priority = (currTime + frontCargo->getLoadTime()).getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed;
 	else
 		priority = currTime.getTotalHours() + movedDistance / speed;

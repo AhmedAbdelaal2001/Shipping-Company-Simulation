@@ -27,7 +27,15 @@ void UI::printMessage(string message) {
 }
 
 
-void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, PriorityQueue<Truck*>* normalNightTrucks, PriorityQueue<Truck*>* waitingSpecialTrucks, PriorityQueue<Truck*>* specialNightTrucks, PriorityQueue<Truck*>* waitingVIPTrucks, PriorityQueue<Truck*>* VIPNightTrucks, Queue<Truck*>* normalCheckupTrucks, Queue<Truck*>* specialCheckupTrucks, Queue<Truck*>* VIPCheckupTrucks, PriorityQueue<Truck*>* movingTrucks, CrossLinkedList<Cargo*>* waitingNormalCargo, Queue<Cargo*>* waitingSpecialCargo, PriorityQueue<Cargo*>* waitingVIPCargo, Queue<Event*>* EventList, Queue<Cargo*>* normalDeliveredCargo, Queue<Cargo*>* specialDeliveredCargo, Queue<Cargo*>* VIPDeliveredCargo, PriorityQueue<Truck*>* LoadingTrucks) {
+void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, PriorityQueue<Truck*>* normalNightTrucks,
+	PriorityQueue<Truck*>* waitingSpecialTrucks, PriorityQueue<Truck*>* specialNightTrucks, PriorityQueue<Truck*>* waitingVIPTrucks,
+	PriorityQueue<Truck*>* VIPNightTrucks, Queue<Truck*>* normalCheckupTrucks, Queue<Truck*>* specialCheckupTrucks,
+	Queue<Truck*>* VIPCheckupTrucks, PriorityQueue<Truck*>* movingTrucks, CrossLinkedList<Cargo*>* waitingNormalCargo,
+	Queue<Cargo*>* waitingSpecialCargo, PriorityQueue<Cargo*>* waitingVIPCargo, Queue<Event*>* EventList,
+	Queue<Cargo*>* normalDeliveredCargo, Queue<Cargo*>* specialDeliveredCargo, Queue<Cargo*>* VIPDeliveredCargo,
+	PriorityQueue<Truck*>* LoadingTrucks, MaintenanceTrucks* normalMaintenance, MaintenanceTrucks* specialMaintenance,
+	MaintenanceTrucks* VIPMaintenance, MaintenanceTrucks* nightVIPMaintenance, MaintenanceTrucks* nightSpecialMaintenance,
+	MaintenanceTrucks* nightNormalMaintenance) {
 	
 	if (mode == "Interactive") {
 		cin.get();
@@ -87,6 +95,19 @@ void UI::print(Time currTime, PriorityQueue<Truck*>* waitingNormalTrucks, Priori
 	cout << "{";
 	VIPCheckupTrucks->printQueue();
 	cout << "}";
+	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl;
+
+	cout << normalMaintenance->getCount() + nightNormalMaintenance->getCount() + specialMaintenance->getCount() + nightSpecialMaintenance->getCount() + VIPMaintenance->getCount() + nightVIPMaintenance->getCount();
+	cout << " In-Maintenance Trucks: ";
+	cout << "[";
+	normalMaintenance->printQueue(); if (!normalMaintenance->isEmpty() && !nightNormalMaintenance->isEmpty()) cout << ","; nightNormalMaintenance->printQueue(); cout << "] ";
+	cout << "(";
+	specialMaintenance->printQueue(); if (!specialMaintenance->isEmpty() && !nightSpecialMaintenance->isEmpty()) cout << ","; nightSpecialMaintenance->printQueue();
+	cout << ") ";
+	cout << "{";
+	VIPMaintenance->printQueue(); if (!VIPMaintenance->isEmpty() && !nightVIPMaintenance->isEmpty()) cout << ",";  nightVIPMaintenance->printQueue();
+	cout << "}";
+
 	cout << endl << "-------------------------------------------------------------------------------------------------------" << endl;
 
 	cout << normalDeliveredCargo->getCount() + specialDeliveredCargo->getCount() + VIPDeliveredCargo->getCount() << " ";

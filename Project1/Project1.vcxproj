@@ -144,6 +144,7 @@
     <ClCompile Include="Company.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MaintenanceTrucks.cpp" />
     <ClCompile Include="Promotion.cpp" />
     <ClCompile Include="Preparation.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Cancellation.h" />
     <ClInclude Include="Company.h" />
     <ClInclude Include="Container.h" />
+    <ClInclude Include="MaintenanceTrucks.h" />
     <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="Cargo.h" />
     <ClInclude Include="CrossLinkedList.h" />

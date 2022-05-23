@@ -14,4 +14,4 @@ Auto-Promoted Cargos: 0 %
 Trucks: 2 [N: 2, S: 0, V: 0]
 
 Avg Active Time = 63.7681%
-Avg utilization = 621
+Avg utilization = 
