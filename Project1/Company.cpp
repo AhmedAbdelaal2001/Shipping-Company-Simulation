@@ -791,12 +791,33 @@ Company::~Company() {
 	delete waitingVIPTrucks;
 	waitingVIPTrucks = nullptr;
 
+	delete normalNightTrucks;
+	normalNightTrucks = nullptr;
+	delete specialNightTrucks;
+	specialNightTrucks = nullptr;
+	delete VIPNightTrucks;
+	VIPNightTrucks = nullptr;
+
 	delete normalCheckupTrucks;
 	normalCheckupTrucks = nullptr;
 	delete specialCheckupTrucks;
 	specialCheckupTrucks = nullptr;
 	delete VIPCheckupTrucks;
 	VIPCheckupTrucks = nullptr;
+
+	delete normalMaintenance;
+	normalMaintenance = nullptr;
+	delete specialMaintenance;
+	specialMaintenance = nullptr;
+	delete VIPMaintenance;
+	VIPMaintenance = nullptr;
+
+	delete nightNormalMaintenance;
+	nightNormalMaintenance = nullptr;
+	delete nightSpecialMaintenance;
+	nightSpecialMaintenance = nullptr;
+	delete nightVIPMaintenance;
+	nightVIPMaintenance = nullptr;
 
 	delete movingTrucks;
 	movingTrucks = nullptr;
@@ -820,14 +841,5 @@ Company::~Company() {
 
 	delete LoadingTrucks;
 	LoadingTrucks = nullptr;
-
-	delete normalNightTrucks;
-	normalNightTrucks = nullptr;
-
-	delete specialNightTrucks;
-	specialNightTrucks = nullptr;
-
-	delete VIPNightTrucks;
-	VIPNightTrucks = nullptr;
 
 }
