@@ -306,9 +306,9 @@ void Company::saveToFile(Time tSIM) {
 
 	} while (nTruck || sTruck || vTruck);
 	
-	avgUtilization = totalTruckUtilization / totalTrucksCount;
+	avgUtilization = totalTruckUtilization / totalTrucksCount ;
 
-	outFile << "Avg utilization = " << avgUtilization;
+	outFile << "Avg utilization = " << avgUtilization * 100 << "%";
 }
 
 bool Company::notEndOfSimulation() {
@@ -348,6 +348,8 @@ void Company::executeCurrEvents(Time currTime) {
 			frontEvent->setEventTime(currTime);
 
 		frontEvent->Execute();
+		delete frontEvent;
+		frontEvent = nullptr;
 	}
 }
 
@@ -405,11 +407,13 @@ void Company::fillTruckWithCargo(Truck* truckPtr, Container<Truck*>* truckContai
 
 void Company::moveTruckToWaiting(Truck* truckPtr) {
 	
+	// handling failed trucks that are returning to waiting
 	if (truckPtr->ifFailed()) {
-		truckPtr->resetFailureFlag();
-		truckPtr->setSpeed(truckPtr->getSpeed() * 3);
+		truckPtr->resetFailureFlag();		// to indicate that it is no longer a failed truck
+		truckPtr->setSpeed(truckPtr->getSpeed() * 3);		// boosting its speed after checkup was completed
 	}
 
+	// returning the truck to its approproate list
 	switch (truckPtr->getType()) {
 
 	case 'N':
@@ -428,8 +432,10 @@ void Company::moveTruckToWaiting(Truck* truckPtr) {
 
 void Company::moveToCheckup(Truck* truckPtr, Time currTime) {
 
+	// setting the time the truck will leave checkup
 	truckPtr->setLeaveTime(currTime);
 
+	// handling failure by returning cargos and returning its cargo to waiting
 	if (truckPtr->ifFailed()) {
 		failedTrucks++;
 
@@ -441,6 +447,7 @@ void Company::moveToCheckup(Truck* truckPtr, Time currTime) {
 		}
 	}	
 
+	// enqueueing in appropriate list
 	switch (truckPtr->getType()) {
 
 	case 'N':
@@ -459,8 +466,12 @@ void Company::moveToCheckup(Truck* truckPtr, Time currTime) {
 
 void Company::moveToMaintenance(Truck* truckPtr, Time currTime)
 {
+
+	// setting the time the truck will leave maintenance
 	truckPtr->setLeaveTime(currTime);
 
+
+	// enqueuing the truck in its approproate list and handling day/night trucks
 	switch (truckPtr->getType()) {
 
 	case 'N':
@@ -483,15 +494,16 @@ void Company::returnFromMaintenance(Time currTime)
 
 	nTruck = sTruck = vTruck = nullptr;
 
+	// making the trucks available after maintenance has finished
 	do {
 
-		if ((normalMaintenance->peek(nTruck) || nightNormalMaintenance->peek(nTruck)) && nTruck->getLeaveTime() == currTime) {
+		if ((normalMaintenance->peek(nTruck) || nightNormalMaintenance->peek(nTruck)) && nTruck->getLeaveTime() == currTime) {		// checking both night and day lists for trucks that have finished maintenance
 			normalMaintenance->peek(nTruck) ? normalMaintenance->dequeue(nTruck) : nightNormalMaintenance->dequeue(nTruck);
-			nTruck->resetTotalMovedDistance();
-			moveTruckToWaiting(nTruck);
+			nTruck->resetTotalMovedDistance();	
+			moveTruckToWaiting(nTruck);		
 		}
 		else
-			nTruck = nullptr;
+			nTruck = nullptr;		// indicates that there aren't any normal trucks that have finished maintenance
 
 		if ((specialMaintenance->peek(sTruck) || nightSpecialMaintenance->peek(sTruck)) && sTruck->getLeaveTime() == currTime) {
 			specialMaintenance->peek(sTruck) ? specialMaintenance->dequeue(sTruck) : nightSpecialMaintenance->dequeue(sTruck);
@@ -552,6 +564,7 @@ void Company::returnFromCheckup(Time currTime) {
 
 	nTruck = sTruck = vTruck = nullptr;
 
+	// returning trucks that have finished checkup to their appropriate lists
 	do {
 		
 		if (normalCheckupTrucks->peek(nTruck) && nTruck->getLeaveTime() == currTime) {
@@ -579,6 +592,12 @@ void Company::returnFromCheckup(Time currTime) {
 
 	} while (nTruck || sTruck || vTruck);
 
+}
+
+void Company::makeTrucksAvailable(Time currTime)
+{
+	returnFromCheckup(currTime);
+	returnFromMaintenance(currTime);
 }
 
 
@@ -618,6 +637,15 @@ bool Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 
 }
 
+
+void Company::startLoading(Time currTime)
+{
+	assignVIP(currTime, waitingVIPCargo);
+	assignSpecial(currTime, waitingSpecialCargo);
+	assignNormal(currTime, waitingNormalCargo);
+	autoPromote(currTime);
+
+}
 
 bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>** truckContainerArr, int truckContainersNum,
 	Time currTime) {
@@ -703,10 +731,11 @@ void Company::startDelivery(Time currTime) {
 	Cargo* headCargoPtr = nullptr;
 	int newPriority;
 
-	while (LoadingTrucks->peek(truckPtr) &&  currTime >= truckPtr->getMoveTime()) {
+	while (LoadingTrucks->peek(truckPtr) &&  currTime >= truckPtr->getMoveTime()) {			// delivery starts when a truck has finished loading all its cargo
 		
 		LoadingTrucks->dequeue(truckPtr);
 
+		// identifying type of cargo the truck is carrying to allow another truck to start loading this type
 		if (truckPtr->containsNormal())
 			isLoadingNormal = false;
 		else if (truckPtr->containsSpecial())
@@ -714,6 +743,7 @@ void Company::startDelivery(Time currTime) {
 		else if (truckPtr->containsVIP())
 			isLoadingVIP = false;
 
+		// calculating initial truck moving priority
 		truckPtr->setMovingPriority(currTime);
 		movingTrucks->enqueue(truckPtr);
 
@@ -724,32 +754,35 @@ void Company::completeDelivery(Time currTime) {
 
 	Truck* truckPtr;
 	Cargo* deliveredCargo;
-	int randomNum;
 
-	
 
-	while (movingTrucks->peek(truckPtr) && -1 * truckPtr->getPriority() == currTime.getTotalHours()) {
+	while (movingTrucks->peek(truckPtr) && -1 * truckPtr->getPriority() == currTime.getTotalHours()) {			// checking if a truck has an event to execute (deliver a cargo/return to company)
 
 		movingTrucks->dequeue(truckPtr);
 
+		// delivering cargo and updating the delivery statistics 
 		if (!truckPtr->ifFailed() && truckPtr->dequeueCargo(deliveredCargo)) {
 
 			moveCargoToDelivered(deliveredCargo);
 
+			// if truck is now empty or a failure has occured then its active time has ended and its total active time is incremented
 			if (truckPtr->isEmpty() || truckPtr->deliveryFailure()) {
 
 				truckPtr->incrementActiveTime(currTime);
 			}
 
+			// updating statistics
 			truckPtr->deliveryStats(currTime, deliveredCargo);
 
 			movingTrucks->enqueue(truckPtr);
 
 		}
+		// when a truck returns to the company a number of checks are made and returning statistics are updated
 		else {
 
 			truckPtr->returnStats(currTime);
 
+			// returning the truck to its suitable list
 			if (truckPtr->ifFailed() || truckPtr->needsCheckup())
 				moveToCheckup(truckPtr, currTime);
 			else if (truckPtr->needsMaintenance())
@@ -771,19 +804,13 @@ void Company::Simulate() {
 
 		executeCurrEvents(currTime);
 
-		assignVIP(currTime, waitingVIPCargo);
-		assignSpecial(currTime, waitingSpecialCargo);
-		assignNormal(currTime, waitingNormalCargo);
-			
-		autoPromote(currTime);
+		startLoading(currTime);
 
 		startDelivery(currTime);
 
 		completeDelivery(currTime);
 
-		returnFromCheckup(currTime);
-
-		returnFromMaintenance(currTime);
+		makeTrucksAvailable(currTime);
 
 
 		if (in_out->getMode() != "Silent")

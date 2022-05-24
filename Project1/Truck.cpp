@@ -181,11 +181,15 @@ bool Truck::ifFailed() const
 
 bool Truck::deliveryFailure()
 {
+	// generating low probability of failure and dealing with failure if it occurs
+
+
 	srand(time(0));
-	int randomNum = rand() % 100;
+	int randomNum = rand() % 100;		//generating a random number between 0-99
 
-	failureFlag = (randomNum >= 0 && randomNum < 10) ? true : false;
+	failureFlag = (randomNum >= 0 && randomNum < 10) ? true : false;	
 
+	// applying effect of failure
 	if (failureFlag) 
 		speed /= 3;
 
@@ -202,22 +206,30 @@ void Truck::resetFailureFlag()
 void Truck::returnStats(Time currTime) {
 	Time restartTime;
 
+	// reseting truck's data
 	cargoType = 'X';
-	totalMovedDist += 2 * movedDistance;
 	setMovedDistance(0);
 	setWaitingPriority();
-	setDeliveryInterval(currTime - getMoveTime());
 	setMoveTime(restartTime);
+
+	// setting return stats
+	totalMovedDist += 2 * movedDistance;
+	setDeliveryInterval(currTime - getMoveTime());
 	if (!failureFlag)
 		incrementDeliveredJourneys();
 }
 
 void Truck::deliveryStats(Time currTime, Cargo* deliveredCargo) {
 	
+	// setting cargo delivery stats
 	deliveredCargo->setDeliveryTime(currTime);
 	deliveredCargo->setTruckID(id);
+
+	// setting truck delivery stats
 	incrementDeliveredCargos();
 	setMovedDistance(deliveredCargo->getDistance());
+
+	// recalculating its moving priority
 	setMovingPriority(currTime);
 
 }
@@ -229,8 +241,22 @@ void Truck::enqueueCargo(Cargo* loading) {
 
 bool Truck::dequeueCargo(Cargo*& cargoPtr) {
 	
-	return cargoList->dequeue(cargoPtr);
+	bool dequeued =  cargoList->dequeue(cargoPtr);
+	if (dequeued) {
+		totalUnloadTime = totalUnloadTime + cargoPtr->getLoadTime();
+	}
+	else
+	{
+		Time defaultTime;
+		totalUnloadTime = defaultTime;
+	}
 
+	return dequeued;
+}
+
+Time Truck::getTotalUnloadTime() const
+{
+	return totalUnloadTime;
 }
 
 void Truck::setCargoType()
@@ -348,7 +374,7 @@ void Truck::setMovingPriority(Time currTime) {
 	Cargo* frontCargo = nullptr;
 
 	if (cargoList->peek(frontCargo) && !failureFlag)
-		priority = (currTime + frontCargo->getLoadTime()).getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed;
+		priority = (currTime + frontCargo->getLoadTime() + totalUnloadTime).getTotalHours() + frontCargo->getDistance() / speed;											//priority = (currTime + frontCargo->getLoadTime()).getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed;
 	else
 		priority = currTime.getTotalHours() + movedDistance / speed;
 

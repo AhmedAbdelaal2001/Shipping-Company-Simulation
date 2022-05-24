@@ -94,7 +94,7 @@ public:
 	void moveToMaintenance(Truck*, Time);
 	void returnFromMaintenance(Time);
 	void returnFromCheckup(Time);
-
+	void makeTrucksAvailable(Time);
 
 	bool assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
 	bool assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
@@ -102,12 +102,11 @@ public:
 	void assignVIP(Time currTime, Container<Cargo*>*);
 	void assignSpecial(Time currTime, Container<Cargo*>*);
 	void assignNormal(Time currTime, Container<Cargo*>*);
-
 	void autoPromote(Time currTime);
+	void startLoading(Time);
 
 	void startDelivery(Time currTime);
 	void completeDelivery(Time currTime);
-
 
 	void printAll(Time currTime);
 

@@ -16,6 +16,7 @@ private:
 	int movedDistance;
 	int totalMovedDist;
 	int maintenanceDistance;
+	Time totalUnloadTime;
 	Time maintenanceDuration;
 	Time checkupDuration;
 	Time leaveTime;
@@ -102,6 +103,7 @@ public:
 
 	void enqueueCargo(Cargo* loading);
 	bool dequeueCargo(Cargo*&);
+	Time getTotalUnloadTime() const;
 
 	void setCargoType();
 
