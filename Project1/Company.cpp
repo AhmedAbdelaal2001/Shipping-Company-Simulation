@@ -324,19 +324,29 @@ bool Company::inWorkingHours(Time currTime)
 }
 
 void Company::printAll(Time currTime) {
-	in_out->print(currTime, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks, waitingVIPTrucks, 
-		          VIPNightTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks, movingTrucks, waitingNormalCargo, 
-				  waitingSpecialCargo, waitingVIPCargo, EventList, normalDeliveredCargo, specialDeliveredCargo, VIPDeliveredCargo,
-		          LoadingTrucks, normalMaintenance, specialMaintenance, VIPMaintenance, nightVIPMaintenance, nightSpecialMaintenance,
-		          nightNormalMaintenance);
+	
+	Container<Cargo*>* cargoContainersArr[6] = { waitingNormalCargo , waitingSpecialCargo, waitingVIPCargo,
+		                                         normalDeliveredCargo, specialDeliveredCargo, VIPDeliveredCargo };
+
+	Container<Truck*>* truckContainersArr[17] = { LoadingTrucks, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks, waitingVIPTrucks, VIPNightTrucks, 
+		                                          movingTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks,
+				                                  normalMaintenance, specialMaintenance, VIPMaintenance, nightVIPMaintenance, nightSpecialMaintenance, nightNormalMaintenance };
+
+	in_out->print(currTime, EventList, cargoContainersArr, truckContainersArr);
 }
 
 void Company::executeCurrEvents(Time currTime) {
 
+	if (!inWorkingHours(currTime)) return;
+
 	Event* frontEvent;
 
-	while (EventList->peek(frontEvent) && currTime == frontEvent->getEventTime()) {
+	while (EventList->peek(frontEvent) && currTime >= frontEvent->getEventTime()) {
 		EventList->dequeue(frontEvent);
+
+		if (!(frontEvent->getEventTime() == currTime))
+			frontEvent->setEventTime(currTime);
+
 		frontEvent->Execute();
 	}
 }
@@ -574,10 +584,10 @@ void Company::returnFromCheckup(Time currTime) {
 
 
 
-void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime) {
+bool Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime) {
 	Cargo* loading = nullptr;
 
-	if (cargoContainer->peek(loading) && loading->getType() == 'V') return;
+	if (cargoContainer->peek(loading) && loading->getType() == 'V') return false;
 
 	while (cargoContainer->peek(loading) && loading->calcWait(currTime) >= maxW && !truckPtr->isFull()) {
 	/*	if (truckPtr->isFull()) {
@@ -592,6 +602,11 @@ void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 	
 	}
 
+	if (truckPtr->isEmpty()) return false;
+	else {
+		moveTruckToLoading(truckContainer, truckPtr);
+		return true;
+	}
 	/*if (!truckPtr->isEmpty()) {
 
 		moveTruckToLoading(truckContainer, truckPtr);
@@ -607,7 +622,7 @@ void Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>** truckContainerArr, int truckContainersNum,
 	Time currTime) {
 	int startIndex, increment;
-	
+	bool nightExceptionflag = false;
 	Truck* truckPtr = nullptr;
 
 	if (inWorkingHours(currTime)) {
@@ -617,7 +632,10 @@ bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>**
 		startIndex = 1; increment = 2;
 	}
 
-	for (int i = startIndex; i < truckContainersNum; i+= increment) {
+	for (int i = startIndex; i < truckContainersNum; i += increment) {
+		
+		if (i % 2 == 0) nightExceptionflag = false;
+
 		if (truckContainerArr[i]->peek(truckPtr)) {
 
 			if (cargoContainer->getCount() >= truckPtr->getCapacity()) {
@@ -625,18 +643,18 @@ bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>**
 				return true;
 			}
 			else {
-				assignMaxWCargo(cargoContainer, truckPtr, truckContainerArr[i], currTime);
-				
-				if (!truckPtr->isEmpty()) {
-					moveTruckToLoading(truckContainerArr[i], truckPtr);
+				if (assignMaxWCargo(cargoContainer, truckPtr, truckContainerArr[i], currTime)) {
 					return true;
+				}
+				else if (i % 2 == 0) {
+					nightExceptionflag = true;
+					continue;
 				}
 
 				return false;
-				/*if (truckContainerArr[i]->peek(truckPtr))
-					return;*/
 			}
 		}
+		else if (nightExceptionflag) break;
 	}
 
 	return false;
@@ -751,7 +769,6 @@ void Company::Simulate() {
 
 	while (notEndOfSimulation()) {
 
-		
 		executeCurrEvents(currTime);
 
 		assignVIP(currTime, waitingVIPCargo);

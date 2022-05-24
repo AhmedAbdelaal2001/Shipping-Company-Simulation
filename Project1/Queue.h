@@ -33,7 +33,7 @@ public:
 
 	bool peek(T& item) { return list.peekFirst(item); }
 
-	void printQueue() { list.printList(); }
+	void print() { list.printList(); }
 };
 
 //void QueueTest() {

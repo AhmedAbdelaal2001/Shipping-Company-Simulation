@@ -89,7 +89,7 @@ public:
 	}
 
 	//Prints the stored content.
-	void printQueue() {                                      //O(n)
+	void print() {                                      //O(n)
 		list.printList();
 	}
 };

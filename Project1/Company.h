@@ -97,7 +97,7 @@ public:
 
 
 	bool assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
-	void assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
+	bool assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
 
 	void assignVIP(Time currTime, Container<Cargo*>*);
 	void assignSpecial(Time currTime, Container<Cargo*>*);

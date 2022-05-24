@@ -9,6 +9,7 @@ public:
 	
 	// Returns count of items
 	virtual int getCount() const = 0;
+
 	//Checks whether the queue is empty or not.
 	virtual bool isEmpty() = 0;
 
@@ -22,5 +23,5 @@ public:
 	virtual bool peek(T& item) = 0;
 
 	//Prints the PQ.
-	virtual void printQueue() = 0;
+	virtual void print() = 0;
 };

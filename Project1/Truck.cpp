@@ -184,7 +184,7 @@ bool Truck::deliveryFailure()
 	srand(time(0));
 	int randomNum = rand() % 100;
 
-	failureFlag = (randomNum >= 0 && randomNum < 100) ? true : false;
+	failureFlag = (randomNum >= 0 && randomNum < 10) ? true : false;
 
 	if (failureFlag) 
 		speed /= 3;
@@ -296,7 +296,7 @@ ostream& operator << (ostream& out, Truck* truckPtr) {
 
 	if (!truckPtr->isEmpty()) {
 
-		truckPtr->cargoList->printQueue();
+		truckPtr->cargoList->print();
 	}
 
 	switch (truckPtr->cargoType) {

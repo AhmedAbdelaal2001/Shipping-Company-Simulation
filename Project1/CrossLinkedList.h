@@ -48,10 +48,8 @@ public:
 		return list.peekFirst(item);
 	}
 
-	void printList() {                                 //O(n)
-		cout << "[";
+	void print() {                                 //O(n)
 		list.printList();
-		cout << "]";
 	}
 };
 
