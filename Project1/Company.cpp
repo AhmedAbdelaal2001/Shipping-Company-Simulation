@@ -609,16 +609,9 @@ bool Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 	if (cargoContainer->peek(loading) && loading->getType() == 'V') return false;
 
 	while (cargoContainer->peek(loading) && loading->calcWait(currTime) >= maxW && !truckPtr->isFull()) {
-	/*	if (truckPtr->isFull()) {
-			moveTruckToLoading(truckContainer, truckPtr);
-			if (!truckContainer->peek(truckPtr)) {
-				truckPtr = nullptr;
-				break;
-			}
-		}*/
-		
+
 		loadCargo(cargoContainer, truckPtr, currTime);
-	
+
 	}
 
 	if (truckPtr->isEmpty()) return false;
@@ -626,18 +619,11 @@ bool Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 		moveTruckToLoading(truckContainer, truckPtr);
 		return true;
 	}
-	/*if (!truckPtr->isEmpty()) {
-
-		moveTruckToLoading(truckContainer, truckPtr);
-	}*/
-
-	/*while (truckContainer->peek(truckPtr) && cargoContainer->getCount() >= truckPtr->getCapacity()) {
-		fillTruckWithCargo(truckPtr, truckContainer, cargoContainer, currTime);
-	}*/
-
 }
 
-
+// Calls all functions responsible for assigning and loading trucks, then autoPromotes if needed.
+//
+// currTime: The current time in the simulation.
 void Company::startLoading(Time currTime)
 {
 	assignVIP(currTime, waitingVIPCargo);
@@ -647,69 +633,125 @@ void Company::startLoading(Time currTime)
 
 }
 
-bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>** truckContainerArr, int truckContainersNum,
-	Time currTime) {
-	int startIndex, increment;
-	bool nightExceptionflag = false;
-	Truck* truckPtr = nullptr;
-
-	if (inWorkingHours(currTime)) {
-		startIndex = 0; increment = 1;
+// Picks the truck having the highest priority from the two truck containers provided. If called during off hours, the function will
+// only consider the first truck container provided.
+//
+// currTime: currTime: The current time in the simulation.
+// truckContainer1: The first truck container that we wish to look at when choosing the highest priority truck.
+// truckContainer2: The second truck container that we wish to look at when choosing the highest priority truck.
+// truckPtr: Should point to the truck having the highest priority at the end of the function's execution.
+// index: will be 0 if we pick a truck from truckContainer1, and 1 if we pick a truck from truckContainer2
+// 
+// returns false if no truck is found, and true otherwise,
+bool Company::HighestPriorityTruck(Time currTime, Container<Truck*>* truckContainer1, Container<Truck*>* truckContainer2, Truck*& truckPtr,
+								   int& index)
+{
+	if (!inWorkingHours(currTime)) {
+		index = 0;
+		return truckContainer1->peek(truckPtr);
 	}
-	else {
-		startIndex = 1; increment = 2;
-	}
 
-	for (int i = startIndex; i < truckContainersNum; i += increment) {
-		
-		if (i % 2 == 0) nightExceptionflag = false;
+	Truck* truckPtr1;
+	Truck* truckPtr2;
 
-		if (truckContainerArr[i]->peek(truckPtr)) {
-
-			if (cargoContainer->getCount() >= truckPtr->getCapacity()) {
-				fillTruckWithCargo(truckPtr, truckContainerArr[i], cargoContainer, currTime);
-				return true;
-			}
-			else {
-				if (assignMaxWCargo(cargoContainer, truckPtr, truckContainerArr[i], currTime)) {
-					return true;
-				}
-				else if (i % 2 == 0) {
-					nightExceptionflag = true;
-					continue;
-				}
-
-				return false;
-			}
+	if (truckContainer1->peek(truckPtr1) && truckContainer2->peek(truckPtr2)) {
+		if (*truckPtr1 > truckPtr2) {
+			truckPtr = truckPtr1;
+			index = 0;
 		}
-		else if (nightExceptionflag) break;
+		else {
+			truckPtr = truckPtr2;
+			index = 1;
+		}
+
+		return true;
+	}
+	else if (truckContainer1->peek(truckPtr1)) {
+		truckPtr = truckPtr1;
+		index = 1;
+		return true;
+	}
+	else if (truckContainer2->peek(truckPtr2)) {
+		truckPtr = truckPtr2;
+		index = 2;
+		return true;
 	}
 
 	return false;
 }
 
-void Company::assignVIP(Time currTime, Container<Cargo*>* cargoContainer) {
+// Assigns cargo, if possible, according to the assignment rule. Works for normal, special, and VIP cargo/trucks. Will be called during
+// assignNormal, assignSpecial, and assignVIP.
+// 
+// cargoContainer: the container carrying the cargo that we wish to dequeue from.
+// truckContainerArr: an array of truck containers, which contains all truck containers that we can dequeue from for the type of cargo
+//					   carried in cargoContainer. The array is ordered according to the assignment rule.
+// truckContainersNum: the number of elements in truckContainerArrr.
+// currTime: currTime: The current time in the simulation.
+// 
+// returns true if it manages to assign cargo to any truck, and false otherwise.
+bool Company::assignCargo(Container<Cargo*>* cargoContainer, Container<Truck*>** truckContainerArr, int truckContainersNum,
+	Time currTime) {
+	int index;
+	Truck* truckPtr = nullptr;
+
+	index = (inWorkingHours(currTime)) ? 0 : 1;
+
+	for (int i = index; i < truckContainersNum; i += 2) {
+
+		if (HighestPriorityTruck(currTime, truckContainerArr[i], truckContainerArr[i+1], truckPtr, index)) {
+
+			if (cargoContainer->getCount() >= truckPtr->getCapacity()) {
+				fillTruckWithCargo(truckPtr, truckContainerArr[i + index], cargoContainer, currTime);
+				return true;
+			}
+			else {
+				if (assignMaxWCargo(cargoContainer, truckPtr, truckContainerArr[i + index], currTime)) {
+					return true;
+				}
+				return false;
+			}
+		}
+	}
+
+	return false;
+}
+
+
+// Responsible for assigning VIP cargo, if possible. Will be called during each timestep.
+// 
+// currTime: The current time in the simulation.
+// VIPCargoContainer: The container carrying the VIP cargo that we wish to dequeue from.
+void Company::assignVIP(Time currTime, Container<Cargo*>* VIPCargoContainer) {
 	if (isLoadingVIP) return;
 
 	Container<Truck*>* truckContainerArr[12] = { waitingVIPTrucks, VIPNightTrucks, waitingNormalTrucks, normalNightTrucks, 
 												waitingSpecialTrucks, specialNightTrucks, VIPMaintenance, nightVIPMaintenance,
 												normalMaintenance, nightNormalMaintenance, specialMaintenance, nightSpecialMaintenance };
-	isLoadingVIP = assignCargo(cargoContainer, truckContainerArr, 8, currTime);	
+	isLoadingVIP = assignCargo(VIPCargoContainer, truckContainerArr, 8, currTime);	
 }
-
-void Company::assignSpecial(Time currTime, Container<Cargo*>* cargoContainer) {
+ 
+// Responsible for assigning special cargo, if possible. Will be called during each timestep.
+// 
+// currTime: The current time in the simulation.
+// specialCargoContainer: The container carrying the special cargo that we wish to dequeue from.
+void Company::assignSpecial(Time currTime, Container<Cargo*>* specialCargoContainer) {
 	if (isLoadingSpecial) return;
 
 	Container<Truck*>* truckContainerArr[4] = { waitingSpecialTrucks, specialNightTrucks, specialMaintenance, nightSpecialMaintenance };
-	isLoadingSpecial = assignCargo(cargoContainer, truckContainerArr, 4, currTime);
+	isLoadingSpecial = assignCargo(specialCargoContainer, truckContainerArr, 4, currTime);
 }
-
-void Company::assignNormal(Time currTime, Container<Cargo*>* cargoContainer) {
+ 
+// Responsible for assigning normal cargo, if possible. Will be called during each timestep.
+// 
+// currTime: The current time in the simulation.
+// normalCargoContainer: The container carrying the normal cargo that we wish to dequeue from.
+void Company::assignNormal(Time currTime, Container<Cargo*>* normalCargoContainer) {
 	if (isLoadingNormal) return;
 
 	Container<Truck*>* truckContainerArr[8] = { waitingNormalTrucks, normalNightTrucks,  waitingVIPTrucks, VIPNightTrucks, normalMaintenance, nightNormalMaintenance, VIPMaintenance, nightVIPMaintenance };
 
-	isLoadingNormal = assignCargo(cargoContainer, truckContainerArr, 8, currTime);
+	isLoadingNormal = assignCargo(normalCargoContainer, truckContainerArr, 8, currTime);
 }
 
 void Company::autoPromote(Time currTime) {

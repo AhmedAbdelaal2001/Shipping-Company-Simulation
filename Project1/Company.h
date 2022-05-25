@@ -5,6 +5,7 @@
 #include "PriorityQueue.h"
 #include "Event.h"
 #include "MaintenanceTrucks.h"
+#include "Time.h"
 
 #include "Truck.h"
 
@@ -96,6 +97,7 @@ public:
 	void returnFromCheckup(Time);
 	void makeTrucksAvailable(Time);
 
+	bool HighestPriorityTruck(Time, Container<Truck*>*, Container<Truck*>*, Truck*&, int&);
 	bool assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
 	bool assignMaxWCargo(Container<Cargo*>*, Truck*&, Container<Truck*>*, Time);
 

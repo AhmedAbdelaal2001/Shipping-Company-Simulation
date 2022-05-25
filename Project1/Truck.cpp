@@ -374,7 +374,7 @@ void Truck::setMovingPriority(Time currTime) {
 	Cargo* frontCargo = nullptr;
 
 	if (cargoList->peek(frontCargo) && !failureFlag)
-		priority = (currTime + frontCargo->getLoadTime() + totalUnloadTime).getTotalHours() + frontCargo->getDistance() / speed;											//priority = (currTime + frontCargo->getLoadTime()).getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed;
+		priority = (moveTime + frontCargo->getLoadTime() + totalUnloadTime).getTotalHours() + frontCargo->getDistance() / speed;											//priority = (currTime + frontCargo->getLoadTime()).getTotalHours() + (frontCargo->getDistance() - movedDistance) / speed;
 	else
 		priority = currTime.getTotalHours() + movedDistance / speed;
 
