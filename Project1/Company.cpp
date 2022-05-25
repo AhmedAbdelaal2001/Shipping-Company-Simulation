@@ -15,12 +15,12 @@ Company::Company() {
 
 void Company::readFromFile() {
 
-	in_out->printMessage("Enter input file name: ");
+	in_out->printMessage("Enter input file name, appended by .txt: ");
 	string fileName = in_out->getFileName();
 
 	ifstream inputFile(fileName);
 
-	in_out->printMessage("Enter output file name: ");
+	in_out->printMessage("Enter output file name, appended by .txt: ");
 	outFileName = in_out->getFileName();
 
 	cout << "Enter mode: (Interactive, Step_By_Step, Silent)" << endl;
@@ -299,9 +299,9 @@ void Company::printAll(Time currTime) {
 	Container<Cargo*>* cargoContainersArr[6] = { waitingNormalCargo , waitingSpecialCargo, waitingVIPCargo,
 		                                         normalDeliveredCargo, specialDeliveredCargo, VIPDeliveredCargo };
 
-	Container<Truck*>* truckContainersArr[17] = { LoadingTrucks, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks, waitingVIPTrucks, VIPNightTrucks, 
-		                                          movingTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks,
-				                                  normalMaintenance, specialMaintenance, VIPMaintenance, nightVIPMaintenance, nightSpecialMaintenance, nightNormalMaintenance };
+	Container<Truck*>* truckContainersArr[17] = { LoadingTrucks, waitingNormalTrucks, normalNightTrucks, waitingSpecialTrucks, specialNightTrucks, waitingVIPTrucks, VIPNightTrucks,
+												  movingTrucks, normalCheckupTrucks, specialCheckupTrucks, VIPCheckupTrucks,
+												  normalMaintenance,nightNormalMaintenance, specialMaintenance, nightSpecialMaintenance, VIPMaintenance, nightVIPMaintenance };
 
 	in_out->print(currTime, EventList, cargoContainersArr, truckContainersArr);
 }
@@ -335,9 +335,12 @@ void Company::moveTruckToLoading(Container<Truck*>* truckContainer, Truck* truck
 }
 
 void Company::loadCargo(Container<Cargo*>* cargoContainer, Truck* truckPtr, Time currTime) {
+	
 	Cargo* loading = nullptr;
+	
 	Time offSet(0, 5);
 	Time endOfDay(0, 23);
+	
 	int remainingHours;
 
 	if (truckPtr->isEmpty())
@@ -495,7 +498,7 @@ void Company::returnFromMaintenance(Time currTime)
 
 
 		if ((VIPMaintenance->peek(vTruck) || nightVIPMaintenance->peek(vTruck)) && vTruck->getLeaveTime() == currTime) {
-			VIPMaintenance->peek(vTruck)? VIPMaintenance->dequeue(vTruck) : nightVIPMaintenance->peek(vTruck);
+			VIPMaintenance->peek(vTruck)? VIPMaintenance->dequeue(vTruck) : nightVIPMaintenance->dequeue(vTruck);
 			vTruck->resetTotalMovedDistance();
 			moveTruckToWaiting(vTruck);
 		}

@@ -199,12 +199,12 @@ void Truck::returnStats(Time currTime) {
 
 	// reseting truck's data
 	cargoType = 'X';
-	setMovedDistance(0);
 	setWaitingPriority();
 	setMoveTime(restartTime);
 
 	// setting return stats
 	totalMovedDist += 2 * movedDistance;
+	setMovedDistance(0);
 	setDeliveryInterval(currTime - getMoveTime());
 	if (!failureFlag)
 		incrementDeliveredJourneys();
@@ -219,7 +219,6 @@ void Truck::deliveryStats(Time currTime, Cargo* deliveredCargo) {
 	// setting truck delivery stats
 	incrementDeliveredCargos();
 	setMovedDistance(deliveredCargo->getDistance());
-
 	// recalculating its moving priority
 	setMovingPriority(currTime);
 

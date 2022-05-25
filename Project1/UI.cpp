@@ -17,7 +17,6 @@ void UI::getModefromUser() {
 
 string UI::getFileName() {
 	string fileName;
-	cout << "Enter file name: (appended by .txt)" << endl;
 	cin >> fileName;
 	return fileName;
 }

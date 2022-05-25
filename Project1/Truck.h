@@ -85,6 +85,7 @@ public:
 	void setMovingPriority(Time);
 
 	void incrementActiveTime(Time currTime);  // sets Active time after calculation
+	void incrementTotalMovedDistance(int);
 	Time getActiveTime();
 	static Time getTotalActiveTime();
 
