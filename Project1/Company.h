@@ -64,10 +64,6 @@ private:
 public:
 
 	Company();
-	/*Queue<Event*>* getEventList() const;
-	CrossLinkedList<Cargo*>* getWaitingNormalCargo() const;
-	Queue<Cargo*>* getWaitingSpecialCargo() const;
-	PriorityQueue<Cargo*>* getWaitingVIPCargo() const;*/
 
 	bool deleteNormalCargo(int id, Cargo*& delCargo);
 
