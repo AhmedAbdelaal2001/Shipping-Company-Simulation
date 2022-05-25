@@ -18,10 +18,6 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysB
 	totalMovedDist = 0;
 	worksAtNight = shiftTime == 'N' ? true : false;
 	failureFlag = false;
-	/*setDeliveryInterval(deliveryInterval);
-	setDeliveredCargos(deliveredCargos);
-	setDeliveredJourneys(deliveryJourneys);
-	setActiveTime(activeTime);*/
 	setWaitingPriority();
 	deliveredCargos = deliveryJourneys = 0;
 	this->maintenanceDistance = maintenanceDistance;
@@ -31,14 +27,6 @@ Truck::Truck(char type, int capacity, Time checkupTime, int speed, int journeysB
 
 bool Truck::isFull() {
 	return cargoList->getCount() == capacity;
-}
-
-Time Truck::getMoveTime() {
-	Time newMoveTime;
-	newMoveTime.setHours(-1 * priority);
-	moveTime = newMoveTime;
-
-	return moveTime;
 }
 
 bool Truck::isEmpty() {
@@ -92,6 +80,7 @@ Time Truck::getLeaveTime() const {
 }
 
 void Truck::setMoveTime(Time moveTime) { this->moveTime = moveTime; }
+
 Time Truck::getMoveTime() const { return moveTime; }
 
 void Truck::setID(int id) {
@@ -148,8 +137,10 @@ int Truck::getDeliveredJourneys() {
 }
 
 void Truck::incrementActiveTime(Time currTime) {
+	
 	activeTime = activeTime + (currTime - moveTime);
 	totalActiveTime = totalActiveTime + activeTime;
+
 }
 
 Time Truck::getActiveTime() {
@@ -160,9 +151,9 @@ Time Truck::getTotalActiveTime(){
 	return totalActiveTime;
 }
 
-int Truck::calcUtilization(Time tSIM)
+float Truck::calcUtilization(Time tSIM)
 {
-	return deliveredCargos != 0 ? (deliveredCargos) / (capacity * deliveryJourneys) * (activeTime.getTotalHours() * tSIM.getTotalHours()) : 0;
+	return deliveryJourneys != 0 ? ((float)deliveredCargos) / (capacity * deliveryJourneys) * ((float)activeTime.getTotalHours() / tSIM.getTotalHours()) : 0;
 }
 
 bool Truck::needsCheckup() const {
@@ -235,8 +226,11 @@ void Truck::deliveryStats(Time currTime, Cargo* deliveredCargo) {
 }
 
 void Truck::enqueueCargo(Cargo* loading) {
+	
 	cargoList->enqueue(loading);
 	moveTime = moveTime + loading->getLoadTime();
+	activeTime = activeTime + loading->getLoadTime();
+
 }
 
 bool Truck::dequeueCargo(Cargo*& cargoPtr) {
@@ -316,9 +310,6 @@ ostream& operator << (ostream& out, Truck* truckPtr) {
 	case 'X':
 		break;
 	}
-
-	//Cargo* tempCargoPtr = nullptr;
-	//truckPtr->cargoList->peek(tempCargoPtr);
 
 	if (!truckPtr->isEmpty()) {
 

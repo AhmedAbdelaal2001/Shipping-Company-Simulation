@@ -69,10 +69,6 @@ void Company::readFromFile() {
 		nightSpecialMaintenance = new MaintenanceTrucks;
 		nightNormalMaintenance = new MaintenanceTrucks;
 
-		/*inputFile >> n_Speed >> s_Speed >> v_Speed;
-
-		inputFile >> n_Capacity >> s_Capacity >> v_Capacity;*/
-
 		inputFile >> journeysBeforeCheckup;
 
 		inputFile >> checkup;
@@ -116,17 +112,6 @@ void Company::readFromFile() {
 			}
 
 		}
-		/*for (int i = 0; i < s_Count; i++)
-		{
-
-			TruckPtr = new Truck('S', s_Capacity, s_CheckupD, s_Speed, journeysBeforeCheckup);
-			waitingSpecialTrucks->enqueue(TruckPtr);
-		}
-		for (int i = 0; i < v_Count; i++)
-		{
-			TruckPtr = new Truck('V', v_Capacity, v_CheckupD, v_Speed, journeysBeforeCheckup);
-			waitingVIPTrucks->enqueue(TruckPtr);
-		}*/
 
 
 		inputFile >> autoProm;
@@ -170,22 +155,6 @@ void Company::readFromFile() {
 	}
 }
 
-//CrossLinkedList<Cargo*>* Company::getWaitingNormalCargo() const {
-//	return waitingNormalCargo;
-//}
-//
-//Queue<Cargo*>* Company::getWaitingSpecialCargo() const {
-//	return waitingSpecialCargo;
-//}
-//
-//PriorityQueue<Cargo*>* Company::getWaitingVIPCargo() const {
-//	return waitingVIPCargo;
-//}
-//
-//Queue<Event*>* Company::getEventList() const {
-//	return EventList;
-//}
-
 bool Company::deleteNormalCargo(int id, Cargo*& delCargo) {
 	return waitingNormalCargo->deleteElement(id, delCargo);
 }
@@ -226,7 +195,8 @@ Cargo* Company::firstDelivered(Cargo* nCargo, Cargo* sCargo, Cargo* vCargo) {
 
 void Company::saveToFile(Time tSIM) {
 	int nCount, sCount, vCount, totalCargoCount;
-	int nTrucks, sTrucks, vTrucks, totalTrucksCount, totalTruckUtilization, avgUtilization;
+	int nTrucks, sTrucks, vTrucks, totalTrucksCount;
+	float totalTruckUtilization, avgUtilization;
 	Time totalWait, avgWait;
 	Cargo* nCargo, * sCargo, * vCargo;
 	nCargo = sCargo = vCargo = nullptr;
@@ -276,9 +246,9 @@ void Company::saveToFile(Time tSIM) {
 
 	outFile << "\nCargos: " << totalCargoCount << " [N: " << nCount << ", S: " << sCount << ", V: " << vCount << "]\n";
 	outFile << "Cargo Avg Wait = " << avgWait << "\n";
-	outFile << "Auto-Promoted Cargos: " << (float)autoPromoted / nCount * 100 << " %";
+	outFile << "Auto-Promoted Cargos: " << (float)autoPromoted / (nCount + autoPromoted) * 100 << " %";
 	outFile << "\nTrucks: " << totalTrucksCount << " [N: " << nTrucks << ", S: " << sTrucks << ", V: " << vTrucks << "]\n";
-	outFile << "\nAvg Active Time = " << (float)Truck::getTotalActiveTime().getTotalHours() / tSIM.getTotalHours() * 100; outFile << "%\n";
+	outFile << "\nAvg Active Time = " << (float)Truck::getTotalActiveTime().getTotalHours() / (tSIM.getTotalHours() * totalTrucksCount) * 100; outFile << "%\n";
 	
 	totalTruckUtilization = 0;
 	
@@ -309,6 +279,7 @@ void Company::saveToFile(Time tSIM) {
 	avgUtilization = totalTruckUtilization / totalTrucksCount ;
 
 	outFile << "Avg utilization = " << avgUtilization * 100 << "%";
+	outFile << "\nFailure Percentage = " << (float)failedTrucks / totalTrucksCount * 100 << "%";
 }
 
 bool Company::notEndOfSimulation() {
@@ -365,14 +336,23 @@ void Company::moveTruckToLoading(Container<Truck*>* truckContainer, Truck* truck
 
 void Company::loadCargo(Container<Cargo*>* cargoContainer, Truck* truckPtr, Time currTime) {
 	Cargo* loading = nullptr;
-	
+	Time offSet(0, 5);
+	Time endOfDay(0, 23);
+	int remainingHours;
+
 	if (truckPtr->isEmpty())
 		truckPtr->setMoveTime(currTime);
 
 	cargoContainer->dequeue(loading);
 	loading->setPriorityToDistance();
 	loading->setWaitingTime(currTime);
+
+	remainingHours = endOfDay.getHours() - currTime.getHours();
+
+	if (!truckPtr->WorksAtNight() && remainingHours < loading->getLoadTime().getTotalHours())	truckPtr->setMoveTime(truckPtr->getMoveTime() + offSet);
+	
 	truckPtr->enqueueCargo(loading);
+
 }
 
 void Company::moveCargoToDelivered(Cargo* deliveredCargo) {
@@ -525,37 +505,6 @@ void Company::returnFromMaintenance(Time currTime)
 
 	} while (nTruck || sTruck || vTruck);
 
-	/*nTruck = sTruck = vTruck = nullptr;
-
-	do {
-
-		if (nightNormalMaintenance->peek(nTruck) && nTruck->getLeaveTime() == currTime) {
-			nTruck->resetTotalMovedDistance();
-			nightNormalMaintenance->dequeue(nTruck);
-			moveTruckToWaiting(nTruck);
-		}
-		else
-			nTruck = nullptr;
-
-		if (nightSpecialMaintenance->peek(sTruck) && sTruck->getLeaveTime() == currTime) {
-			sTruck->resetTotalMovedDistance();
-			nightSpecialMaintenance->dequeue(sTruck);
-			moveTruckToWaiting(sTruck);
-		}
-		else
-			sTruck = nullptr;
-
-
-		if (nightVIPMaintenance->peek(vTruck) && vTruck->getLeaveTime() == currTime) {
-			vTruck->resetTotalMovedDistance();
-			nightVIPMaintenance->dequeue(vTruck);
-			moveTruckToWaiting(vTruck);
-		}
-		else
-			vTruck = nullptr;
-
-
-	} while (nTruck || sTruck || vTruck);*/
 }
 
 void Company::returnFromCheckup(Time currTime) {
@@ -600,13 +549,11 @@ void Company::makeTrucksAvailable(Time currTime)
 	returnFromMaintenance(currTime);
 }
 
-
-
-
 bool Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPtr, Container<Truck*>* truckContainer, Time currTime) {
 	Cargo* loading = nullptr;
 
-	if (cargoContainer->peek(loading) && loading->getType() == 'V') return false;
+	//When uncommented, may result in an infinte loop.
+	//if (cargoContainer->peek(loading) && loading->getType() == 'V') return false;
 
 	while (cargoContainer->peek(loading) && loading->calcWait(currTime) >= maxW && !truckPtr->isFull()) {
 
@@ -626,10 +573,11 @@ bool Company::assignMaxWCargo(Container<Cargo*>* cargoContainer, Truck*& truckPt
 // currTime: The current time in the simulation.
 void Company::startLoading(Time currTime)
 {
+
+	autoPromote(currTime);
 	assignVIP(currTime, waitingVIPCargo);
 	assignSpecial(currTime, waitingSpecialCargo);
 	assignNormal(currTime, waitingNormalCargo);
-	autoPromote(currTime);
 
 }
 
@@ -642,7 +590,7 @@ void Company::startLoading(Time currTime)
 // truckPtr: Should point to the truck having the highest priority at the end of the function's execution.
 // index: will be 0 if we pick a truck from truckContainer1, and 1 if we pick a truck from truckContainer2
 // 
-// returns false if no truck is found, and true otherwise,
+// returns false if no truck is found, and true otherwise.
 bool Company::HighestPriorityTruck(Time currTime, Container<Truck*>* truckContainer1, Container<Truck*>* truckContainer2, Truck*& truckPtr,
 								   int& index)
 {
@@ -668,12 +616,12 @@ bool Company::HighestPriorityTruck(Time currTime, Container<Truck*>* truckContai
 	}
 	else if (truckContainer1->peek(truckPtr1)) {
 		truckPtr = truckPtr1;
-		index = 1;
+		index = 0;
 		return true;
 	}
 	else if (truckContainer2->peek(truckPtr2)) {
 		truckPtr = truckPtr2;
-		index = 2;
+		index = 1;
 		return true;
 	}
 

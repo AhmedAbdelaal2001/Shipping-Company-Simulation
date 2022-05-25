@@ -43,8 +43,6 @@ public:
 
 	bool WorksAtNight() const;
 
-	Time getMoveTime();
-
 	void setCapacity(int capacity);
 	int getCapacity();
 
@@ -90,7 +88,7 @@ public:
 	Time getActiveTime();
 	static Time getTotalActiveTime();
 
-	int calcUtilization(Time);
+	float calcUtilization(Time);
 
 	bool needsCheckup() const;
 	bool needsMaintenance() const;
