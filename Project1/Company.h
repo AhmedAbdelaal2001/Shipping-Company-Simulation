@@ -81,7 +81,7 @@ public:
 	bool notEndOfSimulation();
 	bool inWorkingHours(Time currTime);
 
-	void moveTruckToLoading(Container<Truck*>*, Truck*);
+	void moveTruckToLoading(Container<Truck*>*, Truck*); //*****************
 	void loadCargo(Container<Cargo*>*, Truck*, Time);
 	void moveCargoToDelivered(Cargo*);
 
@@ -90,8 +90,8 @@ public:
 	void moveToCheckup(Truck*, Time);
 	void moveToMaintenance(Truck*, Time);
 	void returnFromMaintenance(Time);
-	void returnFromCheckup(Time);
-	void makeTrucksAvailable(Time);
+	void returnFromCheckup(Time); 
+	void makeTrucksAvailable(Time); //return from checkup and maintenance .
 
 	bool HighestPriorityTruck(Time, Container<Truck*>*, Container<Truck*>*, Truck*&, int&);
 	bool assignCargo(Container<Cargo*>*, Container<Truck*>**, int, Time);
@@ -103,7 +103,7 @@ public:
 	void autoPromote(Time currTime);
 	void startLoading(Time);
 
-	void startDelivery(Time currTime);
+	void startDelivery(Time currTime);//************************
 	void completeDelivery(Time currTime);
 
 	void printAll(Time currTime);

@@ -38,13 +38,17 @@ Cargo::Cargo(Time prepTime, Time loadTime, int id, char type, int distance, floa
 }
 
 void Cargo::computePriority() {
-	priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours(); //Priority equation, cost and distance increase the
-																						
+	priority = cost + distance - 10 * prepTime.getDays() - 5 * prepTime.getHours(); 
+	// VIP cargo with high cost and big distance needs are  at the head of PQ
+	//high prepaeration time means its recently waiting , it should be at the end of the pQ
+	//low prep time means it's been ready for a long time -> hence, has higher priority to be assinged .
+	//prepTime in days is  dominant on PrepTime in hours .
 }
 
 int Cargo::updatePriority(int extraCost) {                                 //Used in promotions 
-	cost += extraCost;
+	cost += extraCost;                         //just for readibility 
 	computePriority();                        //The cargo's priority is calculated using its new cost
+	                                         // if autoP (extra cost==0)
 	return priority;
 }
 

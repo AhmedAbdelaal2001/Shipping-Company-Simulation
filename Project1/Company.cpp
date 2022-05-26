@@ -288,8 +288,8 @@ bool Company::notEndOfSimulation() {
 		!VIPCheckupTrucks->isEmpty() || !normalMaintenance->isEmpty() || !nightNormalMaintenance->isEmpty() || !specialMaintenance->isEmpty() ||
 		!nightSpecialMaintenance->isEmpty() || !VIPMaintenance->isEmpty() || !nightVIPMaintenance->isEmpty();
 }
-
-bool Company::inWorkingHours(Time currTime)
+//working hours are 5 pm-11 pm
+bool Company::inWorkingHours(Time currTime) 
 {
 	return currTime.getHours() <= 23 && currTime.getHours() >= 5;
 }
@@ -305,6 +305,8 @@ void Company::printAll(Time currTime) {
 
 	in_out->print(currTime, EventList, cargoContainersArr, truckContainersArr);
 }
+//Events at off hours are neglected
+//Events that comes before working hours and  its load time finishes during the offhours are assinged to night Trucks.
 
 void Company::executeCurrEvents(Time currTime) {
 
@@ -327,10 +329,12 @@ void Company::executeCurrEvents(Time currTime) {
 
 void Company::moveTruckToLoading(Container<Truck*>* truckContainer, Truck* truckPtr) {
 	
-	truckContainer->dequeue(truckPtr);
-	truckPtr->setPriorityToMoveTime();
-	truckPtr->setCargoType();
-	LoadingTrucks->enqueue(truckPtr);
+	truckContainer->dequeue(truckPtr); // dequeue the truck at the head of pQ (lowest capacity)
+	truckPtr->setPriorityToMoveTime(); // only One list for Loading (contains the 3 types of trucks)
+	truckPtr->setCargoType();          // move time = currTime+ sum of load times of its cargos
+	LoadingTrucks->enqueue(truckPtr);  // the least moveTime ->   will load quickly
+	                                   // the highest movetime -> will load in long time
+	                                   // Priority = MoveTime * -1 ->truck that have least moveTime Has higher Priority
 
 }
 
@@ -596,7 +600,7 @@ void Company::startLoading(Time currTime)
 // returns false if no truck is found, and true otherwise.
 bool Company::HighestPriorityTruck(Time currTime, Container<Truck*>* truckContainer1, Container<Truck*>* truckContainer2, Truck*& truckPtr,
 								   int& index)
-{
+{ // 
 	if (!inWorkingHours(currTime)) {
 		index = 0;
 		return truckContainer1->peek(truckPtr);
@@ -704,15 +708,15 @@ void Company::assignNormal(Time currTime, Container<Cargo*>* normalCargoContaine
 
 	isLoadingNormal = assignCargo(normalCargoContainer, truckContainerArr, 8, currTime);
 }
-
+//if a cargo waits than autoP days from its Preparation time , it should be promoted to VIP
 void Company::autoPromote(Time currTime) {
 	Cargo* promotedCargoPtr = nullptr;
-
+	//while waiting normal list not empty and the cargo's AutoP time exceeds it's autoaP
 	while (waitingNormalCargo->peek(promotedCargoPtr) && promotedCargoPtr->calcWait(currTime) >= autoP) {
 		
-		waitingNormalCargo->dequeue(promotedCargoPtr);
-		promotedCargoPtr->setType('V');
-		promotedCargoPtr->updatePriority(0);
+		waitingNormalCargo->dequeue(promotedCargoPtr); //dequeue it from noemal list
+		promotedCargoPtr->setType('V'); // change its type to VIP
+		promotedCargoPtr->updatePriority(0); //set it's priority (no extra cost)
 		waitingVIPCargo->enqueue(promotedCargoPtr);
 		autoPromoted++;
 
@@ -724,21 +728,25 @@ void Company::startDelivery(Time currTime) {
 	Cargo* headCargoPtr = nullptr;
 	int newPriority;
 
-	while (LoadingTrucks->peek(truckPtr) &&  currTime >= truckPtr->getMoveTime()) {			// delivery starts when a truck has finished loading all its cargo
+	    // delivery starts when a truck has finished loading all its cargo and enqueued to loading trucks and it's move time == currTime .
+
+	while (LoadingTrucks->peek(truckPtr) &&  currTime >= truckPtr->getMoveTime()) {		
 		
 		LoadingTrucks->dequeue(truckPtr);
 
-		// identifying type of cargo the truck is carrying to allow another truck to start loading this type
+		// identifying type of cargo the truck is carrying to allow another truck to start loading this type.
+		
 		if (truckPtr->containsNormal())
-			isLoadingNormal = false;
-		else if (truckPtr->containsSpecial())
-			isLoadingSpecial = false;
-		else if (truckPtr->containsVIP())
+			isLoadingNormal = false;                  // used in Assin Normal
+		else if (truckPtr->containsSpecial())         // used in Assin Special
+			isLoadingSpecial = false;                 // used in Assin VIP
+		else if (truckPtr->containsVIP())             // to check that Only One truck of it's type is being loaded.
 			isLoadingVIP = false;
 
 		// calculating initial truck moving priority
-		truckPtr->setMovingPriority(currTime);
-		movingTrucks->enqueue(truckPtr);
+
+		truckPtr->setMovingPriority(currTime);        // The truck priority is set according to the distance left to deliver its first cargo.
+		movingTrucks->enqueue(truckPtr);              // move it from loading to moving after setting its Priority.
 
 	}
 }

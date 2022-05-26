@@ -236,7 +236,7 @@ bool Truck::dequeueCargo(Cargo*& cargoPtr) {
 	
 	bool dequeued =  cargoList->dequeue(cargoPtr);
 	if (dequeued) {
-		totalUnloadTime = totalUnloadTime + cargoPtr->getLoadTime();
+		totalUnloadTime = totalUnloadTime + cargoPtr->getLoadTime(); // each time a cargo is dequeued , total unloadTime is incremented
 	}
 	else
 	{
